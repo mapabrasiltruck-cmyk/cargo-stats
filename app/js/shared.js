@@ -568,6 +568,66 @@ document.addEventListener('visibilitychange', async () => {
     }
 });
 
+// ========== AUTO-UPDATE BANNER ==========
+
+function initUpdateBanner() {
+    const banner = document.createElement('div');
+    banner.id = 'update-banner';
+    banner.style.cssText = 'display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#0d1117;border-bottom:2px solid #58a6ff;padding:12px 20px;font-family:Consolas,monospace;font-size:13px;color:#e0e0e0;box-shadow:0 4px 20px rgba(0,0,0,0.8);align-items:center;justify-content:space-between;';
+    banner.innerHTML = `
+        <div id="update-info" style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:18px;">&#9889;</span>
+            <span id="update-text">Verificando atualizacoes...</span>
+        </div>
+        <div id="update-actions" style="display:flex;align-items:center;gap:8px;">
+            <div id="update-progress-bar" style="display:none;width:120px;height:6px;background:#1a1a22;border-radius:3px;overflow:hidden;">
+                <div id="update-progress-fill" style="width:0%;height:100%;background:#58a6ff;border-radius:3px;transition:width 0.3s;"></div>
+            </div>
+            <button id="update-btn-restart" style="display:none;padding:6px 16px;background:#238636;border:none;border-radius:6px;color:#fff;cursor:pointer;font-weight:700;">Reiniciar</button>
+            <button id="update-btn-close" style="padding:4px 10px;background:transparent;border:1px solid #555;border-radius:4px;color:#888;cursor:pointer;font-size:12px;">X</button>
+        </div>`;
+    document.body.appendChild(banner);
+
+    if (window.cargoStats) {
+        window.cargoStats.onUpdateAvailable((version) => {
+            showUpdateBanner('Nova versao ' + version + ' disponivel. Baixando...', 'downloading');
+        });
+        window.cargoStats.onUpdateProgress((percent) => {
+            const bar = document.getElementById('update-progress-bar');
+            const fill = document.getElementById('update-progress-fill');
+            if (bar && fill) {
+                bar.style.display = 'block';
+                fill.style.width = Math.round(percent) + '%';
+            }
+            document.getElementById('update-text').textContent = 'Baixando... ' + Math.round(percent) + '%';
+        });
+        window.cargoStats.onUpdateDownloaded(() => {
+            document.getElementById('update-text').textContent = 'Atualizacao baixada! Reiniciar agora?';
+            document.getElementById('update-progress-bar').style.display = 'none';
+            document.getElementById('update-btn-restart').style.display = 'inline-block';
+        });
+    }
+
+    document.getElementById('update-btn-restart').addEventListener('click', () => {
+        if (window.cargoStats && window.cargoStats.restartAndUpdate) {
+            window.cargoStats.restartAndUpdate();
+        }
+    });
+    document.getElementById('update-btn-close').addEventListener('click', () => {
+        document.getElementById('update-banner').style.display = 'none';
+    });
+}
+
+function showUpdateBanner(text, state) {
+    const banner = document.getElementById('update-banner');
+    const textEl = document.getElementById('update-text');
+    if (banner && textEl) {
+        textEl.textContent = text;
+        banner.style.display = 'flex';
+        banner.style.borderBottomColor = state === 'downloading' ? '#58a6ff' : '#238636';
+    }
+}
+
 // ========== FLOATING STATUS BUTTON ==========
 
 let floatingStatusConnected = false;
@@ -579,12 +639,7 @@ function initFloatingStatus() {
     document.body.appendChild(btn);
 
     btn.addEventListener('click', async () => {
-        const currentText = btn.querySelector('.fs-value')?.textContent || '';
-        if (currentText === 'Desconectado' || currentText.includes('offline')) {
-            showDiagnosticModal();
-        } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        showDiagnosticModal();
     });
 }
 
@@ -617,7 +672,9 @@ async function showDiagnosticModal() {
                 Se .NET = AUSENTE, instale .NET Framework 4.5+ em <a href="https://dotnet.microsoft.com/download/dotnet-framework" target="_blank" style="color:#58a6ff;">dotnet.microsoft.com</a><br>
                 Se Telemetria rodando = Nao, pode ser antivirus bloqueando.
             </p>
-            <button onclick="this.closest('#diagnostic-overlay').remove()" style="margin-top:12px;padding:8px 20px;background:#30363d;border:1px solid #58a6ff;border-radius:6px;color:#58a6ff;cursor:pointer;">Fechar</button>
+            <div style="display:flex;gap:8px;margin-top:12px;">
+            <button onclick="this.closest('#diagnostic-overlay').remove()" style="padding:8px 20px;background:#30363d;border:1px solid #58a6ff;border-radius:6px;color:#58a6ff;cursor:pointer;">Fechar</button>
+            <button id="diag-btn-update" onclick="(async()=>{if(window.cargoStats&&window.cargoStats.checkForUpdates){window.cargoStats.checkForUpdates();this.textContent='Verificando...';this.disabled=true;setTimeout(()=>{this.textContent='Verificar atualizacoes';this.disabled=false},5000)};document.getElementById('update-banner').style.display='flex'})()" style="padding:8px 16px;background:#1f6feb;border:none;border-radius:6px;color:#fff;cursor:pointer;">Verificar atualizacoes</button>
         </div>`;
     document.body.appendChild(overlay);
 }
@@ -650,4 +707,5 @@ function updateFloatingStatus(connected, jobActive) {
     }
 }
 
+initUpdateBanner();
 initFloatingStatus();

@@ -20,4 +20,8 @@ contextBridge.exposeInMainWorld('cargoStats', {
 
     // ─── Diagnostics ────────────────────────────────────
     getDiagnostics: () => ipcRenderer.invoke('get-diagnostics'),
+
+    // ─── Manual Update ──────────────────────────────────
+    checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
+    restartAndUpdate: () => ipcRenderer.invoke('restart-and-update'),
 });

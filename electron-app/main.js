@@ -357,6 +357,14 @@ ipcMain.handle('get-telemetry-status', () => {
     return { running, pid: running ? telemetryProcess.pid : null };
 });
 
+ipcMain.handle('check-for-updates', () => {
+    checkForUpdates();
+});
+
+ipcMain.handle('restart-and-update', () => {
+    autoUpdater.quitAndInstall();
+});
+
 ipcMain.handle('get-diagnostics', () => {
     const dotnet = checkDotNetVersion();
     const pluginsDir = getPluginsDir();
