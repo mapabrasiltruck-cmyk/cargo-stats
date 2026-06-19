@@ -577,9 +577,48 @@ function initFloatingStatus() {
     btn.innerHTML = '<div class="fs-dot"></div><div class="fs-tooltip"><div class="fs-label">Status</div><div class="fs-value fs-disconnected">Aguardando telemetria...</div></div>';
     document.body.appendChild(btn);
 
-    btn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    btn.addEventListener('click', async () => {
+        const currentText = btn.querySelector('.fs-value')?.textContent || '';
+        if (currentText === 'Desconectado' || currentText.includes('offline')) {
+            showDiagnosticModal();
+        } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     });
+}
+
+async function showDiagnosticModal() {
+    let info = { dotnet: { installed: false, version: 'N/A' }, plugins: { exeExists: false }, telemetry: { running: false } };
+    if (window.cargoStats && window.cargoStats.getDiagnostics) {
+        try { info = await window.cargoStats.getDiagnostics(); } catch (e) {}
+    }
+    const dotnetStatus = info.dotnet && info.dotnet.installed
+        ? info.dotnet.version
+        : 'AUSENTE (' + ((info.dotnet && info.dotnet.error) || 'desconhecido') + ')';
+    const pluginStatus = info.plugins && info.plugins.exeExists ? 'Sim' : 'Nao';
+    const pluginPath = info.plugins ? info.plugins.path : 'N/A';
+
+    const overlay = document.createElement('div');
+    overlay.id = 'diagnostic-overlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;font-family:Consolas,monospace;';
+    overlay.innerHTML = `
+        <div style="background:#0d1117;border:1px solid #30363d;border-radius:12px;padding:24px;max-width:500px;width:90%;color:#e0e0e0;">
+            <h2 style="margin:0 0 16px;font-size:16px;color:#ff8800;">Diagnostico da Telemetria</h2>
+            <table style="width:100%;font-size:12px;border-collapse:collapse;">
+                <tr><td style="padding:6px 8px;color:#888;">Plugins:</td><td style="padding:6px 8px;">${pluginStatus}</td></tr>
+                <tr><td style="padding:6px 8px;color:#888;">Pasta plugins:</td><td style="padding:6px 8px;word-break:break-all;font-size:11px;">${pluginPath}</td></tr>
+                <tr><td style="padding:6px 8px;color:#888;">.NET Framework:</td><td style="padding:6px 8px;">${dotnetStatus}</td></tr>
+                <tr><td style="padding:6px 8px;color:#888;">Telemetria rodando:</td><td style="padding:6px 8px;">${info.telemetry && info.telemetry.running ? 'Sim (PID: ' + info.telemetry.pid + ')' : 'Nao'}</td></tr>
+                <tr><td style="padding:6px 8px;color:#888;">Versao:</td><td style="padding:6px 8px;">${info.version || 'N/A'}${info.isDev ? ' (dev)' : ''}</td></tr>
+            </table>
+            <p style="margin:16px 0 0;font-size:11px;color:#888;">
+                Se plugins = Nao, reinstale o app.<br>
+                Se .NET = AUSENTE, instale .NET Framework 4.5+ em <a href="https://dotnet.microsoft.com/download/dotnet-framework" target="_blank" style="color:#58a6ff;">dotnet.microsoft.com</a><br>
+                Se Telemetria rodando = Nao, pode ser antivirus bloqueando.
+            </p>
+            <button onclick="this.closest('#diagnostic-overlay').remove()" style="margin-top:12px;padding:8px 20px;background:#30363d;border:1px solid #58a6ff;border-radius:6px;color:#58a6ff;cursor:pointer;">Fechar</button>
+        </div>`;
+    document.body.appendChild(overlay);
 }
 
 function updateFloatingStatus(connected, jobActive) {

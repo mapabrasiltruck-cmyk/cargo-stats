@@ -17,4 +17,7 @@ contextBridge.exposeInMainWorld('cargoStats', {
 
     // ─── Telemetry Status ───────────────────────────────
     getTelemetryStatus: () => ipcRenderer.invoke('get-telemetry-status'),
+
+    // ─── Diagnostics ────────────────────────────────────
+    getDiagnostics: () => ipcRenderer.invoke('get-diagnostics'),
 });
