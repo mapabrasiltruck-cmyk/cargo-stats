@@ -195,6 +195,39 @@ const server = http.createServer(async (req, res) => {
             res.writeHead(502, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'ETS2 Telemetry Server não encontrado' }));
         });
+        proxyReq.setTimeout(3000, () => {
+            proxyReq.destroy();
+            res.writeHead(504, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'ETS2 Telemetry Server timeout' }));
+        });
+        return;
+    }
+
+    if (urlPath === '/api/telemetry/status') {
+        const probeReq = http.get(`${ETS2_SERVER}/api/ets2/telemetry`, (probeRes) => {
+            let data = '';
+            probeRes.on('data', chunk => data += chunk);
+            probeRes.on('end', () => {
+                try {
+                    const parsed = JSON.parse(data);
+                    const gameConnected = parsed && parsed.game && parsed.game.connected === true;
+                    if (gameConnected) {
+                        sendJSON(res, { status: 'connected', message: 'Jogo detectado e telemetria ativa' });
+                    } else {
+                        sendJSON(res, { status: 'no_game', message: 'Servidor de telemetria rodando, mas jogo nao detectado. Inicie o ETS2/ATS.' });
+                    }
+                } catch (e) {
+                    sendJSON(res, { status: 'no_game', message: 'Servidor de telemetria respondeu, mas dados invalidos' });
+                }
+            });
+        });
+        probeReq.on('error', () => {
+            sendJSON(res, { status: 'offline', message: 'ETS2 Telemetry Server nao encontrado na porta 25555' }, 502);
+        });
+        probeReq.setTimeout(3000, () => {
+            probeReq.destroy();
+            sendJSON(res, { status: 'offline', message: 'ETS2 Telemetry Server nao respondeu (timeout)' }, 502);
+        });
         return;
     }
 

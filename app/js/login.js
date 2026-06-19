@@ -29,6 +29,13 @@ async function init() {
                     <label>SENHA</label>
                     <input type="password" id="senha" placeholder="Sua senha" required>
                 </div>
+                <div class="auth-field auth-remember">
+                    <label>
+                        <input type="checkbox" id="lembrar">
+                        Lembrar meus dados
+                    </label>
+                    <button type="button" id="limpar-dados" class="auth-btn-clean" style="display:none">Limpar dados salvos</button>
+                </div>
                 <div id="login-error" class="auth-error"></div>
                 <button type="submit" class="auth-btn">ENTRAR</button>
             </form>
@@ -38,10 +45,32 @@ async function init() {
         </div>`;
     app.appendChild(frame);
 
+    const savedEmail = localStorage.getItem('cargo_login_email') || '';
+    const savedSenha = localStorage.getItem('cargo_login_senha') || '';
+
+    if (savedEmail) {
+        document.getElementById('email').value = savedEmail;
+    }
+    if (savedSenha) {
+        document.getElementById('senha').value = savedSenha;
+        document.getElementById('lembrar').checked = true;
+        document.getElementById('limpar-dados').style.display = 'inline-block';
+    }
+
+    document.getElementById('limpar-dados').addEventListener('click', () => {
+        localStorage.removeItem('cargo_login_email');
+        localStorage.removeItem('cargo_login_senha');
+        document.getElementById('email').value = '';
+        document.getElementById('senha').value = '';
+        document.getElementById('lembrar').checked = false;
+        document.getElementById('limpar-dados').style.display = 'none';
+    });
+
     document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('email').value.trim();
         const senha = document.getElementById('senha').value;
+        const lembrar = document.getElementById('lembrar').checked;
         const errorDiv = document.getElementById('login-error');
         errorDiv.textContent = '';
 
@@ -61,6 +90,16 @@ async function init() {
             if (!response.ok) {
                 errorDiv.textContent = data.error || 'Erro ao fazer login';
                 return;
+            }
+
+            if (lembrar) {
+                localStorage.setItem('cargo_login_email', email);
+                localStorage.setItem('cargo_login_senha', senha);
+                document.getElementById('limpar-dados').style.display = 'inline-block';
+            } else {
+                localStorage.removeItem('cargo_login_email');
+                localStorage.removeItem('cargo_login_senha');
+                document.getElementById('limpar-dados').style.display = 'none';
             }
 
             setAuth(data.token, data.user);

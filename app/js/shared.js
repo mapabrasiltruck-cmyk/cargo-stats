@@ -574,7 +574,7 @@ let floatingStatusConnected = false;
 function initFloatingStatus() {
     const btn = document.createElement('div');
     btn.id = 'floating-status';
-    btn.innerHTML = '<div class="fs-dot"></div><div class="fs-tooltip"><div class="fs-label">Status</div><div class="fs-value fs-disconnected">Desconectado</div></div>';
+    btn.innerHTML = '<div class="fs-dot"></div><div class="fs-tooltip"><div class="fs-label">Status</div><div class="fs-value fs-disconnected">Aguardando telemetria...</div></div>';
     document.body.appendChild(btn);
 
     btn.addEventListener('click', () => {

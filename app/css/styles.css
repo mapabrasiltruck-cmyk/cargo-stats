@@ -636,6 +636,11 @@ body {
     border-top-color: #ffaa00;
 }
 
+.status-bar.starting {
+    color: #44aaff;
+    border-top-color: #44aaff;
+}
+
 .remote-warning {
     display: flex;
     align-items: flex-start;
@@ -1516,6 +1521,50 @@ body {
 .auth-footer a {
     color: #00ff88;
     text-decoration: none;
+}
+
+.auth-remember {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    color: #888;
+}
+
+.auth-remember label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 0.5px;
+}
+
+.auth-remember input[type="checkbox"] {
+    accent-color: #00ff88;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.auth-btn-clean {
+    background: transparent;
+    border: 1px solid #ff4444;
+    color: #ff4444;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.auth-btn-clean:hover {
+    background: #ff4444;
+    color: #000;
 }
 
 .auth-footer a:hover {

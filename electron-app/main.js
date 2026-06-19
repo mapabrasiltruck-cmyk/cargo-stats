@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray, Menu, nativeImage } = require('electron');
+const { app, BrowserWindow, Tray, Menu, nativeImage, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const { spawn } = require('child_process');
 const path = require('path');
@@ -163,9 +163,8 @@ function startTelemetryServer() {
         telemetryProcess = spawn(telemetryExe, [], {
             cwd: telemetryDir,
             stdio: 'ignore',
-            detached: true
+            windowsHide: true
         });
-        telemetryProcess.unref();
         console.log('[TELEMETRY] Servidor iniciado (PID:', telemetryProcess.pid, ')');
     } catch (e) {
         console.log('[TELEMETRY] Erro ao iniciar:', e.message);
@@ -252,21 +251,29 @@ function createWindow(serverUrl) {
         if (!forceQuit) {
             event.preventDefault();
             mainWindow.hide();
+        } else {
+            cleanup();
         }
     });
 
     mainWindow.on('closed', () => { mainWindow = null; });
 }
 
+function killTelemetryProcess() {
+    if (!telemetryProcess) return;
+    try {
+        telemetryProcess.kill();
+    } catch (e) {
+        try { process.kill(telemetryProcess.pid); } catch (e2) {
+            spawn('taskkill', ['/F', '/T', '/PID', telemetryProcess.pid.toString()], { stdio: 'ignore' });
+        }
+    }
+    telemetryProcess = null;
+}
+
 function cleanup() {
     console.log('[APP] Limpando processos...');
-    if (telemetryProcess) {
-        try {
-            telemetryProcess.kill('SIGKILL');
-            process.kill(telemetryProcess.pid, 'SIGKILL');
-        } catch (e) {}
-        telemetryProcess = null;
-    }
+    killTelemetryProcess();
     if (serverInstance) {
         try { serverInstance.close(); } catch (e) {}
         serverInstance = null;
@@ -275,6 +282,11 @@ function cleanup() {
 
 app.on('before-quit', () => {
     forceQuit = true;
+});
+
+ipcMain.handle('get-telemetry-status', () => {
+    const running = telemetryProcess !== null && !telemetryProcess.killed;
+    return { running, pid: running ? telemetryProcess.pid : null };
 });
 
 app.whenReady().then(async () => {
@@ -299,10 +311,8 @@ app.whenReady().then(async () => {
 });
 
 app.on('window-all-closed', () => {
-    if (forceQuit) {
-        cleanup();
-        if (process.platform !== 'darwin') app.quit();
-    }
+    cleanup();
+    if (process.platform !== 'darwin') app.quit();
 });
 
 app.on('activate', () => {

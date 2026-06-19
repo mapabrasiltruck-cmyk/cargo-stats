@@ -3,6 +3,8 @@ let widgetsInstances = {};
 let telemetryData = {};
 let pollInterval = null;
 let remoteAccess = false;
+let telemetryFailCount = 0;
+let telemetryStatusChecked = false;
 
 function isRemoteAccess() {
     const h = window.location.hostname;
@@ -509,6 +511,8 @@ function drawArc(ctx, cx, cy, radius, value, minV, maxV, color) {
 async function fetchTelemetry() {
     const { data, error } = await fetchJSON('/api/telemetry');
     if (data) {
+        telemetryFailCount = 0;
+        telemetryStatusChecked = false;
         updateDashboard(data);
         document.getElementById('status').innerText = '\u25CF Conectado ao ETS2 Telemetry Server';
         document.getElementById('status').className = 'status-bar connected';
@@ -517,16 +521,40 @@ async function fetchTelemetry() {
             updateFloatingStatus(true, jobActive);
         }
     } else {
-        if (remoteAccess) {
-            document.getElementById('status').innerText = '\u25CF Telemetria indisponivel (acesso remoto)';
-            document.getElementById('status').className = 'status-bar warning';
-        } else {
-            document.getElementById('status').innerText = '\u25CF ETS2 Telemetry Server nao encontrado (porta 25555)';
-            document.getElementById('status').className = 'status-bar error';
-        }
+        telemetryFailCount++;
         if (typeof updateFloatingStatus === 'function') {
             updateFloatingStatus(false, false);
         }
+        if (remoteAccess) {
+            setStatus('\u25CF Telemetria indisponivel (acesso remoto)', 'warning');
+            return;
+        }
+        if (telemetryFailCount <= 5) {
+            setStatus('\u25CF Aguardando servidor de telemetria... (' + telemetryFailCount + ')', 'starting');
+        } else if (!telemetryStatusChecked) {
+            telemetryStatusChecked = true;
+            const { data: statusData } = await fetchJSON('/api/telemetry/status');
+            if (statusData && statusData.status === 'no_game') {
+                setStatus('\u25CF Jogo nao detectado — inicie o ETS2/ATS', 'warning');
+            } else if (statusData && statusData.status === 'offline') {
+                setStatus('\u25CF ETS2 Telemetry Server offline (porta 25555)', 'error');
+            } else {
+                setStatus('\u25CF ETS2 Telemetry Server nao encontrado (porta 25555)', 'error');
+            }
+        } else {
+            const statusEl = document.getElementById('status');
+            if (statusEl && !statusEl.innerText.includes('Jogo') && !statusEl.innerText.includes('offline')) {
+                setStatus('\u25CF ETS2 Telemetry Server nao encontrado (porta 25555)', 'error');
+            }
+        }
+    }
+}
+
+function setStatus(text, className) {
+    const el = document.getElementById('status');
+    if (el) {
+        el.innerText = text;
+        el.className = 'status-bar ' + className;
     }
 }
 
