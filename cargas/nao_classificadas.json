@@ -1,0 +1,18 @@
+{
+  "_info": "Cargas que chegaram como Não Classificadas - mova para mapping_cargas.json quando identificar o cargo_id",
+  "_ultima_atualizacao": "2026-06-18T19:33:11.136Z",
+  "nao_classificadas": {
+    "driller": {
+      "nome_original": "Perfuratriz D-50",
+      "primeira_vez": "2026-06-18T15:10:10.970Z",
+      "ultima_vez": "2026-06-18T15:10:10.970Z",
+      "vezes": 1
+    },
+    "moving_cont": {
+      "nome_original": "Contêineres de mudança",
+      "primeira_vez": "2026-06-18T19:33:11.136Z",
+      "ultima_vez": "2026-06-18T19:33:11.136Z",
+      "vezes": 1
+    }
+  }
+}
