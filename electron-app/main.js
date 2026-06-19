@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Tray, Menu, nativeImage } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const { spawn } = require('child_process');
 const path = require('path');
@@ -6,10 +6,15 @@ const fs = require('fs');
 
 const RENDER_URL = 'https://cargo-stats-oficial.onrender.com';
 const SERVER_PORT = 3000;
+const STEAM_REG_PATH = 'HKLM\\SOFTWARE\\WOW6432Node\\Valve\\Steam';
+const ETS2_APPID = '227300';
+const ATS_APPID = '270880';
 
 let mainWindow = null;
 let telemetryProcess = null;
 let serverInstance = null;
+let tray = null;
+let forceQuit = false;
 
 autoUpdater.setFeedURL({
     provider: 'github',
@@ -45,11 +50,67 @@ function getPluginsDir() {
     return path.join(process.resourcesPath, 'plugins');
 }
 
-function getSteamPluginsPaths() {
-    return [
-        'C:\\Program Files (x86)\\Steam\\steamapps\\common\\Euro Truck Simulator 2\\bin\\win_x64\\plugins',
-        'C:\\Program Files (x86)\\Steam\\steamapps\\common\\American Truck Simulator\\bin\\win_x64\\plugins',
+function getSteamInstallPath() {
+    const commonPaths = [
+        'C:\\Program Files (x86)\\Steam',
+        'C:\\Program Files\\Steam',
     ];
+    for (const p of commonPaths) {
+        if (fs.existsSync(p)) return p;
+    }
+    try {
+        const result = require('child_process').execSync(
+            `reg query "${STEAM_REG_PATH}" /v InstallPath`, { encoding: 'utf8', timeout: 5000 }
+        );
+        const match = result.match(/InstallPath\s+REG_SZ\s+(.+)/i);
+        if (match) {
+            const regPath = match[1].trim();
+            if (fs.existsSync(regPath)) return regPath;
+        }
+    } catch (e) {}
+    return null;
+}
+
+function findSteamGamePaths(appId) {
+    const steamPath = getSteamInstallPath();
+    if (!steamPath) return [];
+    const results = [];
+    const baseDir = path.join(steamPath, 'steamapps', 'common');
+    const etsDir = path.join(baseDir, 'Euro Truck Simulator 2');
+    const atsDir = path.join(baseDir, 'American Truck Simulator');
+    if (fs.existsSync(etsDir)) results.push(etsDir);
+    if (fs.existsSync(atsDir)) results.push(atsDir);
+    const vdfPath = path.join(steamPath, 'steamapps', 'libraryfolders.vdf');
+    if (fs.existsSync(vdfPath)) {
+        try {
+            const vdf = fs.readFileSync(vdfPath, 'utf8');
+            const pathMatches = vdf.match(/"path"\s+"([^"]+)"/g);
+            if (pathMatches) {
+                for (const pm of pathMatches) {
+                    const libPath = pm.match(/"path"\s+"([^"]+)"/)[1];
+                    if (!libPath || libPath === steamPath) continue;
+                    const commonDir = path.join(libPath, 'steamapps', 'common');
+                    const ets = path.join(commonDir, 'Euro Truck Simulator 2');
+                    const ats = path.join(commonDir, 'American Truck Simulator');
+                    if (fs.existsSync(ets) && !results.includes(ets)) results.push(ets);
+                    if (fs.existsSync(ats) && !results.includes(ats)) results.push(ats);
+                }
+            }
+        } catch (e) {}
+    }
+    return results;
+}
+
+function getSteamPluginsPaths() {
+    const gamePaths = findSteamGamePaths();
+    const result = [];
+    for (const gamePath of gamePaths) {
+        const x64 = path.join(gamePath, 'bin', 'win_x64', 'plugins');
+        const x86 = path.join(gamePath, 'bin', 'win_x86', 'plugins');
+        if (fs.existsSync(path.dirname(x64))) result.push(x64);
+        if (fs.existsSync(path.dirname(x86))) result.push(x86);
+    }
+    return result;
 }
 
 function installGamePlugin() {
@@ -61,28 +122,48 @@ function installGamePlugin() {
     for (const p of pluginCandidates) {
         if (fs.existsSync(p)) { pluginSrc = p; break; }
     }
-    if (!pluginSrc) { console.log('[PLUGIN] DLL nao encontrada'); return; }
-
-    for (const destDir of getSteamPluginsPaths()) {
+    if (!pluginSrc) {
+        console.log('[PLUGIN] DLL nao encontrada em:', getPluginsDir());
+        console.log('[PLUGIN] Candidates:', JSON.stringify(pluginCandidates));
+        return;
+    }
+    const destDirs = getSteamPluginsPaths();
+    if (destDirs.length === 0) {
+        console.log('[PLUGIN] Nenhuma pasta de jogo encontrada');
+        return;
+    }
+    for (const destDir of destDirs) {
         if (!fs.existsSync(destDir)) {
             try { fs.mkdirSync(destDir, { recursive: true }); } catch (e) { continue; }
         }
         const destFile = path.join(destDir, 'ets2-telemetry-server.dll');
         if (!fs.existsSync(destFile)) {
-            try { fs.copyFileSync(pluginSrc, destFile); console.log('[PLUGIN] Instalado em:', destFile); } catch (e) {}
-        } else { console.log('[PLUGIN] Ja instalado em:', destFile); }
+            try {
+                fs.copyFileSync(pluginSrc, destFile);
+                console.log('[PLUGIN] Instalado em:', destFile);
+            } catch (e) {
+                console.log('[PLUGIN] Erro ao instalar em:', destFile, e.message);
+            }
+        } else {
+            console.log('[PLUGIN] Ja instalado em:', destFile);
+        }
     }
 }
 
 function startTelemetryServer() {
     const telemetryExe = path.join(getPluginsDir(), 'Ets2Telemetry.exe');
+    const telemetryDir = getPluginsDir();
+    console.log('[TELEMETRY] Procurando em:', telemetryExe);
+    console.log('[TELEMETRY] Existe?', fs.existsSync(telemetryExe));
     if (!fs.existsSync(telemetryExe)) {
-        console.log('[TELEMETRY] Servidor nao encontrado em:', telemetryExe);
+        console.log('[TELEMETRY] Servidor nao encontrado');
         return;
     }
     try {
         telemetryProcess = spawn(telemetryExe, [], {
-            cwd: path.dirname(telemetryExe), stdio: 'ignore', detached: true
+            cwd: telemetryDir,
+            stdio: 'ignore',
+            detached: true
         });
         telemetryProcess.unref();
         console.log('[TELEMETRY] Servidor iniciado (PID:', telemetryProcess.pid, ')');
@@ -96,11 +177,9 @@ function startLocalServer() {
         const serverDir = getServerDir();
         const serverPath = path.join(serverDir, 'server.js');
         console.log('[SERVER] Iniciando:', serverPath);
-
         if (!fs.existsSync(serverPath)) {
             return reject(new Error('server.js nao encontrado em: ' + serverPath));
         }
-
         try {
             delete require.cache[require.resolve(serverPath)];
             const { startServer } = require(serverPath);
@@ -110,6 +189,42 @@ function startLocalServer() {
         } catch (e) {
             console.error('[SERVER] Erro:', e.message);
             reject(e);
+        }
+    });
+}
+
+function createTray() {
+    let iconPath = path.join(__dirname, 'build', 'icon.ico');
+    if (!fs.existsSync(iconPath)) iconPath = path.join(__dirname, 'build', 'icon.png');
+    tray = new Tray(iconPath);
+    tray.setToolTip('Cargo Stats');
+
+    const contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Abrir Cargo Stats',
+            click: () => {
+                if (mainWindow) {
+                    mainWindow.show();
+                    mainWindow.focus();
+                }
+            }
+        },
+        { type: 'separator' },
+        {
+            label: 'Fechar',
+            click: () => {
+                forceQuit = true;
+                if (mainWindow) mainWindow.close();
+                app.quit();
+            }
+        }
+    ]);
+
+    tray.setContextMenu(contextMenu);
+    tray.on('double-click', () => {
+        if (mainWindow) {
+            mainWindow.show();
+            mainWindow.focus();
         }
     });
 }
@@ -133,12 +248,42 @@ function createWindow(serverUrl) {
         return { action: url.startsWith(RENDER_URL) ? 'allow' : 'deny' };
     });
 
+    mainWindow.on('close', (event) => {
+        if (!forceQuit) {
+            event.preventDefault();
+            mainWindow.hide();
+        }
+    });
+
     mainWindow.on('closed', () => { mainWindow = null; });
 }
 
+function cleanup() {
+    console.log('[APP] Limpando processos...');
+    if (telemetryProcess) {
+        try {
+            telemetryProcess.kill('SIGKILL');
+            process.kill(telemetryProcess.pid, 'SIGKILL');
+        } catch (e) {}
+        telemetryProcess = null;
+    }
+    if (serverInstance) {
+        try { serverInstance.close(); } catch (e) {}
+        serverInstance = null;
+    }
+}
+
+app.on('before-quit', () => {
+    forceQuit = true;
+});
+
 app.whenReady().then(async () => {
     console.log('[APP] Iniciando Cargo Stats v' + app.getVersion());
+    console.log('[APP] isDev:', isDev());
+    console.log('[APP] pluginsDir:', getPluginsDir());
+    console.log('[APP] plugins existe?', fs.existsSync(getPluginsDir()));
 
+    createTray();
     installGamePlugin();
     startTelemetryServer();
 
@@ -154,9 +299,10 @@ app.whenReady().then(async () => {
 });
 
 app.on('window-all-closed', () => {
-    if (telemetryProcess) { try { telemetryProcess.kill(); } catch (e) {} telemetryProcess = null; }
-    if (serverInstance) { try { serverInstance.close(); } catch (e) {} serverInstance = null; }
-    if (process.platform !== 'darwin') app.quit();
+    if (forceQuit) {
+        cleanup();
+        if (process.platform !== 'darwin') app.quit();
+    }
 });
 
 app.on('activate', () => {

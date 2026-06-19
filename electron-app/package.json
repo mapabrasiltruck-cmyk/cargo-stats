@@ -22,9 +22,7 @@
       "main.js",
       "preload.js",
       "build/*.png",
-      "build/*.ico",
-      "plugins/**/*",
-      "!plugins/README.md"
+      "build/*.ico"
     ],
     "extraResources": [
       {
@@ -36,6 +34,14 @@
           "!*.log",
           "!uploads/**",
           "!backups/**"
+        ]
+      },
+      {
+        "from": "plugins",
+        "to": "plugins",
+        "filter": [
+          "**/*",
+          "!README.md"
         ]
       }
     ],
