@@ -33,7 +33,9 @@ autoUpdater.on('update-downloaded', () => {
 });
 
 function checkForUpdates() {
-    autoUpdater.checkForUpdates().catch(() => {});
+    setTimeout(() => {
+        autoUpdater.checkForUpdates().catch(() => {});
+    }, 5000);
 }
 
 function isDev() {
@@ -357,6 +359,8 @@ ipcMain.handle('get-telemetry-status', () => {
     return { running, pid: running ? telemetryProcess.pid : null };
 });
 
+ipcMain.handle('get-version', () => app.getVersion());
+
 ipcMain.handle('check-for-updates', () => {
     checkForUpdates();
 });
@@ -383,6 +387,28 @@ ipcMain.handle('get-diagnostics', () => {
         isDev: isDev(),
         version: app.getVersion()
     };
+});
+
+const CREDENTIALS_PATH = path.join(app.getPath('userData'), 'credentials.json');
+
+ipcMain.handle('save-credentials', (_event, data) => {
+    try {
+        fs.writeFileSync(CREDENTIALS_PATH, JSON.stringify(data));
+        return true;
+    } catch (e) { return false; }
+});
+
+ipcMain.handle('load-credentials', () => {
+    try {
+        if (fs.existsSync(CREDENTIALS_PATH)) {
+            return JSON.parse(fs.readFileSync(CREDENTIALS_PATH, 'utf8'));
+        }
+    } catch (e) {}
+    return null;
+});
+
+ipcMain.handle('clear-credentials', () => {
+    try { fs.unlinkSync(CREDENTIALS_PATH); } catch (e) {}
 });
 
 app.whenReady().then(async () => {

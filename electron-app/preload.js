@@ -24,4 +24,9 @@ contextBridge.exposeInMainWorld('cargoStats', {
     // ─── Manual Update ──────────────────────────────────
     checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
     restartAndUpdate: () => ipcRenderer.invoke('restart-and-update'),
+
+    // ─── Credential Persistence ─────────────────────────
+    saveCredentials: (data) => ipcRenderer.invoke('save-credentials', data),
+    loadCredentials: () => ipcRenderer.invoke('load-credentials'),
+    clearCredentials: () => ipcRenderer.invoke('clear-credentials'),
 });

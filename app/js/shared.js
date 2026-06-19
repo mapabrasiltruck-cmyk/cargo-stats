@@ -155,6 +155,32 @@ function getNestedValue(obj, path) {
 
 // ========== AUTH FUNCTIONS ==========
 
+async function initAuth() {
+    if (!window.cargoStats) return;
+    try {
+        const localToken = localStorage.getItem('cargo_token');
+        const saved = await window.cargoStats.loadCredentials();
+        if (saved && saved.token) {
+            if (!localToken) {
+                localStorage.setItem('cargo_token', saved.token);
+                if (saved.user) localStorage.setItem('cargo_user', JSON.stringify(saved.user));
+                if (saved.email) localStorage.setItem('cargo_login_email', saved.email);
+                if (saved.senha) localStorage.setItem('cargo_login_senha', saved.senha);
+            }
+        } else if (localToken && saved === null) {
+            const user = localStorage.getItem('cargo_user');
+            const email = localStorage.getItem('cargo_login_email');
+            const senha = localStorage.getItem('cargo_login_senha');
+            await window.cargoStats.saveCredentials({
+                token: localToken,
+                user: user ? JSON.parse(user) : null,
+                email: email || '',
+                senha: senha || ''
+            });
+        }
+    } catch (e) {}
+}
+
 function getAuthToken() {
     return localStorage.getItem('cargo_token');
 }
@@ -709,3 +735,4 @@ function updateFloatingStatus(connected, jobActive) {
 
 initUpdateBanner();
 initFloatingStatus();
+initAuth();

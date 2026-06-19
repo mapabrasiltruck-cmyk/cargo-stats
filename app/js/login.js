@@ -45,21 +45,25 @@ async function init() {
         </div>`;
     app.appendChild(frame);
 
-    const savedEmail = localStorage.getItem('cargo_login_email') || '';
-    const savedSenha = localStorage.getItem('cargo_login_senha') || '';
+    (async () => {
+        const saved = window.cargoStats ? await window.cargoStats.loadCredentials() : null;
+        const savedEmail = (saved && saved.email) || localStorage.getItem('cargo_login_email') || '';
+        const savedSenha = (saved && saved.senha) || localStorage.getItem('cargo_login_senha') || '';
 
-    if (savedEmail) {
-        document.getElementById('email').value = savedEmail;
-    }
-    if (savedSenha) {
-        document.getElementById('senha').value = savedSenha;
-        document.getElementById('lembrar').checked = true;
-        document.getElementById('limpar-dados').style.display = 'inline-block';
-    }
+        if (savedEmail) {
+            document.getElementById('email').value = savedEmail;
+        }
+        if (savedSenha) {
+            document.getElementById('senha').value = savedSenha;
+            document.getElementById('lembrar').checked = true;
+            document.getElementById('limpar-dados').style.display = 'inline-block';
+        }
+    })();
 
     document.getElementById('limpar-dados').addEventListener('click', () => {
         localStorage.removeItem('cargo_login_email');
         localStorage.removeItem('cargo_login_senha');
+        if (window.cargoStats) window.cargoStats.clearCredentials();
         document.getElementById('email').value = '';
         document.getElementById('senha').value = '';
         document.getElementById('lembrar').checked = false;
@@ -95,10 +99,14 @@ async function init() {
             if (lembrar) {
                 localStorage.setItem('cargo_login_email', email);
                 localStorage.setItem('cargo_login_senha', senha);
+                if (window.cargoStats) {
+                    window.cargoStats.saveCredentials({ email, senha, token: data.token, user: data.user });
+                }
                 document.getElementById('limpar-dados').style.display = 'inline-block';
             } else {
                 localStorage.removeItem('cargo_login_email');
                 localStorage.removeItem('cargo_login_senha');
+                if (window.cargoStats) window.cargoStats.clearCredentials();
                 document.getElementById('limpar-dados').style.display = 'none';
             }
 
