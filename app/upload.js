@@ -2,8 +2,30 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const UPLOADS_DIR = path.join(__dirname, 'uploads');
+const UPLOADS_DIR = process.env.CARGOSTATS_UPLOADS_PATH || path.join(__dirname, 'uploads');
 const MAX_SIZE = 2 * 1024 * 1024;
+
+if (process.env.CARGOSTATS_UPLOADS_PATH) {
+    const oldDir = path.join(__dirname, 'uploads');
+    if (!fs.existsSync(process.env.CARGOSTATS_UPLOADS_PATH) && fs.existsSync(oldDir)) {
+        try {
+            const entries = fs.readdirSync(oldDir);
+            for (const entry of entries) {
+                const src = path.join(oldDir, entry);
+                const dest = path.join(process.env.CARGOSTATS_UPLOADS_PATH, entry);
+                if (fs.statSync(src).isFile()) {
+                    if (!fs.existsSync(dest)) {
+                        fs.mkdirSync(process.env.CARGOSTATS_UPLOADS_PATH, { recursive: true });
+                        fs.copyFileSync(src, dest);
+                    }
+                }
+            }
+            console.log('[UPLOAD] Migrados arquivos existentes para:', process.env.CARGOSTATS_UPLOADS_PATH);
+        } catch (e) {
+            console.error('[UPLOAD] Erro ao migrar uploads:', e.message);
+        }
+    }
+}
 
 if (!fs.existsSync(UPLOADS_DIR)) {
     fs.mkdirSync(UPLOADS_DIR, { recursive: true });

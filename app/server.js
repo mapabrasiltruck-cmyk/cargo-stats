@@ -1116,6 +1116,23 @@ const server = http.createServer(async (req, res) => {
         return;
     }
 
+    // --- Uploads (from userData dir or local dir) ---
+    if (urlPath.startsWith('/uploads/')) {
+        const uploadsDir = process.env.CARGOSTATS_UPLOADS_PATH || path.join(__dirname, 'uploads');
+        const uploadPath = path.join(uploadsDir, urlPath.replace('/uploads/', ''));
+        const ext = path.extname(uploadPath);
+        fs.readFile(uploadPath, (err, content) => {
+            if (err) {
+                res.writeHead(404);
+                res.end('Arquivo não encontrado');
+            } else {
+                res.writeHead(200, { 'Content-Type': MIME_TYPES[ext] || 'application/octet-stream' });
+                res.end(content);
+            }
+        });
+        return;
+    }
+
     // --- Site assets (/site/cs/, /site/js/, /site/images/) ---
     if (urlPath.startsWith('/site/')) {
         const siteAssetPath = path.join(__dirname, urlPath);

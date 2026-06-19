@@ -137,22 +137,28 @@ function renderPage() {
     } else {
         if (empresaInfo && empresaInfo.banner) {
             banner.style.cssText = 'width:100%;height:180px;border-radius:12px;margin-bottom:0;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;';
-            banner.innerHTML = `
+            const fotoIcon = motoristaStats.foto
+            ? `<img src="${motoristaStats.foto}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #00ff88;box-shadow:0 0 20px rgba(0,255,136,0.3);">`
+            : `<div style="font-size:48px;margin-bottom:8px;">🏢</div>`;
+        banner.innerHTML = `
                 <img src="${empresaInfo.banner}" alt="${empresaDoMotorista}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
                 <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.6) 100%);"></div>
                 <div style="position:relative;z-index:1;text-align:center;">
-                    <div style="font-size:48px;margin-bottom:8px;">🏢</div>
+                    ${fotoIcon}
                     <div style="color:#fff;font-size:16px;font-weight:700;letter-spacing:2px;text-shadow:0 2px 8px rgba(0,0,0,0.7);">${motoristaStats.nome.toUpperCase()}</div>
                     <div style="color:#ccc;font-size:11px;margin-top:4px;letter-spacing:1px;text-shadow:0 1px 4px rgba(0,0,0,0.7);">
                         <a href="empresa_local.html?empresa=${encodeURIComponent(empresaDoMotorista)}" style="color:#00ff88;text-decoration:none;">${empresaDoMotorista.toUpperCase()}</a>
                     </div>
                 </div>`;
         } else {
+            const fotoIcon2 = motoristaStats.foto
+                ? `<img src="${motoristaStats.foto}" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid #00ff88;box-shadow:0 0 20px rgba(0,255,136,0.3);">`
+                : `<div style="font-size:48px;margin-bottom:8px;">🏢</div>`;
             banner.style.cssText = 'width:100%;height:180px;background:linear-gradient(135deg,#0a1e0a 0%,#1a3a1a 50%,#0d2a0d 100%);border-radius:12px;margin-bottom:0;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;';
             banner.innerHTML = `
                 <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2220%22 cy=%2220%22 r=%221.5%22 fill=%22%2300ff8820%22/><circle cx=%2280%22 cy=%2240%22 r=%221%22 fill=%22%2300ff8815%22/><circle cx=%2250%22 cy=%2280%22 r=%221.2%22 fill=%22%2300ff8810%22/></svg>') repeat;opacity:0.5;"></div>
                 <div style="position:relative;z-index:1;text-align:center;">
-                    <div style="font-size:48px;margin-bottom:8px;">🏢</div>
+                    ${fotoIcon2}
                     <div style="color:#00ff88;font-size:16px;font-weight:700;letter-spacing:2px;">${motoristaStats.nome.toUpperCase()}</div>
                     <div style="color:#888;font-size:11px;margin-top:4px;letter-spacing:1px;">
                         <a href="empresa_local.html?empresa=${encodeURIComponent(empresaDoMotorista)}" style="color:#00ff88;text-decoration:none;">${empresaDoMotorista.toUpperCase()}</a>

@@ -119,7 +119,7 @@ body {
     font-size: 8px;
     font-weight: 700;
     letter-spacing: 2.5px;
-    color: #444;
+    color: #e0e0e0;
     text-transform: uppercase;
     margin-bottom: 10px;
     padding-bottom: 6px;
@@ -471,7 +471,7 @@ body {
     font-size: 9px;
     font-weight: 700;
     letter-spacing: 2px;
-    color: #555;
+    color: #e0e0e0;
     text-transform: uppercase;
 }
 
@@ -493,7 +493,7 @@ body {
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 2px;
-    color: #555;
+    color: #e0e0e0;
     text-transform: uppercase;
     margin-top: 8px;
     padding-top: 8px;
@@ -969,7 +969,7 @@ body {
 .conquistas-section-title {
     font-size: 12px;
     font-weight: 700;
-    color: #888;
+    color: #e0e0e0;
     letter-spacing: 2px;
     text-transform: uppercase;
     margin-bottom: 12px;
@@ -1195,7 +1195,7 @@ body {
 .perfil-card-title {
     font-size: 11px;
     font-weight: 700;
-    color: #888;
+    color: #e0e0e0;
     letter-spacing: 2px;
     text-transform: uppercase;
     margin-bottom: 12px;
@@ -2313,7 +2313,7 @@ body {
     font-size: 9px;
     font-weight: 700;
     letter-spacing: 2px;
-    color: #555;
+    color: #e0e0e0;
     text-transform: uppercase;
     margin-bottom: 8px;
 }
@@ -2358,7 +2358,7 @@ body {
     font-size: 8px;
     font-weight: 600;
     letter-spacing: 1px;
-    color: #555;
+    color: #e0e0e0;
     text-transform: uppercase;
     margin-top: 2px;
 }
@@ -2414,7 +2414,7 @@ body {
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 1px;
-    color: #ccc;
+    color: #e0e0e0;
     text-transform: uppercase;
     margin-bottom: 4px;
 }

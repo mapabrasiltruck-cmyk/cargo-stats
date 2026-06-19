@@ -2,7 +2,19 @@ const Database = require('better-sqlite3');
 const fs = require('fs');
 const path = require('path');
 
-const DB_PATH = path.join(__dirname, 'data.db');
+const DB_PATH = process.env.CARGOSTATS_DB_PATH || path.join(__dirname, 'data.db');
+
+if (process.env.CARGOSTATS_DB_PATH) {
+    const oldPath = path.join(__dirname, 'data.db');
+    if (!fs.existsSync(process.env.CARGOSTATS_DB_PATH) && fs.existsSync(oldPath)) {
+        try {
+            fs.copyFileSync(oldPath, process.env.CARGOSTATS_DB_PATH);
+            console.log('[DB] Migrado dados existentes para:', process.env.CARGOSTATS_DB_PATH);
+        } catch (e) {
+            console.error('[DB] Erro ao migrar dados:', e.message);
+        }
+    }
+}
 
 let db;
 

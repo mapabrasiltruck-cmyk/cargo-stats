@@ -249,11 +249,18 @@ function startLocalServer() {
         if (!fs.existsSync(serverPath)) {
             return reject(new Error('server.js nao encontrado em: ' + serverPath));
         }
+
+        const userDataPath = app.getPath('userData');
+        process.env.CARGOSTATS_DB_PATH = path.join(userDataPath, 'data.db');
+        process.env.CARGOSTATS_UPLOADS_PATH = path.join(userDataPath, 'uploads');
+
         try {
             delete require.cache[require.resolve(serverPath)];
             const { startServer } = require(serverPath);
             serverInstance = startServer(SERVER_PORT);
             console.log('[SERVER] Servidor iniciado na porta', SERVER_PORT);
+            console.log('[SERVER] DB:', process.env.CARGOSTATS_DB_PATH);
+            console.log('[SERVER] Uploads:', process.env.CARGOSTATS_UPLOADS_PATH);
             setTimeout(() => resolve(), 2000);
         } catch (e) {
             console.error('[SERVER] Erro:', e.message);
