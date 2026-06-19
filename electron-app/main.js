@@ -21,6 +21,7 @@ autoUpdater.setFeedURL({
     owner: 'mapabrasiltruck-cmyk',
     repo: 'cargo-stats'
 });
+autoUpdater.autoDownload = false;
 
 autoUpdater.on('update-available', (info) => {
     if (mainWindow) mainWindow.webContents.send('update_available', info.version);
@@ -372,6 +373,10 @@ ipcMain.handle('check-for-updates', () => {
     checkForUpdates();
 });
 
+ipcMain.handle('download-update', () => {
+    autoUpdater.downloadUpdate();
+});
+
 ipcMain.handle('restart-and-update', () => {
     autoUpdater.quitAndInstall();
 });
@@ -430,7 +435,7 @@ app.whenReady().then(async () => {
 
     try {
         await startLocalServer();
-        createWindow(`http://localhost:${SERVER_PORT}`);
+        createWindow(`http://localhost:${SERVER_PORT}/update_check.html`);
     } catch (e) {
         console.log('[APP] Servidor local indisponivel, usando modo remoto:', e.message);
         createWindow(RENDER_URL);

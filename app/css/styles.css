@@ -893,7 +893,7 @@ body {
 
 .desafio-sub {
     font-size: 9px;
-    color: #666;
+    color: #e0e0e0;
 }
 
 .desafio-value {
@@ -1029,7 +1029,7 @@ body {
 
 .conquista-descricao {
     font-size: 10px;
-    color: #888;
+    color: #e0e0e0;
     margin-bottom: 4px;
 }
 
@@ -1225,7 +1225,7 @@ body {
 
 .perfil-stat-label {
     font-size: 9px;
-    color: #666;
+    color: #e0e0e0;
     letter-spacing: 1px;
 }
 
@@ -1273,7 +1273,7 @@ body {
 
 .perfil-conquista-titulo {
     font-size: 9px;
-    color: #ccc;
+    color: #e0e0e0;
     font-weight: 600;
     flex: 1;
     min-width: 0;
@@ -1284,7 +1284,7 @@ body {
 
 .perfil-conquista-progress {
     font-size: 8px;
-    color: #666;
+    color: #e0e0e0;
     flex-shrink: 0;
 }
 

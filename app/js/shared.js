@@ -609,6 +609,7 @@ function initUpdateBanner() {
             <div id="update-progress-bar" style="display:none;width:120px;height:6px;background:#1a1a22;border-radius:3px;overflow:hidden;">
                 <div id="update-progress-fill" style="width:0%;height:100%;background:#58a6ff;border-radius:3px;transition:width 0.3s;"></div>
             </div>
+            <button id="update-btn-download" style="display:none;padding:6px 16px;background:#1f6feb;border:none;border-radius:6px;color:#fff;cursor:pointer;font-weight:700;">Baixar</button>
             <button id="update-btn-restart" style="display:none;padding:6px 16px;background:#238636;border:none;border-radius:6px;color:#fff;cursor:pointer;font-weight:700;">Reiniciar</button>
             <button id="update-btn-close" style="padding:4px 10px;background:transparent;border:1px solid #555;border-radius:4px;color:#888;cursor:pointer;font-size:12px;">X</button>
         </div>`;
@@ -616,7 +617,8 @@ function initUpdateBanner() {
 
     if (window.cargoStats) {
         window.cargoStats.onUpdateAvailable((version) => {
-            showUpdateBanner('Nova versao ' + version + ' disponivel. Baixando...', 'downloading');
+            showUpdateBanner('Nova versao ' + version + ' disponivel.', 'available');
+            document.getElementById('update-btn-download').style.display = 'inline-block';
         });
         window.cargoStats.onUpdateProgress((percent) => {
             const bar = document.getElementById('update-progress-bar');
@@ -634,6 +636,12 @@ function initUpdateBanner() {
         });
     }
 
+    document.getElementById('update-btn-download').addEventListener('click', () => {
+        if (window.cargoStats && window.cargoStats.downloadUpdate) {
+            document.getElementById('update-btn-download').style.display = 'none';
+            window.cargoStats.downloadUpdate();
+        }
+    });
     document.getElementById('update-btn-restart').addEventListener('click', () => {
         if (window.cargoStats && window.cargoStats.restartAndUpdate) {
             window.cargoStats.restartAndUpdate();
