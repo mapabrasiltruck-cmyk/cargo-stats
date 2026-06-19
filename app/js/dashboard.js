@@ -261,6 +261,10 @@ function updateDashboard(data) {
     if (!data) return;
     telemetryData = data;
 
+    if (data.trailer && data.trailer.name) {
+        console.log('[DIAG] Trailer:', JSON.stringify(data.trailer), 'Truck:', JSON.stringify(data.truck));
+    }
+
     for (let [idx, instance] of Object.entries(widgetsInstances)) {
         const w = instance.config;
         const container = instance.element;

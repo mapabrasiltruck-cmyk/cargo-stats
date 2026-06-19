@@ -122,10 +122,11 @@ function formatValue(rawValue, w) {
     if (w.format) {
         try {
             return w.format.replace(/\{value(:[^}]+)?\}/g, (match, fmt) => {
+                const divisor = w.unit === 'km' ? 1000 : 1;
                 if (fmt) {
-                    if (fmt === ':.0f') return Math.round(numericValue);
-                    if (fmt === ':.1f') return numericValue.toFixed(1);
-                    if (fmt === ':.2f') return numericValue.toFixed(2);
+                    if (fmt === ':.0f') return Math.round(numericValue / divisor);
+                    if (fmt === ':.1f') return (numericValue / divisor).toFixed(1);
+                    if (fmt === ':.2f') return (numericValue / divisor).toFixed(2);
                 }
                 return rawValue;
             });

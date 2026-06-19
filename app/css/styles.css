@@ -196,7 +196,7 @@ body {
 
 .section-info .widget-label {
     font-size: 7px;
-    color: #333;
+    color: #fff;
     border-bottom: none;
     margin-bottom: 0;
     padding-bottom: 0;
@@ -211,7 +211,7 @@ body {
     font-size: 8px;
     font-weight: 700;
     letter-spacing: 2px;
-    color: #555;
+    color: #fff;
     text-transform: uppercase;
     margin-bottom: 4px;
     white-space: nowrap;
