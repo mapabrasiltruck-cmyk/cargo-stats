@@ -1,0 +1,55 @@
+{
+  "title": "CARGO STATS - CONQUISTAS",
+  "background": "#0a0a0a",
+  "conquistas": [
+    { "id": "primeira_viagem",   "icone": "🚛", "titulo": "Primeira Viagem",     "descricao": "Complete sua primeira viagem",            "tipo": "motorista", "criterio": "viagens",    "meta": 1,     "raridade": "comum" },
+    { "id": "25_viagens",        "icone": "📦", "titulo": "25 Viagens",           "descricao": "Complete 25 viagens",                    "tipo": "motorista", "criterio": "viagens",    "meta": 25,    "raridade": "comum" },
+    { "id": "50_viagens",        "icone": "🏎️", "titulo": "50 Viagens",           "descricao": "Complete 50 viagens",                    "tipo": "motorista", "criterio": "viagens",    "meta": 50,    "raridade": "comum" },
+    { "id": "100_viagens",       "icone": "🌟", "titulo": "Centenário",           "descricao": "Complete 100 viagens",                   "tipo": "motorista", "criterio": "viagens",    "meta": 100,   "raridade": "raro" },
+    { "id": "250_viagens",       "icone": "💫", "titulo": "250 Viagens",          "descricao": "Complete 250 viagens",                   "tipo": "motorista", "criterio": "viagens",    "meta": 250,   "raridade": "raro" },
+    { "id": "500_viagens",       "icone": "👑", "titulo": "Lenda das Entregas",   "descricao": "Complete 500 viagens",                   "tipo": "motorista", "criterio": "viagens",    "meta": 500,   "raridade": "lendario" },
+    { "id": "750_viagens",       "icone": "💎", "titulo": "Piloto Incansável",     "descricao": "Complete 750 viagens",                   "tipo": "motorista", "criterio": "viagens",    "meta": 750,   "raridade": "lendario" },
+    { "id": "1000_viagens",      "icone": "🔥", "titulo": "Mito das Estradas",    "descricao": "Complete 1.000 viagens",                 "tipo": "motorista", "criterio": "viagens",    "meta": 1000,  "raridade": "lendario" },
+
+    { "id": "5000_km",           "icone": "📏", "titulo": "5.000 KM",             "descricao": "Rodar 5.000 km",                        "tipo": "motorista", "criterio": "km",         "meta": 5000,    "raridade": "comum" },
+    { "id": "10000_km",          "icone": "🛣️", "titulo": "10.000 KM",            "descricao": "Rodar 10.000 km",                       "tipo": "motorista", "criterio": "km",         "meta": 10000,   "raridade": "comum" },
+    { "id": "25000_km",          "icone": "🛣️", "titulo": "25.000 KM",            "descricao": "Rodar 25.000 km",                       "tipo": "motorista", "criterio": "km",         "meta": 25000,   "raridade": "raro" },
+    { "id": "50000_km",          "icone": "🌍", "titulo": "50.000 KM",            "descricao": "Rodar 50.000 km",                       "tipo": "motorista", "criterio": "km",         "meta": 50000,   "raridade": "raro" },
+    { "id": "100000_km",         "icone": "🌍", "titulo": "100.000 KM",           "descricao": "Rodar 100.000 km",                      "tipo": "motorista", "criterio": "km",         "meta": 100000,  "raridade": "lendario" },
+    { "id": "250000_km",         "icone": "🌎", "titulo": "250.000 KM",           "descricao": "Rodar 250.000 km",                      "tipo": "motorista", "criterio": "km",         "meta": 250000,  "raridade": "lendario" },
+    { "id": "500000_km",         "icone": "🚀", "titulo": "Meio Milhão de KM",    "descricao": "Rodar 500.000 km",                      "tipo": "motorista", "criterio": "km",         "meta": 500000,  "raridade": "lendario" },
+
+    { "id": "5000_pontos",       "icone": "⭐", "titulo": "5.000 Pontos",         "descricao": "Ganhar 5.000 pontos",                   "tipo": "motorista", "criterio": "pontuacao",  "meta": 5000,    "raridade": "comum" },
+    { "id": "10000_pontos",      "icone": "💫", "titulo": "10.000 Pontos",        "descricao": "Ganhar 10.000 pontos",                  "tipo": "motorista", "criterio": "pontuacao",  "meta": 10000,   "raridade": "comum" },
+    { "id": "25000_pontos",      "icone": "💫", "titulo": "25.000 Pontos",        "descricao": "Ganhar 25.000 pontos",                  "tipo": "motorista", "criterio": "pontuacao",  "meta": 25000,   "raridade": "raro" },
+    { "id": "50000_pontos",      "icone": "👑", "titulo": "50.000 Pontos",        "descricao": "Ganhar 50.000 pontos",                  "tipo": "motorista", "criterio": "pontuacao",  "meta": 50000,   "raridade": "raro" },
+    { "id": "100000_pontos",     "icone": "👑", "titulo": "100.000 Pontos",       "descricao": "Ganhar 100.000 pontos",                 "tipo": "motorista", "criterio": "pontuacao",  "meta": 100000,  "raridade": "lendario" },
+    { "id": "250000_pontos",     "icone": "💎", "titulo": "250.000 Pontos",       "descricao": "Ganhar 250.000 pontos",                 "tipo": "motorista", "criterio": "pontuacao",  "meta": 250000,  "raridade": "lendario" },
+    { "id": "500000_pontos",     "icone": "🏆", "titulo": "500.000 Pontos",       "descricao": "Ganhar 500.000 pontos",                 "tipo": "motorista", "criterio": "pontuacao",  "meta": 500000,  "raridade": "lendario" },
+
+    { "id": "nivel_prata",       "icone": "🥈", "titulo": "Nível Prata",          "descricao": "Atingir o nível Prata (10.001 pts)",    "tipo": "motorista", "criterio": "nivel_prata", "meta": 10001,   "raridade": "comum" },
+    { "id": "nivel_ouro",        "icone": "🥇", "titulo": "Nível Ouro",           "descricao": "Atingir o nível Ouro (50.001 pts)",     "tipo": "motorista", "criterio": "nivel_ouro",  "meta": 50001,  "raridade": "raro" },
+    { "id": "nivel_diamante",    "icone": "💎", "titulo": "Nível Diamante",       "descricao": "Atingir o nível Diamante (100.001 pts)", "tipo": "motorista", "criterio": "nivel_diamante", "meta": 100001, "raridade": "lendario" },
+    { "id": "nivel_elite",       "icone": "🌟", "titulo": "Nível Elite",          "descricao": "Atingir o nível Elite (200.001 pts)",    "tipo": "motorista", "criterio": "nivel_elite", "meta": 200001, "raridade": "lendario" },
+    { "id": "nivel_lendario",    "icone": "👑", "titulo": "Nível Lendário",       "descricao": "Atingir o nível Lendário (500.001 pts)","tipo": "motorista", "criterio": "nivel_lendario", "meta": 500001, "raridade": "lendario" },
+
+    { "id": "explorador_10",     "icone": "🗺️", "titulo": "Explorador",           "descricao": "Visitar 10 cidades diferentes",          "tipo": "motorista", "criterio": "cidades",     "meta": 10,     "raridade": "comum" },
+    { "id": "explorador_25",     "icone": "🗺️", "titulo": "Explorador Experiente","descricao": "Visitar 25 cidades diferentes",          "tipo": "motorista", "criterio": "cidades",     "meta": 25,     "raridade": "raro" },
+    { "id": "explorador_45",     "icone": "🌎", "titulo": "Explorador Mestre",    "descricao": "Visitar 45 cidades diferentes",          "tipo": "motorista", "criterio": "cidades",     "meta": 45,     "raridade": "lendario" },
+    { "id": "explorador_75",     "icone": "🌏", "titulo": "Cartógrafo",           "descricao": "Visitar 75 cidades diferentes",          "tipo": "motorista", "criterio": "cidades",     "meta": 75,     "raridade": "lendario" },
+
+    { "id": "capital_federal",   "icone": "🏙️", "titulo": "Capital Federal",      "descricao": "Visitar Brasília",                      "tipo": "motorista", "criterio": "cidade_especifica", "meta": "Brasília", "raridade": "comum" },
+    { "id": "norte_explorer",    "icone": "🌴", "titulo": "Norte Explorer",       "descricao": "Visitar Manaus",                        "tipo": "motorista", "criterio": "cidade_especifica", "meta": "Manaus", "raridade": "raro" },
+    { "id": "sul_explorer",      "icone": "❄️", "titulo": "Sul Explorer",         "descricao": "Visitar Porto Alegre",                  "tipo": "motorista", "criterio": "cidade_especifica", "meta": "Porto Alegre", "raridade": "raro" },
+    { "id": "nordeste_explorer", "icone": "☀️", "titulo": "Nordeste Explorer",    "descricao": "Visitar Fortaleza",                     "tipo": "motorista", "criterio": "cidade_especifica", "meta": "Fortaleza", "raridade": "lendario" },
+
+    { "id": "litoral_5",         "icone": "🏖️", "titulo": "Litoral",              "descricao": "Visitar 5 cidades litorâneas",          "tipo": "motorista", "criterio": "cidades_litoral", "meta": 5,  "raridade": "comum" },
+    { "id": "litoral_15",        "icone": "🏖️", "titulo": "Rei do Litoral",       "descricao": "Visitar 15 cidades litorâneas",         "tipo": "motorista", "criterio": "cidades_litoral", "meta": 15, "raridade": "lendario" },
+
+    { "id": "velozes_5",         "icone": "⚡", "titulo": "Velozes & Furiosos",   "descricao": "5+ viagens numa semana",                "tipo": "motorista", "criterio": "viagens_semana", "meta": 5,   "raridade": "raro" },
+    { "id": "velozes_15",        "icone": "⚡", "titulo": "Fúria de Entregas",     "descricao": "15+ viagens numa semana",               "tipo": "motorista", "criterio": "viagens_semana", "meta": 15,  "raridade": "lendario" },
+    { "id": "velozes_30",        "icone": "🔥", "titulo": "Lenda Semanal",        "descricao": "30+ viagens numa semana",               "tipo": "motorista", "criterio": "viagens_semana", "meta": 30,  "raridade": "lendario" },
+
+    { "id": "top1_empresa",      "icone": "🏆", "titulo": "Top 1 Empresa",        "descricao": "Ser a empresa #1 no ranking",           "tipo": "empresa",   "criterio": "top1_ranking", "meta": 1, "raridade": "lendario" }
+  ]
+}

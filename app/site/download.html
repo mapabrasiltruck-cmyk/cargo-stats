@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CARGO STATS - Download</title>
+    <link rel="stylesheet" href="/site/cs/styles.css" />
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#050508; color:#e0e0e0; font-family:'Segoe UI',Arial,sans-serif; min-height:100vh; }
+        .site-header { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(5,5,8,0.92); backdrop-filter:blur(8px); border-bottom:1px solid rgba(245,200,66,0.15); padding:0 2rem; display:flex; align-items:center; height:60px; }
+        .site-header .logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+        .site-header .logo img { height:28px; }
+        .site-header .logo span { color:#f5c842; font-weight:900; font-size:1.1rem; letter-spacing:0.15em; }
+        .site-header nav { margin-left:auto; display:flex; gap:1.5rem; align-items:center; }
+        .site-header nav a { color:rgba(255,255,255,0.6); text-decoration:none; font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase; transition:color 0.3s; }
+        .site-header nav a:hover, .site-header nav a.active { color:#f5c842; }
+        .site-header nav .btn-app { background:#f5c842; color:#050508 !important; padding:0.4rem 1.2rem; border-radius:4px; font-weight:700; }
+        main { padding-top:80px; max-width:1000px; margin:0 auto; padding-left:2rem; padding-right:2rem; padding-bottom:4rem; }
+        .page-title { font-size:1.6rem; font-weight:900; letter-spacing:0.1em; color:#f5c842; margin-bottom:0.5rem; }
+        .page-subtitle { color:rgba(255,255,255,0.5); font-size:0.85rem; margin-bottom:2rem; }
+        .section { background:rgba(255,255,255,0.02); border:1px solid rgba(245,200,66,0.08); border-radius:12px; padding:2rem; margin-bottom:1.5rem; }
+        .section h2 { font-size:1.1rem; color:#f5c842; margin-bottom:1rem; letter-spacing:0.05em; }
+        .section h2 .step { display:inline-block; background:#f5c842; color:#050508; width:24px; height:24px; text-align:center; line-height:24px; border-radius:50%; font-size:0.75rem; font-weight:900; margin-right:8px; }
+        .section p, .section li { color:rgba(255,255,255,0.7); font-size:0.9rem; line-height:1.7; }
+        .section ul { list-style:none; padding:0; }
+        .section ul li { padding:0.4rem 0; padding-left:1.2rem; position:relative; }
+        .section ul li::before { content:'▸'; position:absolute; left:0; color:#f5c842; }
+        .download-btn { display:inline-flex; align-items:center; gap:10px; background:#f5c842; color:#050508; padding:0.8rem 2rem; border-radius:6px; font-weight:900; font-size:1rem; text-decoration:none; transition:all 0.3s; margin-top:0.5rem; }
+        .download-btn:hover { background:#ffd84d; transform:translateY(-1px); box-shadow:0 4px 20px rgba(245,200,66,0.3); }
+        .download-btn .icon { font-size:1.3rem; }
+        .download-btn small { font-weight:400; opacity:0.7; font-size:0.7rem; }
+        .qr-area { display:flex; align-items:center; gap:2rem; flex-wrap:wrap; margin-top:1rem; }
+        .qr-area svg, .qr-area img { width:160px; height:160px; border-radius:8px; background:white; padding:8px; }
+        .qr-text { font-size:0.85rem; color:rgba(255,255,255,0.6); }
+        .qr-text strong { color:#f5c842; }
+        .badge { display:inline-block; background:rgba(245,200,66,0.15); color:#f5c842; padding:0.2rem 0.6rem; border-radius:4px; font-size:0.7rem; font-weight:700; margin-left:0.5rem; }
+        .versao { color:rgba(255,255,255,0.3); font-size:0.75rem; margin-top:0.3rem; }
+        @media (max-width:768px) {
+            .site-header { padding:0 1rem; }
+            .site-header nav { gap:0.8rem; }
+            .site-header nav a { font-size:0.65rem; }
+            main { padding-left:1rem; padding-right:1rem; }
+            .qr-area { flex-direction:column; align-items:flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <a class="logo" href="/">
+            <img src="/site/images/cargo.png" alt="Cargo Stats" />
+            <span>CARGO STATS</span>
+        </a>
+        <nav>
+            <a href="/">Início</a>
+            <a href="/rank">Ranking</a>
+            <a class="active" href="/download">Download</a>
+            <a href="/regras">Regras</a>
+            <a class="btn-app" href="/app">Acessar App</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="page-title">DOWNLOAD</div>
+        <div class="page-subtitle">Instale o Cargo Stats e comece a monitorar suas viagens</div>
+
+        <div class="section">
+            <h2><span class="step">1</span> App Desktop (Windows)</h2>
+            <p>O aplicativo desktop registra automaticamente suas viagens do ETS2/ATS. Ele instala o plugin de telemetria e já conecta tudo pra você.</p>
+            <a class="download-btn" href="#">
+                <span class="icon">⬇</span>
+                Baixar Cargo Stats
+                <small>v0.1.1 · Windows</small>
+            </a>
+            <div class="versao">&#x2705; Auto-update habilitado — o app avisa quando há nova versão</div>
+        </div>
+
+        <div class="section">
+            <h2><span class="step">2</span> Acesso Mobile (PWA)</h2>
+            <p>Escaneie o QR Code abaixo com seu celular para acessar o dashboard de telemetria ao vivo:</p>
+            <div class="qr-area">
+                <div id="qrcode-container">
+                    <div class="loading" style="text-align:center;padding:1rem;color:rgba(255,255,255,0.3);">Carregando QR Code...</div>
+                </div>
+                <div class="qr-text">
+                    <strong>Dashboard Mobile</strong><br>
+                    Acompanhe velocidade, combustível, rota e mais<br>
+                    diretamente do seu celular.<br>
+                    <span style="font-size:0.75rem;color:rgba(255,255,255,0.4);">Requer o servidor de telemetria rodando no PC</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="step">3</span> Requisitos</h2>
+            <ul>
+                <li>Euro Truck Simulator 2 <strong class="badge">RECOMENDADO</strong> ou American Truck Simulator</li>
+                <li>Plugin SDK habilitado nas configurações do jogo</li>
+                <li>Conexão com internet para enviar os dados ao ranking</li>
+                <li>Windows 10/11 (64 bits)</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2><span class="step">4</span> Como funciona</h2>
+            <ul>
+                <li>O app instala automaticamente o plugin de telemetria no ETS2/ATS</li>
+                <li>Durante o jogo, as viagens são detectadas e registradas automaticamente</li>
+                <li>Os dados vão para o servidor central e entram no ranking</li>
+                <li>Você acompanha suas estatísticas, conquistas e prêmios pelo site</li>
+            </ul>
+        </div>
+    </main>
+
+    <script>
+        (async function loadQR() {
+            try {
+                const r = await fetch('/api/network/qrcode?_=' + Date.now());
+                const svg = await r.text();
+                document.getElementById('qrcode-container').innerHTML = svg;
+            } catch(e) {
+                document.getElementById('qrcode-container').innerHTML =
+                    '<div style="color:rgba(255,255,255,0.3);font-size:0.8rem;">QR Code indisponível no momento</div>';
+            }
+        })();
+    </script>
+</body>
+</html>

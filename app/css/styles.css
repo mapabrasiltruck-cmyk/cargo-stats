@@ -1,0 +1,2700 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0a0a0a;
+    color: #e0e0e0;
+    font-family: 'Consolas', 'Courier New', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 16px 24px;
+}
+
+/* ===== NAV BAR ===== */
+.nav-bar {
+    width: 1024px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    margin-bottom: 16px;
+    background: #0d0d12;
+    border: 1px solid #1e1e28;
+    border-radius: 12px;
+}
+
+.nav-brand {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #00ff88;
+    text-transform: uppercase;
+    text-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+}
+
+.nav-links {
+    display: flex;
+    gap: 4px;
+}
+
+.nav-link {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: #555;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    color: #aaa;
+    background: #1a1a22;
+}
+
+.nav-link.active {
+    color: #00ff88;
+    border-color: #00ff88;
+    background: rgba(0, 255, 136, 0.05);
+}
+
+/* ===== DASHBOARD FRAME ===== */
+.dashboard-frame {
+    width: 1024px;
+    background: #0d0d12;
+    border: 1px solid #1e1e28;
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.dashboard-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #00ff88;
+    text-transform: uppercase;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #1a1a22;
+    text-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 16px;
+}
+
+.dashboard-left {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.dashboard-right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ===== SECTION ===== */
+.section {
+    background: #111118;
+    border: 1px solid #1a1a22;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.section-title {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: #444;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #1a1a22;
+}
+
+/* ===== SECTION: INSTRUMENTS ===== */
+.section-instruments {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+}
+
+.section-instruments .section-title {
+    text-align: center;
+    grid-column: 1 / -1;
+}
+
+.section-instruments .widget-gauge {
+    min-width: 0;
+}
+
+/* ===== SECTION: FLUIDS + WEAR ===== */
+.section-fluids,
+.section-wear {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* ===== SECTION: DATA ===== */
+.section-data {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* ===== DASHBOARD BOTTOM ===== */
+.dashboard-bottom {
+    margin-top: 16px;
+}
+
+.section-route .section-title {
+    text-align: center;
+    grid-column: 1 / -1;
+}
+
+.section-route {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 8px;
+}
+
+/* ===== SECTION: STATUS ===== */
+.section-status .status-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* ===== SECTION: INFO ===== */
+.section-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.section-info .widget-text {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.section-info .widget-label {
+    font-size: 7px;
+    color: #333;
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.section-info .text-value {
+    font-size: 11px;
+}
+
+/* ===== WIDGET LABEL ===== */
+.widget-label {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #1a1a22;
+}
+
+/* ===== GAUGE ===== */
+.widget-gauge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #0d0d12;
+    border: 1px solid #1a1a22;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.widget-gauge .gauge-canvas {
+    display: block;
+    width: 100%;
+    flex: 1;
+}
+
+.widget-gauge .gauge-value {
+    position: static;
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+    margin-top: 2px;
+    letter-spacing: 1px;
+}
+
+/* ===== TEXT ===== */
+.widget-text {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 4px 8px;
+    background: #0d0d12;
+    border: 1px solid #1a1a22;
+    border-radius: 6px;
+}
+
+.widget-text .text-value {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--accent, #fff);
+    text-shadow: 0 0 10px color-mix(in srgb, var(--accent, #fff) 25%, transparent);
+    letter-spacing: 0.5px;
+}
+
+.widget-text .widget-unit {
+    font-size: 10px;
+    color: #555;
+    font-weight: 400;
+}
+
+/* ===== PROGRESS BAR ===== */
+.widget-progress-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 8px;
+    background: #0d0d12;
+    border: 1px solid #1a1a22;
+    border-radius: 6px;
+}
+
+.widget-progress-bar .widget-label {
+    min-width: 100px;
+    flex-shrink: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    font-size: 7px;
+    color: #555;
+}
+
+.widget-progress-bar .progress-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.widget-progress-bar .progress-bar-container {
+    width: 100%;
+    height: 14px;
+    background: #1a1a22;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+}
+
+.widget-progress-bar .progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 3px;
+    transition: width 0.15s ease-out;
+    position: relative;
+}
+
+.widget-progress-bar .progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.1), transparent);
+    border-radius: 3px 3px 0 0;
+}
+
+.widget-progress-bar .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+}
+
+.widget-progress-bar .progress-value {
+    color: var(--accent, #fff);
+    font-weight: bold;
+    text-shadow: 0 0 6px color-mix(in srgb, var(--accent, #fff) 20%, transparent);
+}
+
+.widget-progress-bar .progress-max {
+    color: #333;
+}
+
+/* ===== STATUS ===== */
+.status-icon {
+    font-size: 16px;
+    opacity: 0.15;
+    transition: opacity 0.2s, transform 0.2s, filter 0.2s;
+    filter: grayscale(100%) brightness(0.5);
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    background: #1a1a22;
+    font-weight: bold;
+    color: #555;
+}
+
+.status-icon.active {
+    opacity: 1;
+    filter: grayscale(0%) brightness(1);
+    transform: scale(1.05);
+    background: #1a221a;
+    color: #00ff88;
+    box-shadow: 0 0 8px rgba(0, 255, 100, 0.15);
+}
+
+/* ===== CANVASES ===== */
+.chart-canvas,
+.map-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+}
+
+/* ===== DATA TABLE ===== */
+.table-wrapper {
+    overflow-x: auto;
+    margin-top: 6px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.data-table thead th {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #555;
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid #1a1a22;
+}
+
+.data-table tbody tr {
+    transition: background 0.15s;
+}
+
+.data-table tbody tr:hover {
+    background: rgba(0, 255, 136, 0.03);
+}
+
+.data-table tbody td {
+    padding: 5px 8px;
+    border-bottom: 1px solid #141419;
+    color: #ccc;
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-link {
+    color: #00ff88;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.table-link:hover {
+    color: #66ffbb;
+    text-decoration: underline;
+}
+
+/* ===== AWARD CARDS ===== */
+.section-premiacao-empresas,
+.section-premiacao-motoristas {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.award-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: #0d0d12;
+    border: 1px solid #1a1a22;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+}
+
+.award-card:hover {
+    border-color: #333;
+}
+
+.award-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+    width: 48px;
+    text-align: center;
+}
+
+.award-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.award-title {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #555;
+    text-transform: uppercase;
+}
+
+.award-recipient {
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    margin-top: 2px;
+}
+
+.award-value {
+    font-size: 12px;
+    color: var(--accent, #00ff88);
+    margin-top: 1px;
+}
+
+/* ===== PODIUM ===== */
+.podium-section-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #555;
+    text-transform: uppercase;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #1a1a22;
+}
+
+.podium {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.podium-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: #0d0d12;
+    border: 1px solid #1a1a22;
+    border-radius: 6px;
+}
+
+.podium-pos {
+    font-size: 18px;
+    width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.podium-name {
+    flex: 1;
+    font-size: 12px;
+    font-weight: 600;
+    color: #ccc;
+}
+
+.podium-value {
+    font-size: 11px;
+    font-weight: bold;
+    color: #888;
+}
+
+.podium-gold {
+    border-color: #b8860b;
+    background: rgba(184, 134, 11, 0.05);
+}
+
+.podium-gold .podium-name {
+    color: #ffd700;
+}
+
+.podium-gold .podium-value {
+    color: #ffd700;
+}
+
+.podium-silver {
+    border-color: #888;
+    background: rgba(192, 192, 192, 0.03);
+}
+
+.podium-silver .podium-name {
+    color: #c0c0c0;
+}
+
+.podium-silver .podium-value {
+    color: #c0c0c0;
+}
+
+.podium-bronze {
+    border-color: #8b4513;
+    background: rgba(205, 127, 50, 0.03);
+}
+
+.podium-bronze .podium-name {
+    color: #cd7f32;
+}
+
+.podium-bronze .podium-value {
+    color: #cd7f32;
+}
+
+/* ===== NIVEL BADGES ===== */
+.nivel-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border: 1px solid;
+    border-radius: 4px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.widget-nivel {
+    margin-top: 4px;
+}
+
+.award-nivel {
+    display: inline-block;
+    margin-left: 4px;
+    vertical-align: middle;
+}
+
+/* ===== STATUS BAR ===== */
+.status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 6px 20px;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    z-index: 100;
+    background: #0d0d12;
+    border-top: 1px solid #1a1a22;
+    text-align: center;
+}
+
+.status-bar.connected {
+    color: #00ff88;
+    border-top-color: #00ff88;
+}
+
+.status-bar.disconnected {
+    color: #ffaa00;
+    border-top-color: #ffaa00;
+}
+
+.status-bar.error {
+    color: #ff4444;
+    border-top-color: #ff4444;
+}
+
+.status-bar.warning {
+    color: #ffaa00;
+    border-top-color: #ffaa00;
+}
+
+.remote-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 10px 20px;
+    padding: 14px 18px;
+    background: rgba(255, 170, 0, 0.08);
+    border: 1px solid rgba(255, 170, 0, 0.25);
+    border-radius: 6px;
+    color: #ffaa00;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.remote-warning-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.remote-warning-text strong {
+    color: #ffcc44;
+}
+
+.reload-hint {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    font-size: 9px;
+    color: #333;
+    letter-spacing: 1px;
+    z-index: 100;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #0a0a0a; }
+::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #444; }
+
+/* ===== FOOTER ===== */
+.dashboard-footer {
+    margin-top: 16px;
+    padding-top: 12px;
+    padding-bottom: 4px;
+    border-top: 1px solid #1a1a22;
+    text-align: center;
+}
+
+.footer-line {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: #00ff88;
+}
+
+.footer-copy {
+    font-size: 8px;
+    color: #444;
+    margin-top: 4px;
+}
+
+/* ===== PERIOD TOGGLE ===== */
+.period-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 0;
+    margin-bottom: 8px;
+}
+
+.period-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #666;
+    letter-spacing: 1px;
+    margin-right: 4px;
+}
+
+.period-btn {
+    background: transparent;
+    border: 1px solid #333;
+    color: #888;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 5px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.period-btn:hover {
+    border-color: #555;
+    color: #ccc;
+}
+
+.period-btn.active {
+    background: var(--accent, #00ff88);
+    border-color: var(--accent, #00ff88);
+    color: #000;
+}
+
+/* ===== LOBO SOLITARIO - ENCONTRAR EMPRESA ===== */
+.lobo-empresa-card {
+    background: #0d1117;
+    border: 1px solid #1e1e28;
+    border-radius: 12px;
+    padding: 20px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.lobo-empresa-card:hover {
+    border-color: #00ff8840;
+    box-shadow: 0 4px 20px rgba(0, 255, 136, 0.08);
+}
+
+.lobo-btn-pedido {
+    padding: 8px 24px;
+    background: #ffaa00;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.lobo-btn-pedido:hover:not(:disabled) {
+    background: #ffcc44;
+    transform: translateY(-1px);
+}
+
+.lobo-btn-pedido:disabled {
+    background: #333;
+    color: #888;
+    cursor: default;
+}
+
+/* ===== DESAFIOS ===== */
+.desafios-header {
+    text-align: center;
+    padding-bottom: 12px;
+}
+
+.desafios-week {
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
+
+.desafios-countdown {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.countdown-label {
+    font-size: 10px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.countdown-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ff4444;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    padding: 3px 10px;
+    border: 1px solid #ff4444;
+    border-radius: 4px;
+    background: rgba(255, 68, 68, 0.1);
+}
+
+.desafios-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 12px;
+}
+
+.desafio-card {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 8px;
+    padding: 16px;
+    transition: border-color 0.2s;
+}
+
+.desafio-card:hover {
+    border-color: var(--accent, #00ff88);
+}
+
+.desafio-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #222;
+}
+
+.desafio-icon {
+    font-size: 20px;
+}
+
+.desafio-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent, #00ff88);
+    letter-spacing: 1px;
+}
+
+.desafio-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.desafio-medal {
+    font-size: 12px;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.desafio-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.desafio-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #ddd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.desafio-sub {
+    font-size: 9px;
+    color: #666;
+}
+
+.desafio-value {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent, #00ff88);
+    white-space: nowrap;
+    margin-left: 4px;
+}
+
+.desafio-bar-track {
+    height: 3px;
+    background: #222;
+    border-radius: 2px;
+    margin: 2px 0 6px 32px;
+    overflow: hidden;
+}
+
+.desafio-bar-fill {
+    height: 100%;
+    background: var(--accent, #00ff88);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+/* ===== CONQUISTAS ===== */
+.conquistas-stats-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 10px 0;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.conquistas-motorista {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.conquistas-empresa {
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 1px;
+}
+
+.conquistas-nivel {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border: 1px solid var(--accent, #00ff88);
+    border-radius: 4px;
+    color: var(--accent, #00ff88);
+}
+
+.conquistas-progress-text {
+    font-size: 11px;
+    color: #666;
+    letter-spacing: 1px;
+}
+
+.conquistas-grid {
+    padding: 12px;
+}
+
+.conquistas-section {
+    margin-bottom: 20px;
+}
+
+.conquistas-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #888;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #222;
+}
+
+.conquistas-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+}
+
+.conquista-card {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 8px;
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: all 0.2s;
+}
+
+.conquista-card.desbloqueada {
+    border-color: var(--rarity-color, #aaa);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.conquista-card.desbloqueada:hover {
+    border-color: var(--rarity-color, #aaa);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+}
+
+.conquista-card.bloqueada {
+    opacity: 0.5;
+}
+
+.conquista-icone {
+    font-size: 28px;
+    flex-shrink: 0;
+    width: 40px;
+    text-align: center;
+}
+
+.conquista-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.conquista-titulo {
+    font-size: 12px;
+    font-weight: 700;
+    color: #eee;
+    margin-bottom: 2px;
+}
+
+.conquista-descricao {
+    font-size: 10px;
+    color: #888;
+    margin-bottom: 4px;
+}
+
+.conquista-rarity {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.conquista-progress-bar {
+    height: 4px;
+    background: #222;
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+}
+
+.conquista-progress-fill {
+    height: 100%;
+    background: var(--rarity-color, #aaa);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.conquista-progress-text {
+    font-size: 9px;
+    color: #666;
+    margin-top: 2px;
+}
+
+.conquistas-ranking-section {
+    margin-top: 12px;
+}
+
+.conquistas-ranking-count {
+    font-weight: 700;
+    color: #ffd700;
+}
+
+.conquistas-ranking-pct {
+    font-size: 10px;
+    color: #888;
+    margin-left: 4px;
+}
+
+/* ===== PERFIL DO MOTORISTA ===== */
+.perfil-header {
+    text-align: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #222;
+    margin-bottom: 16px;
+}
+
+.perfil-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+}
+
+.perfil-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 10px;
+}
+
+.perfil-empresa {
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 1px;
+}
+
+.perfil-status {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.perfil-ranking {
+    font-size: 10px;
+    color: #666;
+    letter-spacing: 1px;
+}
+
+.perfil-nivel {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 16px;
+    border: 2px solid;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.perfil-nivel-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 6px;
+}
+
+.perfil-nivel-bar {
+    width: 200px;
+    height: 6px;
+    background: #222;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.perfil-nivel-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.perfil-nivel-text {
+    font-size: 9px;
+    color: #666;
+    letter-spacing: 1px;
+}
+
+.perfil-nivel-max {
+    font-size: 11px;
+    color: #00e5ff;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.perfil-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 16px;
+    padding: 0 12px;
+}
+
+.perfil-left {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.perfil-right {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.perfil-card {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 8px;
+    padding: 14px;
+}
+
+.perfil-card-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #888;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #222;
+}
+
+.perfil-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.perfil-stat {
+    text-align: center;
+    padding: 8px 4px;
+    background: #0a0a0a;
+    border-radius: 6px;
+}
+
+.perfil-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #00ff88;
+    margin-bottom: 2px;
+}
+
+.perfil-stat-label {
+    font-size: 9px;
+    color: #666;
+    letter-spacing: 1px;
+}
+
+.perfil-cidades-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.perfil-cidade-tag {
+    font-size: 9px;
+    color: #aaa;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 3px 8px;
+    white-space: nowrap;
+}
+
+.perfil-conquistas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 6px;
+}
+
+.perfil-conquista {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    background: #0a0a0a;
+    border-radius: 4px;
+    border: 1px solid #222;
+    transition: opacity 0.2s;
+}
+
+.perfil-conquista:hover {
+    border-color: #444;
+}
+
+.perfil-conquista-icone {
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.perfil-conquista-titulo {
+    font-size: 9px;
+    color: #ccc;
+    font-weight: 600;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.perfil-conquista-progress {
+    font-size: 8px;
+    color: #666;
+    flex-shrink: 0;
+}
+
+.perfil-historico .table-wrapper {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* ===== EVOLUÇÃO / CHARTS ===== */
+.evolucao-filters {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px 0;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.evolucao-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.evolucao-filter-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #666;
+    letter-spacing: 1px;
+}
+
+.evolucao-btn {
+    background: transparent;
+    border: 1px solid #333;
+    color: #888;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.evolucao-btn:hover {
+    border-color: #555;
+    color: #ccc;
+}
+
+.evolucao-btn.active {
+    background: #00ff88;
+    border-color: #00ff88;
+    color: #000;
+}
+
+.evolucao-btn-period {
+    background: transparent;
+    border: 1px solid #333;
+    color: #888;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.evolucao-btn-period:hover {
+    border-color: #555;
+    color: #ccc;
+}
+
+.evolucao-btn-period.active {
+    background: #44aaff;
+    border-color: #44aaff;
+    color: #000;
+}
+
+.evolucao-select {
+    background: #0a0a0a;
+    border: 1px solid #333;
+    color: #ccc;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+}
+
+.evolucao-select:focus {
+    border-color: #00ff88;
+}
+
+.evolucao-select option {
+    background: #111;
+    color: #ccc;
+}
+
+.evolucao-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 12px;
+}
+
+.evolucao-chart-full {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 8px;
+    padding: 14px;
+    grid-column: 1 / -1;
+    height: 280px;
+}
+
+.evolucao-chart-half {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 8px;
+    padding: 14px;
+    height: 280px;
+}
+
+/* ===== AUTH PAGES ===== */
+.auth-frame {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.auth-card {
+    width: 400px;
+    background: #0d0d12;
+    border: 1px solid #1e1e28;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.auth-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #00ff88;
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #1a1a22;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.auth-field label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #555;
+    text-transform: uppercase;
+}
+
+.auth-field input,
+.auth-field select {
+    background: #111118;
+    border: 1px solid #1e1e28;
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: #e0e0e0;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.auth-field input:focus,
+.auth-field select:focus {
+    border-color: #00ff88;
+}
+
+.auth-field input::placeholder {
+    color: #333;
+}
+
+.auth-error {
+    font-size: 11px;
+    color: #ff4444;
+    text-align: center;
+    min-height: 16px;
+}
+
+.auth-success {
+    font-size: 11px;
+    color: #00ff88;
+    text-align: center;
+    min-height: 16px;
+}
+
+.auth-btn {
+    background: #00ff88;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    color: #000;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    margin-top: 8px;
+}
+
+.auth-btn:hover {
+    opacity: 0.85;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 11px;
+    color: #555;
+}
+
+.auth-footer a {
+    color: #00ff88;
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* ===== NAV USER ===== */
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    padding-left: 12px;
+    border-left: 1px solid #1e1e28;
+}
+
+.nav-user-name {
+    font-size: 10px;
+    font-weight: 700;
+    color: #aaa;
+    letter-spacing: 1px;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.nav-user-name:hover {
+    color: #00ff88;
+}
+
+.nav-user-tipo {
+    font-size: 8px;
+    font-weight: 700;
+    color: #00ff88;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border: 1px solid #00ff88;
+    border-radius: 3px;
+}
+
+.nav-btn-logout {
+    background: transparent;
+    border: 1px solid #ff4444;
+    color: #ff4444;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nav-btn-logout:hover {
+    background: #ff4444;
+    color: #000;
+}
+
+/* ===== ADMIN PANEL ===== */
+.admin-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 12px 0;
+    border-bottom: 1px solid #1a1a22;
+    margin-bottom: 16px;
+}
+
+.admin-tab {
+    background: transparent;
+    border: 1px solid #333;
+    color: #888;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 6px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.admin-tab:hover {
+    border-color: #555;
+    color: #ccc;
+}
+
+.admin-tab.active {
+    background: #00ff88;
+    border-color: #00ff88;
+    color: #000;
+}
+
+.admin-content {
+    padding: 0 4px;
+}
+
+.admin-form {
+    background: #111118;
+    border: 1px solid #1a1a22;
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 16px;
+}
+
+.admin-form-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #1a1a22;
+}
+
+.admin-form-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.admin-input {
+    background: #0a0a0a;
+    border: 1px solid #1e1e28;
+    border-radius: 4px;
+    padding: 8px 10px;
+    color: #e0e0e0;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 11px;
+    outline: none;
+    flex: 1;
+    min-width: 120px;
+}
+
+.admin-input:focus {
+    border-color: #00ff88;
+}
+
+.admin-select {
+    background: #0a0a0a;
+    border: 1px solid #1e1e28;
+    border-radius: 4px;
+    padding: 8px 10px;
+    color: #e0e0e0;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 11px;
+    outline: none;
+    min-width: 160px;
+}
+
+.admin-btn {
+    background: #00ff88;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    color: #000;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.admin-btn:hover {
+    opacity: 0.85;
+}
+
+.admin-btn-delete {
+    background: transparent;
+    border: 1px solid #ff4444;
+    color: #ff4444;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.admin-btn-delete:hover {
+    background: #ff4444;
+    color: #000;
+}
+
+.admin-btn-edit {
+    background: transparent;
+    border: 1px solid #00ff88;
+    color: #00ff88;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-right: 4px;
+}
+
+.admin-btn-edit:hover {
+    background: #00ff88;
+    color: #000;
+}
+
+.admin-table {
+    overflow-x: auto;
+}
+
+/* ===== VIAGEM FORM ===== */
+.viagem-form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.viagem-field {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    min-width: 140px;
+}
+
+.viagem-field label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #555;
+    text-transform: uppercase;
+}
+
+.viagem-historico {
+    margin-top: 16px;
+}
+
+.viagem-historico .admin-form-title {
+    margin-bottom: 8px;
+}
+
+/* ===== RESPONSIVE - MOBILE ===== */
+@media (max-width: 768px) {
+    body {
+        padding: 0 8px 24px;
+    }
+
+    .nav-bar {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px 12px;
+        width: 100%;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 2px;
+    }
+
+    .nav-link {
+        font-size: 9px;
+        padding: 4px 8px;
+    }
+
+    .nav-user {
+        border-left: none;
+        border-top: 1px solid #1e1e28;
+        padding-left: 0;
+        padding-top: 8px;
+        justify-content: center;
+        margin-left: 0;
+    }
+
+    .dashboard-frame {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+    }
+
+    .dashboard-title {
+        font-size: 11px;
+        letter-spacing: 2px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-instruments {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .section-route {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .widget-gauge .gauge-canvas {
+        width: 180px;
+        height: 130px;
+    }
+
+    .widget-text {
+        flex-wrap: wrap;
+    }
+
+    .widget-text .text-value {
+        font-size: 16px;
+    }
+
+    .widget-progress-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .widget-progress-bar .widget-label {
+        min-width: unset;
+    }
+
+    .data-table {
+        font-size: 10px;
+    }
+
+    .data-table thead th {
+        font-size: 7px;
+        padding: 4px 5px;
+    }
+
+    .data-table tbody td {
+        padding: 4px 5px;
+    }
+
+    .remote-warning {
+        margin: 8px 4px;
+        padding: 10px 12px;
+        font-size: 10px;
+    }
+
+    .status-bar {
+        font-size: 8px;
+        padding: 5px 10px;
+    }
+
+    .reload-hint {
+        display: none;
+    }
+
+    .period-bar {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .period-label {
+        font-size: 8px;
+    }
+
+    .period-btn {
+        font-size: 9px;
+        padding: 4px 10px;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 360px;
+    }
+
+    .admin-tabs {
+        flex-wrap: wrap;
+        gap: 3px;
+    }
+
+    .admin-tab {
+        font-size: 9px;
+        padding: 5px 10px;
+    }
+
+    .admin-form-row {
+        flex-direction: column;
+    }
+
+    .admin-input,
+    .admin-select {
+        min-width: unset;
+        width: 100%;
+    }
+
+    .admin-btn,
+    .admin-btn-delete {
+        width: 100%;
+        text-align: center;
+    }
+
+    .admin-table {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .evolucao-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .evolucao-filters {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .conquistas-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .desafios-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .perfil-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .perfil-stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .perfil-conquistas-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+
+    .award-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+    }
+
+    .podium-row {
+        padding: 5px 8px;
+    }
+
+    .podium-name {
+        font-size: 11px;
+    }
+
+    .footer-line {
+        font-size: 8px;
+    }
+
+    .viagem-field {
+        min-width: unset;
+    }
+
+    .nivel-badge {
+        font-size: 8px;
+        padding: 2px 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-links {
+        gap: 1px;
+    }
+
+    .nav-link {
+        font-size: 8px;
+        padding: 3px 6px;
+    }
+
+    .section-instruments {
+        grid-template-columns: 1fr;
+    }
+
+    .section-route {
+        grid-template-columns: 1fr;
+    }
+
+    .perfil-nivel {
+        font-size: 12px;
+        padding: 3px 12px;
+    }
+
+    .perfil-nivel-bar {
+        width: 140px;
+    }
+
+    .conquista-card {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .conquista-icone {
+        font-size: 22px;
+    }
+
+    .auth-card {
+        padding: 16px;
+    }
+}
+
+/* ===== CS GOLD / MOEDA ===== */
+.cs-gold-icon {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 3px;
+}
+
+.cs-gold-icon-lg {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.nav-brand img {
+    filter: drop-shadow(0 0 4px rgba(0, 255, 136, 0.4));
+}
+
+/* ===== CARGA CATEGORY BADGES ===== */
+.categoria-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border: 1px solid;
+}
+
+.categoria-badge-geral { border-color: #4CAF50; color: #4CAF50; background: rgba(76,175,80,0.1); }
+.categoria-badge-construcao { border-color: #FF9800; color: #FF9800; background: rgba(255,152,0,0.1); }
+.categoria-badge-granel { border-color: #8BC34A; color: #8BC34A; background: rgba(139,195,74,0.1); }
+.categoria-badge-combustiveis { border-color: #F44336; color: #F44336; background: rgba(244,67,54,0.1); }
+.categoria-badge-carga_viva { border-color: #E91E63; color: #E91E63; background: rgba(233,30,99,0.1); }
+.categoria-badge-maquinas { border-color: #9C27B0; color: #9C27B0; background: rgba(156,39,176,0.1); }
+.categoria-badge-veiculos { border-color: #2196F3; color: #2196F3; background: rgba(33,150,243,0.1); }
+.categoria-badge-desconhecida { border-color: #607D8B; color: #607D8B; background: rgba(96,125,139,0.1); }
+
+/* ===== CARGA STATUS WIDGET ===== */
+.cargo-status-widget {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #0d1117;
+    border: 1px solid #1e1e28;
+    border-radius: 10px;
+    margin-bottom: 8px;
+}
+
+.cargo-status-nome {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e0e0e0;
+    flex: 1;
+}
+
+.cargo-status-cat {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* ===== TOGGLE CATEGORIAS ===== */
+.categoria-toggle {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.categoria-toggle-btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid #1e1e28;
+    background: #0d1117;
+    color: #666;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.categoria-toggle-btn:hover {
+    border-color: #00ff88;
+    color: #00ff88;
+}
+
+.categoria-toggle-btn.active {
+    background: #00ff88;
+    color: #000;
+    border-color: #00ff88;
+}
+
+/* ===== SYNC STATUS ===== */
+.sync-status {
+    font-size: 10px;
+    color: #555;
+    text-align: center;
+    padding: 4px;
+}
+
+.sync-status.synced { color: #4CAF50; }
+.sync-status.syncing { color: #FF9800; }
+.sync-status.error { color: #F44336; }
+
+/* ===== FLOATING STATUS BUTTON ===== */
+#floating-status {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid #333;
+    background: #0d0d12;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+
+#floating-status:hover {
+    transform: scale(1.1);
+}
+
+#floating-status .fs-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #555;
+    transition: background 0.3s;
+}
+
+#floating-status.connected .fs-dot {
+    background: #00e5ff;
+    box-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+    animation: fs-pulse-cyan 2s infinite;
+}
+
+#floating-status.job-active .fs-dot {
+    background: #00ff88;
+    box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+    animation: fs-pulse-green 1s infinite;
+}
+
+#floating-status.disconnected .fs-dot {
+    background: #ff4444;
+    box-shadow: 0 0 8px rgba(255, 68, 68, 0.3);
+}
+
+@keyframes fs-pulse-cyan {
+    0%, 100% { box-shadow: 0 0 8px rgba(0, 229, 255, 0.5); }
+    50% { box-shadow: 0 0 16px rgba(0, 229, 255, 0.8); }
+}
+
+@keyframes fs-pulse-green {
+    0%, 100% { box-shadow: 0 0 8px rgba(0, 255, 136, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(0, 255, 136, 1); }
+}
+
+#floating-status .fs-tooltip {
+    position: absolute;
+    bottom: 56px;
+    right: 0;
+    background: #0d1117;
+    border: 1px solid #1e1e28;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-family: Consolas, monospace;
+    color: #e0e0e0;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+#floating-status:hover .fs-tooltip {
+    opacity: 1;
+}
+
+.fs-tooltip .fs-label {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #555;
+    margin-bottom: 2px;
+}
+
+.fs-tooltip .fs-value {
+    font-weight: 700;
+}
+
+.fs-tooltip .fs-connected { color: #00e5ff; }
+.fs-tooltip .fs-disconnected { color: #ff4444; }
+.fs-tooltip .fs-job-active { color: #00ff88; }
+.fs-tooltip .fs-job-inactive { color: #555; }
+
+/* ===== PREMIACAO - PODIO ===== */
+.premiacao-podio-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 4px 0;
+}
+
+.premiacao-trofeu-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 12px;
+    background: #0d0d12;
+    border: 1px solid #1a1a22;
+    border-radius: 12px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.3s;
+}
+
+.premiacao-trofeu-card:hover {
+    transform: translateY(-3px);
+}
+
+.prem-gold { border-color: rgba(255,215,0,0.25); }
+.prem-gold:hover { box-shadow: 0 8px 30px rgba(255,215,0,0.1); }
+
+.prem-silver { border-color: rgba(192,192,192,0.2); }
+.prem-silver:hover { box-shadow: 0 8px 30px rgba(192,192,192,0.08); }
+
+.prem-bronze { border-color: rgba(205,127,50,0.2); }
+.prem-bronze:hover { box-shadow: 0 8px 30px rgba(205,127,50,0.08); }
+
+.prem-pos-number {
+    font-size: 42px;
+    margin-bottom: 6px;
+    filter: drop-shadow(0 2px 8px rgba(255,215,0,0.2));
+}
+
+.prem-trofeu-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.prem-nome {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.prem-nivel-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.prem-stats-row {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    justify-content: center;
+}
+
+.prem-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.prem-stat-val {
+    font-size: 14px;
+    font-weight: 700;
+    color: #e0e0e0;
+}
+
+.prem-stat-lbl {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #555;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+/* ===== PREMIACAO - MEDALHAS ===== */
+.premiacao-medalhas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 4px 0;
+}
+
+.premiacao-medalha-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 10px;
+    background: #0d0d12;
+    border: 1px solid #1a1a22;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.3s;
+    position: relative;
+}
+
+.premiacao-medalha-card:hover {
+    transform: translateY(-2px);
+}
+
+.prem-locked {
+    opacity: 0.5;
+    filter: grayscale(0.6);
+}
+
+.prem-unlocked {
+    opacity: 1;
+}
+
+.prem-medalha-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    border-radius: 50%;
+    background: #1a1a22;
+    margin-bottom: 8px;
+    transition: box-shadow 0.3s;
+}
+
+.prem-medalha-titulo {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #ccc;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.prem-medalha-valor {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 6px;
+}
+
+.prem-medalha-motorista {
+    font-size: 12px;
+    font-weight: 600;
+    color: #aaa;
+}
+
+.prem-medalha-tier {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #444;
+    background: #1a1a22;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.prem-medalha-progresso {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #1e1e28;
+}
+
+.prem-medalha-bar {
+    width: 100%;
+    height: 4px;
+    background: #1a1a22;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.prem-medalha-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.5s ease;
+}
+
+.prem-medalha-bar-text {
+    font-size: 9px;
+    color: #666;
+    margin-top: 4px;
+    text-align: center;
+}
+
+/* ===== PREMIACAO - TROFEUS ESPECIAIS ===== */
+.premiacao-trofeus-especiais {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 4px 0;
+}
+
+.prem-trofeu-especial {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: #0d0d12;
+    border: 1px solid #1a1a22;
+    border-radius: 10px;
+    transition: transform 0.2s, box-shadow 0.3s;
+}
+
+.prem-trofeu-especial:hover {
+    transform: translateY(-2px);
+}
+
+.prem-trofeu-icone {
+    font-size: 32px;
+    flex-shrink: 0;
+    width: 48px;
+    text-align: center;
+}
+
+.prem-trofeu-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.prem-trofeu-titulo {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #ccc;
+    text-transform: uppercase;
+}
+
+.prem-trofeu-motorista {
+    font-size: 14px;
+    font-weight: 700;
+    color: #aaa;
+    margin-top: 2px;
+}
+
+.prem-trofeu-req {
+    font-size: 10px;
+    color: #555;
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+/* ===== PREMIACAO - TODAS AS CONQUISTAS ===== */
+.premiacao-todas-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 4px 0;
+}
+
+.premiacao-cat-section {
+    background: #0d0d12;
+    border: 1px solid #1a1a22;
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.premiacao-cat-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #ccc;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1a1a22;
+    margin-bottom: 10px;
+}
+
+.premiacao-cat-count {
+    margin-left: auto;
+    font-size: 10px;
+    font-weight: 600;
+    color: #00ff88;
+    background: rgba(0,255,136,0.08);
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+
+.premiacao-conquistas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+}
+
+.premiacao-conquista-mini {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px;
+    background: #111118;
+    border: 1px solid #1a1a22;
+    border-radius: 8px;
+    text-align: center;
+    position: relative;
+    transition: transform 0.15s;
+}
+
+.premiacao-conquista-mini:hover {
+    transform: translateY(-1px);
+}
+
+.prem-conq-locked {
+    opacity: 0.45;
+    filter: grayscale(0.5);
+}
+
+.prem-conq-unlocked {
+    opacity: 1;
+}
+
+.prem-conq-icone {
+    font-size: 22px;
+    margin-bottom: 4px;
+}
+
+.prem-conq-titulo {
+    font-size: 10px;
+    font-weight: 700;
+    color: #ccc;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.prem-conq-desc {
+    font-size: 9px;
+    color: #666;
+    margin-bottom: 6px;
+    line-height: 1.3;
+}
+
+.prem-conq-progresso {
+    width: 100%;
+}
+
+.prem-conq-bar {
+    width: 100%;
+    height: 4px;
+    background: #1a1a22;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.prem-conq-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.5s;
+}
+
+.prem-conq-bar-text {
+    font-size: 8px;
+    color: #555;
+    margin-top: 2px;
+}
+
+.prem-conq-raridade {
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
+
+.prem-conq-check {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    font-size: 10px;
+    color: #00ff88;
+    font-weight: 700;
+}
+
+.prem-conq-lock {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    font-size: 10px;
+    opacity: 0.4;
+}
+
+/* ===== EVENTO BANNER (DASHBOARD) ===== */
+#dashboard-evento-banner {
+    margin-bottom: 16px;
+}
+
+.evento-banner-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #1a0d00 0%, #2a1500 50%, #1a0d00 100%);
+    border: 1px solid #ff660040;
+    border-radius: 10px;
+    flex-wrap: wrap;
+}
+
+.evento-icone {
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
+.evento-titulo {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ff8800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.evento-desc {
+    font-size: 11px;
+    color: #aaa;
+    flex: 1;
+    min-width: 150px;
+}
+
+.evento-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #ffaa00;
+    background: rgba(255, 136, 0, 0.15);
+    padding: 2px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.evento-countdown {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ff6600;
+    font-family: Consolas, monospace;
+    background: #0d0d12;
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: 1px solid #ff660030;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .premiacao-podio-grid {
+        grid-template-columns: 1fr;
+    }
+    .premiacao-medalhas-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .premiacao-trofeus-especiais {
+        grid-template-columns: 1fr;
+    }
+    .premiacao-conquistas-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .evento-banner-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .evento-countdown {
+        align-self: flex-end;
+    }
+}

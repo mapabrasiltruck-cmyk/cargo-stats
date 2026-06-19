@@ -1,0 +1,70 @@
+{
+  "name": "cargo-stats",
+  "version": "0.1.1",
+  "description": "Cargo Stats — Telemetria ETS2/ATS",
+  "main": "main.js",
+  "author": "Cargo Stats",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "npm run rebuild:server && electron-builder",
+    "publish": "npm run rebuild:server && electron-builder --publish always",
+    "rebuild:server": "npx @electron/rebuild -m ../app -f",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "com.cargostats.app",
+    "productName": "Cargo Stats",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "build/*.png",
+      "build/*.ico",
+      "plugins/**/*",
+      "!plugins/README.md"
+    ],
+    "extraResources": [
+      {
+        "from": "../app",
+        "to": "server",
+        "filter": [
+          "**/*",
+          "!*.db*",
+          "!*.log",
+          "!uploads/**",
+          "!backups/**"
+        ]
+      }
+    ],
+    "publish": {
+      "provider": "github",
+      "owner": "mapabrasiltruck-cmyk",
+      "repo": "cargo-stats"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Cargo Stats",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico"
+    }
+  },
+  "dependencies": {
+    "electron-updater": "^6.0.0"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.0.4",
+    "electron": "^30.0.0",
+    "electron-builder": "^25.0.0"
+  }
+}
+

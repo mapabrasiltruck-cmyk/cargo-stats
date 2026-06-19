@@ -1,0 +1,1267 @@
+{
+  "_info": "Mapeamento de IDs de cargas ETS2/ATS para nomes e categorias",
+  "_categorias": [
+    "geral",
+    "quimicos",
+    "construcao",
+    "veiculos",
+    "carga_viva",
+    "maquinas",
+    "granel",
+    "a_classificar"
+  ],
+  "cargas": {
+    "acetylene": {
+      "nome": "Acetileno",
+      "categoria": "quimicos"
+    },
+    "acid": {
+      "nome": "Acido",
+      "categoria": "quimicos"
+    },
+    "aircft_tires.dlc_fr": {
+      "nome": "Pneus de Aeronave",
+      "categoria": "veiculos"
+    },
+    "aircond.dlc_trailers": {
+      "nome": "Ar Condicionado",
+      "categoria": "geral"
+    },
+    "air_mails.dlc_fr": {
+      "nome": "Correios Aereos",
+      "categoria": "geral"
+    },
+    "almond": {
+      "nome": "Amendoa",
+      "categoria": "granel"
+    },
+    "ammunition": {
+      "nome": "Municoes",
+      "categoria": "geral"
+    },
+    "apples": {
+      "nome": "Macas",
+      "categoria": "granel"
+    },
+    "apples_c.dlc_north": {
+      "nome": "Macas (Norsk)",
+      "categoria": "granel"
+    },
+    "arsenic": {
+      "nome": "Arsenico",
+      "categoria": "quimicos"
+    },
+    "asph_miller.dlc_heavy_cargo": {
+      "nome": "Moinho de Asfalto",
+      "categoria": "maquinas"
+    },
+    "atl_cod_flt.dlc_north": {
+      "nome": "Bacalhau do Atlantico",
+      "categoria": "granel"
+    },
+    "backfl_prev.dlc_fr": {
+      "nome": "Barras de Protecao",
+      "categoria": "construcao"
+    },
+    "barley.dlc_north": {
+      "nome": "Cevada",
+      "categoria": "granel"
+    },
+    "basil.dlc_fr": {
+      "nome": "Manjericao",
+      "categoria": "granel"
+    },
+    "beans": {
+      "nome": "Feijao",
+      "categoria": "granel"
+    },
+    "beef_meat": {
+      "nome": "Carne Bovina",
+      "categoria": "carga_viva"
+    },
+    "beverages": {
+      "nome": "Bebidas",
+      "categoria": "geral"
+    },
+    "beverages_c.dlc_north": {
+      "nome": "Bebidas (Norsk)",
+      "categoria": "geral"
+    },
+    "big_bag_seed": {
+      "nome": "Sementes (Big Bag)",
+      "categoria": "granel"
+    },
+    "boric_acid": {
+      "nome": "Acido Borico",
+      "categoria": "quimicos"
+    },
+    "boric_acid.dlc_fr": {
+      "nome": "Acido Borico",
+      "categoria": "quimicos"
+    },
+    "bottle_water.dlc_fr": {
+      "nome": "Agua Engarrafada",
+      "categoria": "geral"
+    },
+    "brake_fluid": {
+      "nome": "Oleo de Freio",
+      "categoria": "veiculos"
+    },
+    "brake_fluid.dlc_north": {
+      "nome": "Oleo de Freio",
+      "categoria": "veiculos"
+    },
+    "bricks": {
+      "nome": "Tijolos",
+      "categoria": "construcao"
+    },
+    "cable_reel": {
+      "nome": "Bobina de Cabo",
+      "categoria": "maquinas"
+    },
+    "cable_reel.dlc_heavy_cargo": {
+      "nome": "Bobina de Cabo",
+      "categoria": "maquinas"
+    },
+    "canned_beans": {
+      "nome": "Feijao em Lata",
+      "categoria": "geral"
+    },
+    "canned_beef.dlc_north": {
+      "nome": "Carne em Lata",
+      "categoria": "geral"
+    },
+    "canned_food": {
+      "nome": "Comida Enlatada",
+      "categoria": "geral"
+    },
+    "canned_pork.dlc_north": {
+      "nome": "Porco em Lata",
+      "categoria": "geral"
+    },
+    "canned_tuna.dlc_north": {
+      "nome": "Atum em Lata",
+      "categoria": "geral"
+    },
+    "carb_water.dlc_fr": {
+      "nome": "Agua Carbonatada",
+      "categoria": "geral"
+    },
+    "carpet": {
+      "nome": "Tapete",
+      "categoria": "geral"
+    },
+    "carrots.dlc_north": {
+      "nome": "Cenouras",
+      "categoria": "granel"
+    },
+    "carrots_c.dlc_north": {
+      "nome": "Cenouras (Norsk)",
+      "categoria": "granel"
+    },
+    "cars_fr.dlc_fr": {
+      "nome": "Carros (Francia)",
+      "categoria": "veiculos"
+    },
+    "cauliflower": {
+      "nome": "Couve-flor",
+      "categoria": "granel"
+    },
+    "caviar.dlc_north": {
+      "nome": "Caviar",
+      "categoria": "geral"
+    },
+    "cattle": {
+      "nome": "Gado",
+      "categoria": "carga_viva"
+    },
+    "cement": {
+      "nome": "Cimento",
+      "categoria": "construcao"
+    },
+    "cement_st": {
+      "nome": "Sacos de Cimento",
+      "categoria": "construcao"
+    },
+    "cheese": {
+      "nome": "Queijo",
+      "categoria": "geral"
+    },
+    "chemicals": {
+      "nome": "Quimicos",
+      "categoria": "quimicos"
+    },
+    "chem_sorbent": {
+      "nome": "Quimico Sorvente",
+      "categoria": "quimicos"
+    },
+    "chem_sorbent.dlc_north": {
+      "nome": "Quimico Sorvente",
+      "categoria": "quimicos"
+    },
+    "chem_sorb_c.dlc_north": {
+      "nome": "Quimico Sorvente (Norsk)",
+      "categoria": "quimicos"
+    },
+    "chewing_gums.dlc_fr": {
+      "nome": "Chicletes",
+      "categoria": "geral"
+    },
+    "chicken_meat.dlc_north": {
+      "nome": "Carne de Frango",
+      "categoria": "carga_viva"
+    },
+    "chimney_syst": {
+      "nome": "Sistema de Chamine",
+      "categoria": "construcao"
+    },
+    "chlorine": {
+      "nome": "Cloro",
+      "categoria": "quimicos"
+    },
+    "chocolate.dlc_fr": {
+      "nome": "Chocolate",
+      "categoria": "geral"
+    },
+    "clothes": {
+      "nome": "Roupas",
+      "categoria": "geral"
+    },
+    "clothes_c.dlc_north": {
+      "nome": "Roupas (Norsk)",
+      "categoria": "geral"
+    },
+    "coal": {
+      "nome": "Carvao",
+      "categoria": "granel"
+    },
+    "coconut_milk.dlc_fr": {
+      "nome": "Leite de Coco",
+      "categoria": "geral"
+    },
+    "coconut_oil.dlc_fr": {
+      "nome": "Oleo de Coco",
+      "categoria": "quimicos"
+    },
+    "comp_process.dlc_fr": {
+      "nome": "Computador de Processo",
+      "categoria": "geral"
+    },
+    "concentrate_juice.dlc_fr": {
+      "nome": "Suco Concentrado",
+      "categoria": "geral"
+    },
+    "concrete": {
+      "nome": "Concreto",
+      "categoria": "construcao"
+    },
+    "concrete_b": {
+      "nome": "Barras de Concreto",
+      "categoria": "construcao"
+    },
+    "concr_beams.dlc_heavy_cargo": {
+      "nome": "Vigas de Concreto",
+      "categoria": "construcao"
+    },
+    "computers": {
+      "nome": "Computadores",
+      "categoria": "geral"
+    },
+    "contamin": {
+      "nome": "Contaminado",
+      "categoria": "quimicos"
+    },
+    "cont_trees": {
+      "nome": "Arvores de Decoracao",
+      "categoria": "granel"
+    },
+    "corn": {
+      "nome": "Milho",
+      "categoria": "granel"
+    },
+    "copp_rf_gutt": {
+      "nome": "Calha de Cobre",
+      "categoria": "construcao"
+    },
+    "corks.dlc_fr": {
+      "nome": "Rolhas",
+      "categoria": "geral"
+    },
+    "cott_cheese.dlc_north": {
+      "nome": "Queijo Cottage",
+      "categoria": "geral"
+    },
+    "crane_cap": {
+      "nome": "Capacidade de Guindaste",
+      "categoria": "maquinas"
+    },
+    "crawler_tr": {
+      "nome": "Trator de Esteira",
+      "categoria": "maquinas"
+    },
+    "crude_oil": {
+      "nome": "Petroleo Cru",
+      "categoria": "quimicos"
+    },
+    "cut_flowers.dlc_fr": {
+      "nome": "Flores Cortadas",
+      "categoria": "carga_viva"
+    },
+    "cyanide": {
+      "nome": "Cianeto",
+      "categoria": "quimicos"
+    },
+    "desinfection.dlc_north": {
+      "nome": "Desinfetante",
+      "categoria": "quimicos"
+    },
+    "diesel": {
+      "nome": "Diesel",
+      "categoria": "quimicos"
+    },
+    "diesel_gen.dlc_fr": {
+      "nome": "Gerador Diesel",
+      "categoria": "maquinas"
+    },
+    "digger1000": {
+      "nome": "Escavadeira 1000",
+      "categoria": "maquinas"
+    },
+    "digger500": {
+      "nome": "Escavadeira 500",
+      "categoria": "maquinas"
+    },
+    "diggers": {
+      "nome": "Escavadeiras",
+      "categoria": "maquinas"
+    },
+    "dozer": {
+      "nome": "Bulldozer",
+      "categoria": "maquinas"
+    },
+    "dozer.dlc_heavy_cargo": {
+      "nome": "Bulldozer",
+      "categoria": "maquinas"
+    },
+    "dril_equip": {
+      "nome": "Equipamento de Furadeira",
+      "categoria": "maquinas"
+    },
+    "driller.dlc_trailers": {
+      "nome": "Furadeira",
+      "categoria": "maquinas"
+    },
+    "dryers": {
+      "nome": "Secadores",
+      "categoria": "maquinas"
+    },
+    "drymilk": {
+      "nome": "Leite em Po",
+      "categoria": "geral"
+    },
+    "dynamite": {
+      "nome": "Dinamite",
+      "categoria": "quimicos"
+    },
+    "electronics": {
+      "nome": "Eletronicos",
+      "categoria": "geral"
+    },
+    "elect_wiring.dlc_north": {
+      "nome": "Fiação Eletrica",
+      "categoria": "construcao"
+    },
+    "emptytank": {
+      "nome": "Tanque Vazio",
+      "categoria": "geral"
+    },
+    "empty_barr.dlc_north": {
+      "nome": "Barris Vazios",
+      "categoria": "geral"
+    },
+    "empty_palet": {
+      "nome": "Pallet Vazio",
+      "categoria": "geral"
+    },
+    "emp_wine_bar.dlc_fr": {
+      "nome": "Barril de Vinho",
+      "categoria": "geral"
+    },
+    "emp_wine_bot.dlc_fr": {
+      "nome": "Garrafas de Vinho",
+      "categoria": "geral"
+    },
+    "excavator": {
+      "nome": "Escavadeira",
+      "categoria": "maquinas"
+    },
+    "excav_soil.dlc_fr": {
+      "nome": "Terra de Escavacao",
+      "categoria": "construcao"
+    },
+    "explosives": {
+      "nome": "Explosivos",
+      "categoria": "quimicos"
+    },
+    "fertilizer": {
+      "nome": "Fertilizante",
+      "categoria": "granel"
+    },
+    "fireworks": {
+      "nome": "Fogos de Artificio",
+      "categoria": "quimicos"
+    },
+    "fish_chips.dlc_north": {
+      "nome": "Peixe com Batata",
+      "categoria": "geral"
+    },
+    "floorpanels": {
+      "nome": "Paineis de Piso",
+      "categoria": "construcao"
+    },
+    "flour": {
+      "nome": "Farinha",
+      "categoria": "granel"
+    },
+    "fluorine": {
+      "nome": "Fluor",
+      "categoria": "quimicos"
+    },
+    "forklift": {
+      "nome": "Empilhadeira",
+      "categoria": "maquinas"
+    },
+    "forklifts": {
+      "nome": "Empilhadeiras",
+      "categoria": "maquinas"
+    },
+    "fresh_fish.dlc_north": {
+      "nome": "Peixe Fresco",
+      "categoria": "carga_viva"
+    },
+    "frozen_food": {
+      "nome": "Comida Congelada",
+      "categoria": "geral"
+    },
+    "frozen_hake.dlc_north": {
+      "nome": "Merluza Congelada",
+      "categoria": "carga_viva"
+    },
+    "fueltanker": {
+      "nome": "Tanque de Combustivel",
+      "categoria": "quimicos"
+    },
+    "fuel_oil.dlc_fr": {
+      "nome": "Oleo Combustivel",
+      "categoria": "quimicos"
+    },
+    "fuel_tanks.dlc_north": {
+      "nome": "Tanques de Combustivel",
+      "categoria": "quimicos"
+    },
+    "furniture": {
+      "nome": "Moveis",
+      "categoria": "geral"
+    },
+    "garlic.dlc_north": {
+      "nome": "Alho",
+      "categoria": "granel"
+    },
+    "gasoline": {
+      "nome": "Gasolina",
+      "categoria": "quimicos"
+    },
+    "glass": {
+      "nome": "Vidro",
+      "categoria": "construcao"
+    },
+    "glass_packed": {
+      "nome": "Vidro Embalado",
+      "categoria": "construcao"
+    },
+    "goat_cheese": {
+      "nome": "Queijo de Cabra",
+      "categoria": "geral"
+    },
+    "granite_cube.dlc_fr": {
+      "nome": "Cubo de Granito",
+      "categoria": "construcao"
+    },
+    "grapes": {
+      "nome": "Uvas",
+      "categoria": "granel"
+    },
+    "grain": {
+      "nome": "Graos",
+      "categoria": "granel"
+    },
+    "graph_grease": {
+      "nome": "Graxa de Grafite",
+      "categoria": "quimicos"
+    },
+    "grass_rolls": {
+      "nome": "Rolos de Grama",
+      "categoria": "carga_viva"
+    },
+    "gravel": {
+      "nome": "Cascalho",
+      "categoria": "granel"
+    },
+    "guard_rails.dlc_north": {
+      "nome": "Guarda-Corpos",
+      "categoria": "construcao"
+    },
+    "gummy_bears.dlc_fr": {
+      "nome": "Jelly Beans",
+      "categoria": "geral"
+    },
+    "harvest_bins.dlc_fr": {
+      "nome": "Caixas de Colheita",
+      "categoria": "granel"
+    },
+    "hay": {
+      "nome": "Feno",
+      "categoria": "granel"
+    },
+    "hchemicals": {
+      "nome": "Quimicos Perigosos",
+      "categoria": "quimicos"
+    },
+    "helicopter.dlc_trailers": {
+      "nome": "Helicoptero",
+      "categoria": "veiculos"
+    },
+    "hipresstank": {
+      "nome": "Tanque de Alta Pressao",
+      "categoria": "quimicos"
+    },
+    "hi_volt_cabl.dlc_fr": {
+      "nome": "Cabo de Alta Tensao",
+      "categoria": "construcao"
+    },
+    "hmetal": {
+      "nome": "Metal Pesado",
+      "categoria": "construcao"
+    },
+    "honey": {
+      "nome": "Mel",
+      "categoria": "geral"
+    },
+    "hwaste": {
+      "nome": "Residuos Perigosos",
+      "categoria": "quimicos"
+    },
+    "hydrochlor": {
+      "nome": "Acido Cloridrico",
+      "categoria": "quimicos"
+    },
+    "hydrogen": {
+      "nome": "Hidrogenio",
+      "categoria": "quimicos"
+    },
+    "ibc_cont.dlc_north": {
+      "nome": "Contenedor IBC",
+      "categoria": "quimicos"
+    },
+    "ice_cream": {
+      "nome": "Sorvete",
+      "categoria": "geral"
+    },
+    "icecream": {
+      "nome": "Sorvete",
+      "categoria": "geral"
+    },
+    "iced_coffee.dlc_fr": {
+      "nome": "Cafe Gelado",
+      "categoria": "geral"
+    },
+    "iron_pipes": {
+      "nome": "Tubos de Ferro",
+      "categoria": "construcao"
+    },
+    "kerosene": {
+      "nome": "Querosene",
+      "categoria": "quimicos"
+    },
+    "ketchup": {
+      "nome": "Ketchup",
+      "categoria": "geral"
+    },
+    "lamb_stom.dlc_north": {
+      "nome": "Estomago de Cordeiro",
+      "categoria": "carga_viva"
+    },
+    "largetubes": {
+      "nome": "Tubos Grandes",
+      "categoria": "construcao"
+    },
+    "lavender.dlc_fr": {
+      "nome": "Lavanda",
+      "categoria": "carga_viva"
+    },
+    "lead": {
+      "nome": "Chumbo",
+      "categoria": "quimicos"
+    },
+    "limonades.dlc_fr": {
+      "nome": "Limonada",
+      "categoria": "geral"
+    },
+    "live_cattle": {
+      "nome": "Gado Vivo",
+      "categoria": "carga_viva"
+    },
+    "live_cattle.dlc_north": {
+      "nome": "Gado Vivo",
+      "categoria": "carga_viva"
+    },
+    "live_catt_fr.dlc_fr": {
+      "nome": "Gado Vivo (Francia)",
+      "categoria": "carga_viva"
+    },
+    "liver_paste.dlc_north": {
+      "nome": "Pasta de Figado",
+      "categoria": "geral"
+    },
+    "locomotive.dlc_heavy_cargo": {
+      "nome": "Locomotiva",
+      "categoria": "maquinas"
+    },
+    "logs": {
+      "nome": "Toras",
+      "categoria": "granel"
+    },
+    "lpg": {
+      "nome": "Gas LP",
+      "categoria": "quimicos"
+    },
+    "lumber": {
+      "nome": "Madeira",
+      "categoria": "construcao"
+    },
+    "magnesium": {
+      "nome": "Magnesio",
+      "categoria": "quimicos"
+    },
+    "maple_syrup": {
+      "nome": "Xarope de Bordo",
+      "categoria": "geral"
+    },
+    "mason_jars": {
+      "nome": "Vasos de Mason",
+      "categoria": "geral"
+    },
+    "meat": {
+      "nome": "Carne",
+      "categoria": "carga_viva"
+    },
+    "med_equip.dlc_fr": {
+      "nome": "Equipamento Medico",
+      "categoria": "geral"
+    },
+    "med_vaccine.dlc_fr": {
+      "nome": "Vacinas Medicas",
+      "categoria": "geral"
+    },
+    "mercuric": {
+      "nome": "Mercurio",
+      "categoria": "quimicos"
+    },
+    "mercury": {
+      "nome": "Mercurio",
+      "categoria": "quimicos"
+    },
+    "metal_cans.dlc_north": {
+      "nome": "Latas de Metal",
+      "categoria": "geral"
+    },
+    "metal_center.dlc_heavy_cargo": {
+      "nome": "Centro Metalico",
+      "categoria": "maquinas"
+    },
+    "milk": {
+      "nome": "Leite",
+      "categoria": "geral"
+    },
+    "milling_m": {
+      "nome": "Maquina de Moagem",
+      "categoria": "maquinas"
+    },
+    "mobile_crane.dlc_heavy_cargo": {
+      "nome": "Guindaste Movel",
+      "categoria": "maquinas"
+    },
+    "mondeos": {
+      "nome": "Ford Mondeo",
+      "categoria": "veiculos"
+    },
+    "motor_oil": {
+      "nome": "Oleo de Motor",
+      "categoria": "veiculos"
+    },
+    "motor_oil.dlc_north": {
+      "nome": "Oleo de Motor",
+      "categoria": "veiculos"
+    },
+    "motor_oil_c.dlc_north": {
+      "nome": "Oleo de Motor (Norsk)",
+      "categoria": "veiculos"
+    },
+    "natur_rubber.dlc_fr": {
+      "nome": "Borracha Natural",
+      "categoria": "geral"
+    },
+    "neon": {
+      "nome": "Neon",
+      "categoria": "quimicos"
+    },
+    "nitrocel": {
+      "nome": "Nitrocelulose",
+      "categoria": "quimicos"
+    },
+    "nitrogen": {
+      "nome": "Nitrogenio",
+      "categoria": "quimicos"
+    },
+    "nonalco_beer.dlc_fr": {
+      "nome": "Cerveja sem Alcool",
+      "categoria": "geral"
+    },
+    "nylon_cord.dlc_fr": {
+      "nome": "Corda de Nylon",
+      "categoria": "geral"
+    },
+    "office_suppl": {
+      "nome": "Material de Escritorio",
+      "categoria": "geral"
+    },
+    "oil": {
+      "nome": "Oleo",
+      "categoria": "quimicos"
+    },
+    "oil_filters": {
+      "nome": "Filtros de Oleo",
+      "categoria": "veiculos"
+    },
+    "oil_filters.dlc_north": {
+      "nome": "Filtros de Oleo",
+      "categoria": "veiculos"
+    },
+    "oil_filt_c.dlc_north": {
+      "nome": "Filtros de Oleo (Norsk)",
+      "categoria": "veiculos"
+    },
+    "olives.dlc_fr": {
+      "nome": "Azeitonas",
+      "categoria": "granel"
+    },
+    "onion": {
+      "nome": "Cebola",
+      "categoria": "granel"
+    },
+    "onion.dlc_north": {
+      "nome": "Cebola",
+      "categoria": "granel"
+    },
+    "oranges": {
+      "nome": "Laranjas",
+      "categoria": "granel"
+    },
+    "ore": {
+      "nome": "Minerio",
+      "categoria": "granel"
+    },
+    "outdr_flr_tl": {
+      "nome": "Ferramentas de Piso",
+      "categoria": "construcao"
+    },
+    "overweight": {
+      "nome": "Sobrecarga",
+      "categoria": "geral"
+    },
+    "packag_food.dlc_fr": {
+      "nome": "Comida Embalada",
+      "categoria": "geral"
+    },
+    "packag_food": {
+      "nome": "Comida Embalada",
+      "categoria": "geral"
+    },
+    "paper": {
+      "nome": "Papel",
+      "categoria": "geral"
+    },
+    "pears.dlc_north": {
+      "nome": "Peras",
+      "categoria": "granel"
+    },
+    "peas": {
+      "nome": "Ervilhas",
+      "categoria": "granel"
+    },
+    "pesticide": {
+      "nome": "Pesticida",
+      "categoria": "quimicos"
+    },
+    "pet Food": {
+      "nome": "Racao Animal",
+      "categoria": "carga_viva"
+    },
+    "pet_food": {
+      "nome": "Racao Animal",
+      "categoria": "carga_viva"
+    },
+    "pet_food.dlc_north": {
+      "nome": "Racao Animal",
+      "categoria": "carga_viva"
+    },
+    "pet_food_c.dlc_north": {
+      "nome": "Racao Animal (Norsk)",
+      "categoria": "carga_viva"
+    },
+    "petrol": {
+      "nome": "Petroleo",
+      "categoria": "quimicos"
+    },
+    "phosphor": {
+      "nome": "Fosforo",
+      "categoria": "quimicos"
+    },
+    "plant_substr": {
+      "nome": "Substrato para Plantas",
+      "categoria": "carga_viva"
+    },
+    "plastic_gra": {
+      "nome": "Plastico Granulado",
+      "categoria": "geral"
+    },
+    "plast_film.dlc_north": {
+      "nome": "Filme Plastico",
+      "categoria": "geral"
+    },
+    "plast_film_c.dlc_north": {
+      "nome": "Filme Plastico (Norsk)",
+      "categoria": "geral"
+    },
+    "plows": {
+      "nome": "Arados",
+      "categoria": "maquinas"
+    },
+    "plumb_suppl.dlc_north": {
+      "nome": "Suprimentos de Hidraulica",
+      "categoria": "construcao"
+    },
+    "plums": {
+      "nome": "Ameixas",
+      "categoria": "granel"
+    },
+    "pnut_butter": {
+      "nome": "Pasta de Amendoim",
+      "categoria": "geral"
+    },
+    "polyst_box.dlc_north": {
+      "nome": "Caixa de Poliestireno",
+      "categoria": "geral"
+    },
+    "pork_meat.dlc_north": {
+      "nome": "Carne Suina",
+      "categoria": "carga_viva"
+    },
+    "post_packag.dlc_fr": {
+      "nome": "Pacotes Postais",
+      "categoria": "geral"
+    },
+    "potahydro": {
+      "nome": "Hidroxido de Potassio",
+      "categoria": "quimicos"
+    },
+    "potassium": {
+      "nome": "Potassio",
+      "categoria": "quimicos"
+    },
+    "potatoes": {
+      "nome": "Batatas",
+      "categoria": "granel"
+    },
+    "pot_flowers.dlc_north": {
+      "nome": "Flores em Vaso",
+      "categoria": "carga_viva"
+    },
+    "precast_strs": {
+      "nome": "Estruturas Prefabricadas",
+      "categoria": "construcao"
+    },
+    "press_sl_val.dlc_fr": {
+      "nome": "Valvulas de Pressao",
+      "categoria": "maquinas"
+    },
+    "protec_cloth.dlc_fr": {
+      "nome": "Roupa de Protecao",
+      "categoria": "geral"
+    },
+    "pumps.dlc_fr": {
+      "nome": "Bombas",
+      "categoria": "maquinas"
+    },
+    "radiators.dlc_north": {
+      "nome": "Radiadores",
+      "categoria": "construcao"
+    },
+    "refl_posts.dlc_north": {
+      "nome": "Postos Refletivos",
+      "categoria": "construcao"
+    },
+    "rice": {
+      "nome": "Arroz",
+      "categoria": "granel"
+    },
+    "rice_c.dlc_north": {
+      "nome": "Arroz (Norsk)",
+      "categoria": "granel"
+    },
+    "roller.dlc_trailers": {
+      "nome": "Rolo Compactador",
+      "categoria": "maquinas"
+    },
+    "roofing_felt": {
+      "nome": "Manta de Telhado",
+      "categoria": "construcao"
+    },
+    "rooflights": {
+      "nome": "Luzes de Telhado",
+      "categoria": "construcao"
+    },
+    "roof_tiles": {
+      "nome": "Telhas",
+      "categoria": "construcao"
+    },
+    "rye.dlc_north": {
+      "nome": "Centeio",
+      "categoria": "granel"
+    },
+    "salm_fillet.dlc_north": {
+      "nome": "Filete de Salmao",
+      "categoria": "carga_viva"
+    },
+    "salt_spices.dlc_north": {
+      "nome": "Sal e Especiarias",
+      "categoria": "geral"
+    },
+    "salt_spice_c.dlc_north": {
+      "nome": "Sal e Especiarias (Norsk)",
+      "categoria": "geral"
+    },
+    "sand": {
+      "nome": "Areia",
+      "categoria": "granel"
+    },
+    "sandwch_pnls": {
+      "nome": "Paineis Sanduiche",
+      "categoria": "construcao"
+    },
+    "sausages.dlc_north": {
+      "nome": "Linguiças",
+      "categoria": "geral"
+    },
+    "sawpanels": {
+      "nome": "Paineis Serrados",
+      "categoria": "construcao"
+    },
+    "scaffoldings": {
+      "nome": "Andaimes",
+      "categoria": "construcao"
+    },
+    "scaffoldings.dlc_north": {
+      "nome": "Andaimes",
+      "categoria": "construcao"
+    },
+    "scania_tr.dlc_north": {
+      "nome": "Scania R",
+      "categoria": "veiculos"
+    },
+    "scrap": {
+      "nome": "Sucata",
+      "categoria": "granel"
+    },
+    "scrap_metals.dlc_north": {
+      "nome": "Sucata Metalica",
+      "categoria": "granel"
+    },
+    "sheep_wool.dlc_north": {
+      "nome": "La de Ovelha",
+      "categoria": "carga_viva"
+    },
+    "shock_absorb.dlc_north": {
+      "nome": "Amortecedores",
+      "categoria": "veiculos"
+    },
+    "silica.dlc_fr": {
+      "nome": "Silica",
+      "categoria": "quimicos"
+    },
+    "smokd_eel.dlc_north": {
+      "nome": "Enguia Fumada",
+      "categoria": "carga_viva"
+    },
+    "smokd_sprats.dlc_north": {
+      "nome": "Sardinha Fumada",
+      "categoria": "carga_viva"
+    },
+    "sodchlor": {
+      "nome": "Cloreto de Sodio",
+      "categoria": "quimicos"
+    },
+    "sodhydro": {
+      "nome": "Hidroxido de Sodio",
+      "categoria": "quimicos"
+    },
+    "sodium": {
+      "nome": "Sodio",
+      "categoria": "quimicos"
+    },
+    "soy_milk.dlc_fr": {
+      "nome": "Leite de Soja",
+      "categoria": "geral"
+    },
+    "spher_valves.dlc_fr": {
+      "nome": "Valvulas Esfericas",
+      "categoria": "maquinas"
+    },
+    "steel_cord.dlc_fr": {
+      "nome": "Cabo de Aco",
+      "categoria": "construcao"
+    },
+    "stones.dlc_fr": {
+      "nome": "Pedras",
+      "categoria": "construcao"
+    },
+    "stone_dust.dlc_north": {
+      "nome": "Poeira de Pedra",
+      "categoria": "construcao"
+    },
+    "stone_wool.dlc_north": {
+      "nome": "La de Pedra",
+      "categoria": "construcao"
+    },
+    "straw_bales": {
+      "nome": "Fardos de Palha",
+      "categoria": "granel"
+    },
+    "sugar": {
+      "nome": "Acucar",
+      "categoria": "granel"
+    },
+    "sulfuric": {
+      "nome": "Acido Sulfurico",
+      "categoria": "quimicos"
+    },
+    "tableware": {
+      "nome": "Louca",
+      "categoria": "geral"
+    },
+    "tarp_carb": {
+      "nome": "Lona de Carbono",
+      "categoria": "construcao"
+    },
+    "tomatoes": {
+      "nome": "Tomates",
+      "categoria": "granel"
+    },
+    "toys": {
+      "nome": "Brinquedos",
+      "categoria": "geral"
+    },
+    "tracks.dlc_trailers": {
+      "nome": "Trilhos",
+      "categoria": "maquinas"
+    },
+    "tractor": {
+      "nome": "Trator",
+      "categoria": "maquinas"
+    },
+    "tractor.dlc_trailers": {
+      "nome": "Trator",
+      "categoria": "maquinas"
+    },
+    "tractors": {
+      "nome": "Tratores",
+      "categoria": "maquinas"
+    },
+    "transformer": {
+      "nome": "Transformador",
+      "categoria": "maquinas"
+    },
+    "transformat.dlc_heavy_cargo": {
+      "nome": "Transformador de Potencia",
+      "categoria": "maquinas"
+    },
+    "transmis.dlc_north": {
+      "nome": "Transmissao",
+      "categoria": "veiculos"
+    },
+    "truck_batt": {
+      "nome": "Bateria de Caminhao",
+      "categoria": "veiculos"
+    },
+    "truck_batt.dlc_north": {
+      "nome": "Bateria de Caminhao",
+      "categoria": "veiculos"
+    },
+    "truck_batt_c.dlc_north": {
+      "nome": "Bateria de Caminhao (Norsk)",
+      "categoria": "veiculos"
+    },
+    "truck_rims": {
+      "nome": "Aros de Caminhao",
+      "categoria": "veiculos"
+    },
+    "truck_rims.dlc_north": {
+      "nome": "Aros de Caminhao",
+      "categoria": "veiculos"
+    },
+    "truck_rims_c.dlc_north": {
+      "nome": "Aros de Caminhao (Norsk)",
+      "categoria": "veiculos"
+    },
+    "truck_tyres": {
+      "nome": "Pneus de Caminhao",
+      "categoria": "veiculos"
+    },
+    "truck_tyres.dlc_north": {
+      "nome": "Pneus de Caminhao",
+      "categoria": "veiculos"
+    },
+    "tube.dlc_trailers": {
+      "nome": "Tubos",
+      "categoria": "construcao"
+    },
+    "tubes": {
+      "nome": "Tubos",
+      "categoria": "construcao"
+    },
+    "tyres": {
+      "nome": "Pneus",
+      "categoria": "veiculos"
+    },
+    "used_battery": {
+      "nome": "Bateria Usada",
+      "categoria": "veiculos"
+    },
+    "used_packag": {
+      "nome": "Embalagens Usadas",
+      "categoria": "geral"
+    },
+    "used_plast.dlc_north": {
+      "nome": "Plastico Usado",
+      "categoria": "geral"
+    },
+    "used_plast_c.dlc_north": {
+      "nome": "Plastico Usado (Norsk)",
+      "categoria": "geral"
+    },
+    "vent_tube": {
+      "nome": "Tubo de Ventilacao",
+      "categoria": "construcao"
+    },
+    "vinegar.dlc_north": {
+      "nome": "Vinagre",
+      "categoria": "geral"
+    },
+    "vinegar_c.dlc_north": {
+      "nome": "Vinagre (Norsk)",
+      "categoria": "geral"
+    },
+    "volvo_cars.dlc_north": {
+      "nome": "Carros Volvo",
+      "categoria": "veiculos"
+    },
+    "volvo_tr.dlc_north": {
+      "nome": "Caminhao Volvo",
+      "categoria": "veiculos"
+    },
+    "wallpanels": {
+      "nome": "Paineis de Parede",
+      "categoria": "construcao"
+    },
+    "w_turbine": {
+      "nome": "Turbina Eolica",
+      "categoria": "maquinas"
+    },
+    "watermelons": {
+      "nome": "Melancias",
+      "categoria": "granel"
+    },
+    "wheat": {
+      "nome": "Trigo",
+      "categoria": "granel"
+    },
+    "wheat.dlc_north": {
+      "nome": "Trigo",
+      "categoria": "granel"
+    },
+    "windml_eng.dlc_north": {
+      "nome": "Motor de Eolica",
+      "categoria": "maquinas"
+    },
+    "windml_tube.dlc_north": {
+      "nome": "Tubo de Eolica",
+      "categoria": "maquinas"
+    },
+    "wood_bark": {
+      "nome": "Casca de Madeira",
+      "categoria": "construcao"
+    },
+    "wood_bark.dlc_north": {
+      "nome": "Casca de Madeira",
+      "categoria": "construcao"
+    },
+    "wooden_beams.dlc_north": {
+      "nome": "Vigas de Madeira",
+      "categoria": "construcao"
+    },
+    "wshavings": {
+      "nome": "Lascas de Madeira",
+      "categoria": "construcao"
+    },
+    "yacht": {
+      "nome": "Iate",
+      "categoria": "veiculos"
+    },
+    "yacht.dlc_trailers": {
+      "nome": "Iate",
+      "categoria": "veiculos"
+    },
+    "yogurt": {
+      "nome": "Iogurte",
+      "categoria": "geral"
+    },
+    "young_seed": {
+      "nome": "Mudas Jovens",
+      "categoria": "carga_viva"
+    },
+    "borates": {
+      "nome": "Boratos",
+      "categoria": "granel"
+    },
+    "cars_pick_cr": {
+      "nome": "Picapes",
+      "categoria": "veiculos"
+    },
+    "truck_medium": {
+      "nome": "Picape",
+      "categoria": "veiculos"
+    },
+    "frozen_veget": {
+      "nome": "Vegetais Congelados",
+      "categoria": "geral"
+    },
+    "driller": {
+      "nome": "Perfuratriz D-50",
+      "categoria": "maquinas"
+    },
+    "moving_cont": {
+      "nome": "Contêineres de mudança",
+      "categoria": "geral"
+    }
+  }
+}
