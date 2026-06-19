@@ -1,6 +1,6 @@
 {
   "name": "cargo-stats",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Cargo Stats — Telemetria ETS2/ATS",
   "main": "main.js",
   "author": "Cargo Stats",
@@ -23,6 +23,9 @@
       "preload.js",
       "build/*.png",
       "build/*.ico"
+    ],
+    "asarUnpack": [
+      "plugins/**"
     ],
     "extraResources": [
       {

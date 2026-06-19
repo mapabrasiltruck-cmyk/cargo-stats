@@ -150,7 +150,75 @@ function installGamePlugin() {
     }
 }
 
+function checkDotNetVersion() {
+    try {
+        const result = require('child_process').execSync(
+            'reg query "HKLM\\SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full" /v Release',
+            { encoding: 'utf8', timeout: 5000, stdio: ['pipe', 'pipe', 'ignore'] }
+        );
+        const match = result.match(/Release\s+REG_DWORD\s+0x([0-9a-f]+)/i);
+        if (match) {
+            const release = parseInt(match[1], 16);
+            const versions = [
+                { min: 528040, label: '4.8' },
+                { min: 461808, label: '4.7.2' },
+                { min: 461308, label: '4.7.1' },
+                { min: 460798, label: '4.7' },
+                { min: 394802, label: '4.6.2' },
+                { min: 394254, label: '4.6.1' },
+                { min: 393295, label: '4.6' },
+                { min: 379893, label: '4.5.2' },
+                { min: 378675, label: '4.5.1' },
+                { min: 378389, label: '4.5' }
+            ];
+            for (const v of versions) {
+                if (release >= v.min) return { installed: true, version: v.label, release };
+            }
+            return { installed: true, version: '4.x+', release };
+        }
+    } catch (e) {
+        return { installed: false, version: null, error: e.message };
+    }
+    return { installed: false, version: null, error: 'Chave de registro nao encontrada' };
+}
+
+function copyFolderSync(src, dest) {
+    if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
+    const entries = fs.readdirSync(src, { withFileTypes: true });
+    for (const entry of entries) {
+        const srcPath = path.join(src, entry.name);
+        const destPath = path.join(dest, entry.name);
+        if (entry.isDirectory()) {
+            copyFolderSync(srcPath, destPath);
+        } else {
+            fs.copyFileSync(srcPath, destPath);
+        }
+    }
+}
+
+function extractPluginsIfNeeded() {
+    const pluginsDir = getPluginsDir();
+    const exePath = path.join(pluginsDir, 'Ets2Telemetry.exe');
+    if (fs.existsSync(exePath)) return;
+    const srcPlugins = path.join(__dirname, 'plugins');
+    if (fs.existsSync(srcPlugins)) {
+        console.log('[TELEMETRY] Extraindo plugins de', srcPlugins, 'para', pluginsDir);
+        try {
+            copyFolderSync(srcPlugins, pluginsDir);
+            console.log('[TELEMETRY] Plugins extraidos com sucesso');
+        } catch (e) {
+            console.log('[TELEMETRY] Falha ao extrair plugins:', e.message);
+        }
+    }
+}
+
 function startTelemetryServer() {
+    extractPluginsIfNeeded();
+    const dotnet = checkDotNetVersion();
+    console.log('[TELEMETRY] .NET Framework:', dotnet.installed ? dotnet.version : 'AUSENTE');
+    if (!dotnet.installed) {
+        console.log('[TELEMETRY] .NET Framework 4.5+ necessario. Instale em: https://dotnet.microsoft.com/download/dotnet-framework');
+    }
     const telemetryExe = path.join(getPluginsDir(), 'Ets2Telemetry.exe');
     const telemetryDir = getPluginsDir();
     console.log('[TELEMETRY] Procurando em:', telemetryExe);
@@ -287,6 +355,26 @@ app.on('before-quit', () => {
 ipcMain.handle('get-telemetry-status', () => {
     const running = telemetryProcess !== null && !telemetryProcess.killed;
     return { running, pid: running ? telemetryProcess.pid : null };
+});
+
+ipcMain.handle('get-diagnostics', () => {
+    const dotnet = checkDotNetVersion();
+    const pluginsDir = getPluginsDir();
+    const exePath = path.join(pluginsDir, 'Ets2Telemetry.exe');
+    return {
+        dotnet,
+        plugins: {
+            path: pluginsDir,
+            exists: fs.existsSync(pluginsDir),
+            exeExists: fs.existsSync(exePath)
+        },
+        telemetry: {
+            running: telemetryProcess !== null && !telemetryProcess.killed,
+            pid: telemetryProcess && !telemetryProcess.killed ? telemetryProcess.pid : null
+        },
+        isDev: isDev(),
+        version: app.getVersion()
+    };
 });
 
 app.whenReady().then(async () => {
