@@ -21,6 +21,7 @@
     "files": [
       "main.js",
       "preload.js",
+      "steam-auth.js",
       "build/*.png",
       "build/*.ico"
     ],
