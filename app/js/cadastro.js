@@ -29,6 +29,13 @@ async function init() {
                 <div id="form-area"></div>
                 <div id="cadastro-error" class="auth-error"></div>
                 <div id="cadastro-success" class="auth-success"></div>
+                <div class="auth-divider" id="steam-divider"><span>ou</span></div>
+                <button id="btn-steam-login" class="auth-btn-steam">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:middle;">
+                        <path d="M12 2C6.48 2 2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.95c5.05-.5 9-4.76 9-9.95 0-5.52-4.48-10-10-10z"/>
+                    </svg>
+                    Criar conta com Steam
+                </button>
                 <div class="auth-footer">
                     Ja tem conta? <a href="login_local.html">Entrar</a>
                 </div>
@@ -155,6 +162,79 @@ async function cadastrarLobo(e) {
     } catch (err) {
         errorDiv.textContent = 'Erro de conexao com o servidor';
     }
+}
+
+async function handleSteamLogin() {
+    const errorDiv = document.getElementById('cadastro-error');
+    const successDiv = document.getElementById('cadastro-success');
+    errorDiv.textContent = '';
+    successDiv.textContent = '';
+    const btnSteam = document.getElementById('btn-steam-login');
+    btnSteam.disabled = true;
+    btnSteam.textContent = 'Abrindo Steam...';
+
+    try {
+        const result = await window.cargoStats.steamLogin();
+        if (!result.success) {
+            if (result.error && result.error.includes('fechada')) {
+                btnSteam.disabled = false;
+                btnSteam.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:middle;"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.95c5.05-.5 9-4.76 9-9.95 0-5.52-4.48-10-10-10z"/></svg> Criar conta com Steam';
+                return;
+            }
+            errorDiv.textContent = result.error || 'Erro ao autenticar com Steam';
+            btnSteam.disabled = false;
+            btnSteam.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:middle;"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.95c5.05-.5 9-4.76 9-9.95 0-5.52-4.48-10-10-10z"/></svg> Criar conta com Steam';
+            return;
+        }
+
+        btnSteam.textContent = 'Conectando...';
+
+        const response = await fetch('/api/auth/steam', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                steam_id: result.steam_id,
+                nome: result.nome,
+                avatar: result.avatar
+            })
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+            errorDiv.textContent = data.error || 'Erro ao criar conta Steam';
+            btnSteam.disabled = false;
+            btnSteam.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:middle;"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.95c5.05-.5 9-4.76 9-9.95 0-5.52-4.48-10-10-10z"/></svg> Criar conta com Steam';
+            return;
+        }
+
+        setAuth(data.token, data.user);
+        if (window.cargoStats) {
+            window.cargoStats.saveCredentials({ email: data.user.email, token: data.token, user: data.user });
+        }
+
+        successDiv.textContent = 'Conta criada via Steam! Redirecionando...';
+        setTimeout(() => {
+            if (data.user.empresa) {
+                window.location.href = 'empresa_local.html?empresa=' + encodeURIComponent(data.user.empresa);
+            } else {
+                window.location.href = 'perfil_local.html?motorista=' + encodeURIComponent(data.user.nome);
+            }
+        }, 1500);
+    } catch (err) {
+        errorDiv.textContent = 'Erro de conexao com o servidor';
+        btnSteam.disabled = false;
+        btnSteam.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:middle;"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.95c5.05-.5 9-4.76 9-9.95 0-5.52-4.48-10-10-10z"/></svg> Criar conta com Steam';
+    }
+}
+
+// Steam Login Button (only in Electron)
+const btnSteamCadastro = document.getElementById('btn-steam-login');
+const steamDividerCadastro = document.getElementById('steam-divider');
+if (btnSteamCadastro && window.cargoStats && window.cargoStats.steamLogin) {
+    btnSteamCadastro.addEventListener('click', handleSteamLogin);
+} else if (btnSteamCadastro) {
+    btnSteamCadastro.style.display = 'none';
+    if (steamDividerCadastro) steamDividerCadastro.style.display = 'none';
 }
 
 init();

@@ -39,6 +39,15 @@ async function init() {
                 <div id="login-error" class="auth-error"></div>
                 <button type="submit" class="auth-btn">ENTRAR</button>
             </form>
+            <div class="auth-divider" id="steam-divider">
+                <span>ou</span>
+            </div>
+            <button id="btn-steam-login" class="auth-btn-steam">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:middle;">
+                    <path d="M12 2C6.48 2 2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.95c5.05-.5 9-4.76 9-9.95 0-5.52-4.48-10-10-10z"/>
+                </svg>
+                Entrar com Steam
+            </button>
             <div class="auth-footer">
                 Nao tem conta? <a href="cadastro_local.html">Cadastre-se</a>
             </div>
@@ -48,13 +57,9 @@ async function init() {
     (async () => {
         const saved = window.cargoStats ? await window.cargoStats.loadCredentials() : null;
         const savedEmail = (saved && saved.email) || localStorage.getItem('cargo_login_email') || '';
-        const savedSenha = (saved && saved.senha) || localStorage.getItem('cargo_login_senha') || '';
 
         if (savedEmail) {
             document.getElementById('email').value = savedEmail;
-        }
-        if (savedSenha) {
-            document.getElementById('senha').value = savedSenha;
             document.getElementById('lembrar').checked = true;
             document.getElementById('limpar-dados').style.display = 'inline-block';
         }
@@ -62,7 +67,6 @@ async function init() {
 
     document.getElementById('limpar-dados').addEventListener('click', () => {
         localStorage.removeItem('cargo_login_email');
-        localStorage.removeItem('cargo_login_senha');
         if (window.cargoStats) window.cargoStats.clearCredentials();
         document.getElementById('email').value = '';
         document.getElementById('senha').value = '';
@@ -98,14 +102,12 @@ async function init() {
 
             if (lembrar) {
                 localStorage.setItem('cargo_login_email', email);
-                localStorage.setItem('cargo_login_senha', senha);
                 if (window.cargoStats) {
-                    window.cargoStats.saveCredentials({ email, senha, token: data.token, user: data.user });
+                    window.cargoStats.saveCredentials({ email, token: data.token, user: data.user });
                 }
                 document.getElementById('limpar-dados').style.display = 'inline-block';
             } else {
                 localStorage.removeItem('cargo_login_email');
-                localStorage.removeItem('cargo_login_senha');
                 if (window.cargoStats) window.cargoStats.clearCredentials();
                 document.getElementById('limpar-dados').style.display = 'none';
             }
@@ -123,6 +125,71 @@ async function init() {
             errorDiv.textContent = 'Erro de conexao com o servidor';
         }
     });
+
+    // Steam Login Button
+    const btnSteam = document.getElementById('btn-steam-login');
+    const steamDivider = document.getElementById('steam-divider');
+    if (btnSteam && window.cargoStats && window.cargoStats.steamLogin) {
+        btnSteam.addEventListener('click', async () => {
+            const errorDiv = document.getElementById('login-error');
+            errorDiv.textContent = '';
+            btnSteam.disabled = true;
+            btnSteam.textContent = 'Abrindo Steam...';
+
+            try {
+                const result = await window.cargoStats.steamLogin();
+                if (!result.success) {
+                    if (result.error && result.error.includes('fechada')) {
+                        btnSteam.disabled = false;
+                        btnSteam.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:middle;"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.95c5.05-.5 9-4.76 9-9.95 0-5.52-4.48-10-10-10z"/></svg> Entrar com Steam';
+                        return;
+                    }
+                    errorDiv.textContent = result.error || 'Erro ao autenticar com Steam';
+                    btnSteam.disabled = false;
+                    btnSteam.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:middle;"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.95c5.05-.5 9-4.76 9-9.95 0-5.52-4.48-10-10-10z"/></svg> Entrar com Steam';
+                    return;
+                }
+
+                btnSteam.textContent = 'Conectando...';
+
+                const response = await fetch('/api/auth/steam', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        steam_id: result.steam_id,
+                        nome: result.nome,
+                        avatar: result.avatar
+                    })
+                });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    errorDiv.textContent = data.error || 'Erro ao criar conta Steam';
+                    btnSteam.disabled = false;
+                    btnSteam.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:middle;"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.95c5.05-.5 9-4.76 9-9.95 0-5.52-4.48-10-10-10z"/></svg> Entrar com Steam';
+                    return;
+                }
+
+                setAuth(data.token, data.user);
+                if (window.cargoStats) {
+                    window.cargoStats.saveCredentials({ email: data.user.email, token: data.token, user: data.user });
+                }
+
+                if (data.user.empresa) {
+                    window.location.href = 'empresa_local.html?empresa=' + encodeURIComponent(data.user.empresa);
+                } else {
+                    window.location.href = 'perfil_local.html?motorista=' + encodeURIComponent(data.user.nome);
+                }
+            } catch (err) {
+                errorDiv.textContent = 'Erro de conexao com o servidor';
+                btnSteam.disabled = false;
+                btnSteam.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:middle;"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3H13v6.95c5.05-.5 9-4.76 9-9.95 0-5.52-4.48-10-10-10z"/></svg> Entrar com Steam';
+            }
+        });
+    } else if (btnSteam) {
+        btnSteam.style.display = 'none';
+        if (steamDivider) steamDivider.style.display = 'none';
+    }
 }
 
 init();

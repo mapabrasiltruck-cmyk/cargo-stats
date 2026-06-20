@@ -1,0 +1,29 @@
+RewriteEngine On
+
+# Clean URLs
+RewriteRule ^rank$ rank.html [L]
+RewriteRule ^regras$ regras.html [L]
+RewriteRule ^download$ download.html [L]
+
+# Block direct access to api/config.php
+RewriteRule ^api/config\.php$ - [F,L]
+
+# CORS headers for API
+<FilesMatch "\.php$">
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+</FilesMatch>
+
+# Cache static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+</IfModule>
+
+# Security headers
+Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options "SAMEORIGIN"

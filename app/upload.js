@@ -4,20 +4,19 @@ const crypto = require('crypto');
 
 const UPLOADS_DIR = process.env.CARGOSTATS_UPLOADS_PATH || path.join(__dirname, 'uploads');
 const MAX_SIZE = 2 * 1024 * 1024;
+const ALLOWED_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.ico']);
 
 if (process.env.CARGOSTATS_UPLOADS_PATH) {
     const oldDir = path.join(__dirname, 'uploads');
     if (!fs.existsSync(process.env.CARGOSTATS_UPLOADS_PATH) && fs.existsSync(oldDir)) {
         try {
+            fs.mkdirSync(process.env.CARGOSTATS_UPLOADS_PATH, { recursive: true });
             const entries = fs.readdirSync(oldDir);
             for (const entry of entries) {
                 const src = path.join(oldDir, entry);
                 const dest = path.join(process.env.CARGOSTATS_UPLOADS_PATH, entry);
-                if (fs.statSync(src).isFile()) {
-                    if (!fs.existsSync(dest)) {
-                        fs.mkdirSync(process.env.CARGOSTATS_UPLOADS_PATH, { recursive: true });
-                        fs.copyFileSync(src, dest);
-                    }
+                if (fs.statSync(src).isFile() && !fs.existsSync(dest)) {
+                    fs.copyFileSync(src, dest);
                 }
             }
             console.log('[UPLOAD] Migrados arquivos existentes para:', process.env.CARGOSTATS_UPLOADS_PATH);
@@ -34,11 +33,11 @@ if (!fs.existsSync(UPLOADS_DIR)) {
 function parseMultipart(req) {
     return new Promise((resolve, reject) => {
         const contentType = req.headers['content-type'] || '';
-        const boundaryMatch = contentType.match(/boundary=(.+)/);
+        const boundaryMatch = contentType.match(/boundary="?([^";\s]+)"?/);
         if (!boundaryMatch) return reject(new Error('No boundary'));
         const boundary = boundaryMatch[1];
 
-        let body = [];
+        const chunks = [];
         let totalSize = 0;
 
         req.on('data', chunk => {
@@ -47,13 +46,17 @@ function parseMultipart(req) {
                 req.destroy();
                 return reject(new Error('Arquivo muito grande (max 2MB)'));
             }
-            body.push(chunk);
+            chunks.push(chunk);
         });
 
         req.on('end', () => {
-            const buffer = Buffer.concat(body);
-            const result = parseBuffer(buffer, boundary);
-            resolve(result);
+            try {
+                const buffer = Buffer.concat(chunks);
+                const result = parseBuffer(buffer, boundary);
+                resolve(result);
+            } catch(e) {
+                reject(e);
+            }
         });
 
         req.on('error', reject);
@@ -80,13 +83,16 @@ function parseBuffer(buffer, boundary) {
 
         const nameMatch = headerStr.match(/name="([^"]+)"/);
         const filenameMatch = headerStr.match(/filename="([^"]+)"/);
-        const contentTypeMatch = headerStr.match(/Content-Type:\s*(.+)/i);
 
         if (!nameMatch) { start = nextStart; continue; }
         const fieldName = nameMatch[1];
 
         if (filenameMatch && filenameMatch[1]) {
-            const ext = path.extname(filenameMatch[1]) || '.png';
+            const ext = path.extname(filenameMatch[1]).toLowerCase() || '.png';
+            if (!ALLOWED_EXTENSIONS.has(ext)) {
+                start = nextStart;
+                continue;
+            }
             const safeName = crypto.randomBytes(8).toString('hex') + ext;
             const filePath = path.join(UPLOADS_DIR, safeName);
 

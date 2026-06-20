@@ -26,10 +26,13 @@ const {
     criarSolicitacao, getSolicitacoesPorEmpresa, getSolicitacoesPendentesCount, responderSolicitacao, getSolicitacaoPendente,
     getEventoAtivo, getEventoPorId, criarEvento, encerrarEvento,
     atualizarProgressoEvento, getProgressoEmpresa, getProgressoMotorista,
-    getHistoricoEventos, gerarEventoAleatorio, adicionarBonusViagem, deletarEvento
+    getHistoricoEventos, gerarEventoAleatorio, adicionarBonusViagem, deletarEvento,
+    buscarUsuarioPorSteamId, criarUsuarioSteam, atualizarAvatar
 } = require('./database');
 const { classificarCarga, getCategoriasCores, getCategoriasNomes, invalidarCacheMapping } = require('./classificador');
 const { parseMultipart } = require('./upload');
+const { rateLimit, isRateLimited } = require('./rateLimiter');
+const syncHostinger = require('./sync_hostinger');
 
 const PORT = process.env.PORT || 3000;
 const ETS2_SERVER = 'http://localhost:25555';
@@ -73,16 +76,49 @@ function sendJSON(res, data, status) {
     res.end(JSON.stringify(data));
 }
 
+const MAX_BODY_SIZE = 1 * 1024 * 1024;
+
+function safeInt(value) {
+    if (value === undefined || value === null || value === '') return null;
+    const n = parseInt(value, 10);
+    return isNaN(n) ? null : n;
+}
+
+function safeJsonParse(str, fallback) {
+    try { return JSON.parse(str || '{}'); }
+    catch(e) { return fallback || {}; }
+}
+
 function readBody(req) {
     return new Promise((resolve, reject) => {
-        let body = '';
-        req.on('data', chunk => body += chunk);
+        let totalSize = 0;
+        const chunks = [];
+        req.on('data', chunk => {
+            totalSize += chunk.length;
+            if (totalSize > MAX_BODY_SIZE) {
+                req.destroy();
+                reject(new Error('PayloadTooLarge'));
+                return;
+            }
+            chunks.push(chunk);
+        });
         req.on('end', () => {
+            const body = Buffer.concat(chunks).toString();
+            if (!body) return resolve({});
             try { resolve(JSON.parse(body)); }
             catch(e) { resolve({}); }
         });
         req.on('error', reject);
     });
+}
+
+function sanitizePath(requestedPath, baseDir) {
+    const resolved = path.resolve(baseDir, requestedPath.replace(/^\/+/, ''));
+    const baseResolved = path.resolve(baseDir);
+    if (!resolved.startsWith(baseResolved + path.sep) && resolved !== baseResolved) {
+        return null;
+    }
+    return resolved;
 }
 
 function getSession(req) {
@@ -160,10 +196,12 @@ function sendDiscordNotification(userId, tripData) {
             }
         };
         const req = https.request(options);
-        req.on('error', () => {});
+        req.on('error', (e) => console.error('[DISCORD] Erro no webhook:', e.message));
         req.write(payload);
         req.end();
-    } catch (e) {}
+    } catch (e) {
+        console.error('[DISCORD] Erro ao enviar webhook:', e.message);
+    }
 }
 
 const server = http.createServer(async (req, res) => {
@@ -171,9 +209,15 @@ const server = http.createServer(async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Max-Age', '86400');
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '0');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 
     if (req.method === 'OPTIONS') {
         res.writeHead(200);
@@ -183,6 +227,9 @@ const server = http.createServer(async (req, res) => {
 
     const urlPath = req.url.split('?')[0];
     const query = parseQuery(req.url);
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+
+    const ipKey = (extra) => `ip:${clientIp}:${extra}`;
 
     if (urlPath === '/api/telemetry') {
         const proxyReq = http.get(`${ETS2_SERVER}/api/ets2/telemetry`, (proxyRes) => {
@@ -236,16 +283,25 @@ const server = http.createServer(async (req, res) => {
     // ========== AUTH ROUTES ==========
 
     if (urlPath === '/api/auth/register' && req.method === 'POST') {
+        if (isRateLimited(ipKey('register'), 5, 60 * 1000)) {
+            return sendJSON(res, { error: 'Muitas tentativas. Tente novamente em 1 minuto.' }, 429);
+        }
         const body = await readBody(req);
         const { email, senha, nome, tipo, empresa } = body;
         if (!email || !senha || !nome) {
             return sendJSON(res, { error: 'Email, senha e nome sao obrigatorios' }, 400);
         }
+        if (typeof email !== 'string' || email.length > 254 || !email.includes('@')) {
+            return sendJSON(res, { error: 'Email invalido' }, 400);
+        }
+        if (typeof senha !== 'string' || senha.length < 4) {
+            return sendJSON(res, { error: 'Senha deve ter no minimo 4 caracteres' }, 400);
+        }
         if (buscarUsuarioPorEmail(email)) {
             return sendJSON(res, { error: 'Email ja cadastrado' }, 409);
         }
         const hash = bcrypt.hashSync(senha, 10);
-        const userTipo = tipo || 'motorista';
+        const userTipo = ['motorista', 'admin'].includes(tipo) ? tipo : 'motorista';
         const userEmpresa = (userTipo === 'motorista' && !empresa) ? 'Lobo Solitário' : (empresa || null);
         criarUsuario(email, hash, nome, userTipo, userEmpresa);
         const user = buscarUsuarioPorEmail(email);
@@ -261,6 +317,9 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (urlPath === '/api/auth/login' && req.method === 'POST') {
+        if (isRateLimited(ipKey('login'), 10, 60 * 1000)) {
+            return sendJSON(res, { error: 'Muitas tentativas de login. Tente novamente em 1 minuto.' }, 429);
+        }
         const body = await readBody(req);
         const { email, senha } = body;
         if (!email || !senha) {
@@ -300,6 +359,61 @@ const server = http.createServer(async (req, res) => {
         }
         atualizarUsuario(session.user_id, undefined, undefined, undefined, discord_webhook);
         return sendJSON(res, { ok: true });
+    }
+
+    // ========== STEAM AUTH ==========
+
+    if (urlPath === '/api/auth/steam' && req.method === 'POST') {
+        if (isRateLimited(ipKey('steam_auth'), 10, 60 * 1000)) {
+            return sendJSON(res, { error: 'Muitas tentativas. Tente novamente em 1 minuto.' }, 429);
+        }
+        const body = await readBody(req);
+        const { steam_id, nome, avatar } = body;
+        if (!steam_id || !nome) {
+            return sendJSON(res, { error: 'steam_id e nome sao obrigatorios' }, 400);
+        }
+        if (typeof steam_id !== 'string' || !/^\d{17}$/.test(steam_id)) {
+            return sendJSON(res, { error: 'steam_id invalido' }, 400);
+        }
+
+        let user = buscarUsuarioPorSteamId(steam_id);
+        if (!user) {
+            criarUsuarioSteam(steam_id, nome, avatar || '');
+            user = buscarUsuarioPorSteamId(steam_id);
+            if (user) {
+                criarMotorista(nome, 'Lobo Solitário', user.id, 'Motorista');
+            }
+        } else if (avatar && avatar !== user.avatar) {
+            atualizarAvatar(user.id, avatar);
+            user.avatar = avatar;
+        }
+
+        if (!user) {
+            return sendJSON(res, { error: 'Erro ao criar usuario Steam' }, 500);
+        }
+
+        const token = createSessionToken(user.id);
+        return sendJSON(res, {
+            token,
+            user: {
+                id: user.id,
+                email: user.email,
+                nome: user.nome,
+                tipo: user.tipo,
+                empresa: user.empresa,
+                steam_id: user.steam_id,
+                avatar: user.avatar
+            }
+        });
+    }
+
+    if (urlPath === '/api/auth/steam/check' && req.method === 'GET') {
+        const query2 = parseQuery(req.url);
+        if (!query2.steam_id) {
+            return sendJSON(res, { error: 'steam_id obrigatorio' }, 400);
+        }
+        const user = buscarUsuarioPorSteamId(query2.steam_id);
+        return sendJSON(res, { exists: !!user });
     }
 
     // ========== PERFIL FOTO ==========
@@ -640,6 +754,9 @@ const server = http.createServer(async (req, res) => {
     // ========== VIAGEM (MOTORISTA LOGADO) ==========
 
     if (urlPath === '/api/viagens' && req.method === 'POST') {
+        if (isRateLimited(ipKey('viagens'), 20, 60 * 1000)) {
+            return sendJSON(res, { error: 'Muitas requisicoes. Aguarde um momento.' }, 429);
+        }
         const session = getSession(req);
         if (!session) return sendJSON(res, { error: 'Não autenticado' }, 401);
         const body = await readBody(req);
@@ -656,6 +773,9 @@ const server = http.createServer(async (req, res) => {
             return sendJSON(res, { error: 'Só pode cadastrar viagens para si mesmo' }, 403);
         }
 
+        const kmNum = Math.max(0, parseInt(km) || 0);
+        const ptsNum = Math.max(0, parseInt(pontuacao) || 0);
+
         let cat = categoria_carga;
         if (!cat) {
             const classificacao = classificarCarga(carga_nome || destino || origem || '', cargo_id || '');
@@ -668,19 +788,24 @@ const server = http.createServer(async (req, res) => {
         const evento = getEventoAtivo();
         const eventoInfo = evento ? {
             id: evento.id,
-            km: km || 0,
-            pontuacao: pontuacao || 0,
+            km: kmNum,
+            pontuacao: ptsNum,
             categoria_carga: cat,
             destino: destino || ''
         } : null;
 
-        const tripResult = criarViagemCompleta(nomeMotorista, empresaMotorista, data, origem || '', destino || '', km || 0, pontuacao || 0, cat, eventoInfo);
+        const tripResult = criarViagemCompleta(nomeMotorista, empresaMotorista, data, origem || '', destino || '', kmNum, ptsNum, cat, eventoInfo);
+
+        if (tripResult && tripResult.duplicate) {
+            return sendJSON(res, { ok: true, duplicate: true, message: 'Viagem duplicada detectada' });
+        }
+
         const bonusInfo = tripResult && tripResult.bonusInfo ? tripResult.bonusInfo : null;
 
         sendDiscordNotification(session.user_id, {
             motorista: nomeMotorista, empresa: empresaMotorista,
             origem: origem || '', destino: destino || '',
-            km: km || 0, pontuacao: pontuacao || 0,
+            km: kmNum, pontuacao: ptsNum,
             categoria: cat,
             bonus_pontos: bonusInfo ? bonusInfo.bonus_pontos : 0,
             bonus_km: bonusInfo ? bonusInfo.bonus_km : 0
@@ -691,6 +816,9 @@ const server = http.createServer(async (req, res) => {
     // ========== AUTO-RECORD (TELEMETRY) ==========
 
     if (urlPath === '/api/viagens/auto' && req.method === 'POST') {
+        if (isRateLimited(ipKey('auto'), 30, 60 * 1000)) {
+            return sendJSON(res, { error: 'Muitas requisicoes. Aguarde um momento.' }, 429);
+        }
         const session = getSession(req);
         if (!session) return sendJSON(res, { error: 'Nao autenticado' }, 401);
         const body = await readBody(req);
@@ -702,11 +830,8 @@ const server = http.createServer(async (req, res) => {
         const empresaAuto = empresa || 'Lobo Solitário';
 
         const hoje = new Date().toISOString().split('T')[0];
-
-        if (verificarViagemDuplicada(motorista, origem, destino, km)) {
-            console.log(`[AUTO-RECORD] DUPLICATA IGNORADA: ${motorista} ${origem||'?'} → ${destino||'?'} ${km}km`);
-            return sendJSON(res, { ok: true, duplicate: true, data: hoje });
-        }
+        const kmNum = Math.max(0, parseInt(km) || 0);
+        const ptsNum = Math.max(0, parseInt(pontuacao) || 0);
 
         const classificacao = classificarCarga(carga_nome || '', cargo_id || '');
         const cat = classificacao.slug || 'geral';
@@ -718,20 +843,24 @@ const server = http.createServer(async (req, res) => {
         const evento = getEventoAtivo();
         const eventoInfo = evento ? {
             id: evento.id,
-            km: km || 0,
-            pontuacao: pontuacao || 0,
+            km: kmNum,
+            pontuacao: ptsNum,
             categoria_carga: cat,
             destino: destino || ''
         } : null;
 
-        const tripResult = criarViagemCompleta(motorista, empresaAuto, hoje, origem || '', destino || '', km || 0, pontuacao || 0, cat, eventoInfo);
+        const tripResult = criarViagemCompleta(motorista, empresaAuto, hoje, origem || '', destino || '', kmNum, ptsNum, cat, eventoInfo);
+
+        if (tripResult && tripResult.duplicate) {
+            return sendJSON(res, { ok: true, duplicate: true, data: hoje });
+        }
+
         const bonusInfo = tripResult && tripResult.bonusInfo ? tripResult.bonusInfo : null;
 
-        console.log(`[AUTO-RECORD] ${motorista} (${empresaAuto}): ${origem||'?'} → ${destino||'?'} | ${km}km | ${pontuacao}pts | ${cat}${bonusInfo ? ` | BONUS: +${bonusInfo.bonus_pontos}pts` : ''}`);
         sendDiscordNotification(session.user_id, {
             motorista, empresa: empresaAuto,
             origem: origem || '', destino: destino || '',
-            km: km || 0, pontuacao: pontuacao || 0,
+            km: kmNum, pontuacao: ptsNum,
             categoria: cat,
             bonus_pontos: bonusInfo ? bonusInfo.bonus_pontos : 0,
             bonus_km: bonusInfo ? bonusInfo.bonus_km : 0
@@ -742,8 +871,8 @@ const server = http.createServer(async (req, res) => {
     // ========== PUBLIC READ ROUTES ==========
 
     if (urlPath === '/api/empresas' && req.method === 'GET') {
-        const mes = query.mes ? parseInt(query.mes) : null;
-        const ano = query.ano ? parseInt(query.ano) : null;
+        const mes = safeInt(query.mes);
+        const ano = safeInt(query.ano);
         const empresas = getEmpresas(mes, ano);
         const stats = mes && ano ? getStatsGeraisMes(mes, ano) : getStatsGerais();
         return sendJSON(res, { ...stats, empresas });
@@ -751,52 +880,56 @@ const server = http.createServer(async (req, res) => {
 
     if (urlPath === '/api/motoristas' && req.method === 'GET') {
         const empresa = query.empresa || null;
-        const mes = query.mes ? parseInt(query.mes) : null;
-        const ano = query.ano ? parseInt(query.ano) : null;
+        const mes = safeInt(query.mes);
+        const ano = safeInt(query.ano);
         const motoristas = getMotoristas(empresa, mes, ano);
         return sendJSON(res, { motoristas });
     }
 
     if (urlPath === '/api/viagens' && req.method === 'GET') {
         const filtros = {};
-        if (query.mes) filtros.mes = parseInt(query.mes);
-        if (query.ano) filtros.ano = parseInt(query.ano);
+        if (query.mes) filtros.mes = safeInt(query.mes);
+        if (query.ano) filtros.ano = safeInt(query.ano);
         if (query.empresa) filtros.empresa = query.empresa;
         if (query.motorista) filtros.motorista = query.motorista;
         if (query.dataInicio) filtros.dataInicio = query.dataInicio;
         if (query.dataFim) filtros.dataFim = query.dataFim;
         const viagens = getViagens(filtros);
-        console.log(`[DEBUG] GET /api/viagens | filtros:`, JSON.stringify(filtros), `| retornou ${viagens.length} viagens | ids:`, viagens.map(v => v.id).slice(0, 5));
         return sendJSON(res, { viagens });
     }
 
     if (urlPath === '/api/ranking/empresas') {
         const periodo = query.periodo || 'geral';
-        const mes = query.mes ? parseInt(query.mes) : null;
-        const ano = query.ano ? parseInt(query.ano) : null;
+        const mes = query.mes ? safeInt(query.mes) : null;
+        const ano = query.ano ? safeInt(query.ano) : null;
         const ranking = getRankingEmpresas(periodo, mes, ano);
         return sendJSON(res, { ranking });
     }
 
     if (urlPath === '/api/ranking/motoristas') {
         const periodo = query.periodo || 'geral';
-        const mes = query.mes ? parseInt(query.mes) : null;
-        const ano = query.ano ? parseInt(query.ano) : null;
+        const mes = query.mes ? safeInt(query.mes) : null;
+        const ano = query.ano ? safeInt(query.ano) : null;
         const empresa = query.empresa || null;
         const ranking = getRankingMotoristas(periodo, mes, ano, empresa);
         return sendJSON(res, { ranking });
     }
 
     if (urlPath === '/api/stats') {
-        const mes = query.mes ? parseInt(query.mes) : null;
-        const ano = query.ano ? parseInt(query.ano) : null;
+        const mes = query.mes ? safeInt(query.mes) : null;
+        const ano = query.ano ? safeInt(query.ano) : null;
         const stats = mes && ano ? getStatsGeraisMes(mes, ano) : getStatsGerais();
         return sendJSON(res, stats);
     }
 
     if (urlPath === '/api/conquistas') {
-        const conquistasConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'conquistas_config.json'), 'utf8'));
-        const conquistasDef = conquistasConfig.conquistas || [];
+        let conquistasDef;
+        try {
+            const conquistasConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'conquistas_config.json'), 'utf8'));
+            conquistasDef = conquistasConfig.conquistas || [];
+        } catch(e) {
+            return sendJSON(res, { error: 'Erro ao carregar conquistas' }, 500);
+        }
 
         if (query.motorista) {
             const result = getConquistasMotorista(query.motorista, conquistasDef);
@@ -857,7 +990,20 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (urlPath === '/api/health') {
-        return sendJSON(res, { status: 'ok', uptime: process.uptime() });
+        let dbStatus = 'ok';
+        try { getDB().prepare('SELECT 1').get(); }
+        catch(e) { dbStatus = 'error: ' + e.message; }
+        const mem = process.memoryUsage();
+        return sendJSON(res, {
+            status: dbStatus === 'ok' ? 'ok' : 'degraded',
+            uptime: Math.floor(process.uptime()),
+            db: dbStatus,
+            memory: {
+                rss: Math.floor(mem.rss / 1024 / 1024) + 'MB',
+                heap: Math.floor(mem.heapUsed / 1024 / 1024) + 'MB'
+            },
+            timestamp: new Date().toISOString()
+        });
     }
 
     // ========== CARGAS / CLASSIFICACAO ==========
@@ -888,8 +1034,8 @@ const server = http.createServer(async (req, res) => {
     if (urlPath === '/api/ranking/cargas' && req.method === 'GET') {
         const categoria = query.categoria || null;
         const empresa = query.empresa || null;
-        const mes = query.mes ? parseInt(query.mes) : null;
-        const ano = query.ano ? parseInt(query.ano) : null;
+        const mes = query.mes ? safeInt(query.mes) : null;
+        const ano = query.ano ? safeInt(query.ano) : null;
         const periodo = query.periodo || 'geral';
 
         if (categoria) {
@@ -908,6 +1054,9 @@ const server = http.createServer(async (req, res) => {
     // ========== SYNC (WEB RECEBE DO EXE) ==========
 
     if (urlPath === '/api/sync/receber' && req.method === 'POST') {
+        const session = getSession(req);
+        if (!session) return sendJSON(res, { error: 'Nao autenticado' }, 401);
+        if (session.tipo !== 'admin') return sendJSON(res, { error: 'Acesso negado' }, 403);
         const body = await readBody(req);
         if (!body.dados || !Array.isArray(body.dados)) {
             return sendJSON(res, { error: 'Formato invalido: esperado { dados: [...] }' }, 400);
@@ -918,6 +1067,54 @@ const server = http.createServer(async (req, res) => {
         } catch (e) {
             return sendJSON(res, { error: e.message }, 500);
         }
+    }
+
+    // ========== HOSTINGER SYNC ==========
+
+    if (urlPath === '/api/sync/status' && req.method === 'GET') {
+        const session = getSession(req);
+        if (!requireAdmin(session, res)) return;
+        return sendJSON(res, syncHostinger.getStatus());
+    }
+
+    if (urlPath === '/api/sync/config' && req.method === 'POST') {
+        const session = getSession(req);
+        if (!requireAdmin(session, res)) return;
+        const body = await readBody(req);
+        const dataDir = process.env.CARGOSTATS_DB_PATH
+            ? require('path').dirname(process.env.CARGOSTATS_DB_PATH)
+            : __dirname;
+        syncHostinger.updateConfig(dataDir, body);
+        return sendJSON(res, { ok: true, status: syncHostinger.getStatus() });
+    }
+
+    if (urlPath === '/api/sync/now' && req.method === 'POST') {
+        const session = getSession(req);
+        if (!requireAdmin(session, res)) return;
+        const result = await syncHostinger.syncNow(getDB, getRankingEmpresas, getRankingMotoristas, getStatsGerais);
+        return sendJSON(res, result);
+    }
+
+    if (urlPath === '/api/sync/dados' && req.method === 'GET') {
+        const session = getSession(req);
+        if (!session) return sendJSON(res, { error: 'Nao autenticado' }, 401);
+        if (session.tipo !== 'admin') return sendJSON(res, { error: 'Acesso negado' }, 403);
+        const empresas = getRankingEmpresas('geral');
+        const motoristas = getRankingMotoristas('geral');
+        const stats = getStatsGerais();
+        return sendJSON(res, {
+            empresas: empresas.map(e => ({
+                nome: e.nome, logo: e.logo || '', descricao: e.descricao || '',
+                motoristas: e.motoristas || 0, viagens: e.viagens || 0,
+                km: e.km || 0, pontuacao: e.pontuacao || 0
+            })),
+            motoristas: motoristas.map(m => ({
+                nome: m.nome, empresa: m.empresa,
+                viagens: m.viagens || 0, km: m.km || 0, pontuacao: m.pontuacao || 0
+            })),
+            stats,
+            timestamp: new Date().toISOString()
+        });
     }
 
     // ========== SOLICITACOES ==========
@@ -983,15 +1180,15 @@ const server = http.createServer(async (req, res) => {
             return sendJSON(res, { error: 'Apenas o dono/diretor pode aceitar pedidos' }, 403);
         }
 
-        responderSolicitacao(id, 'aceita');
-
-        const usuarioAlvo = dbConn.prepare(`SELECT id FROM usuarios WHERE nome = ?`).get(sol.motorista);
-        criarMotorista(sol.motorista, sol.empresa, usuarioAlvo ? usuarioAlvo.id : null, 'Motorista', 'motorista');
-
-        if (usuarioAlvo) {
-            dbConn.prepare(`UPDATE usuarios SET empresa = ? WHERE id = ?`).run(sol.empresa, usuarioAlvo.id);
-        }
-
+        const tx = dbConn.transaction(() => {
+            responderSolicitacao(id, 'aceita');
+            const usuarioAlvo = dbConn.prepare(`SELECT id FROM usuarios WHERE nome = ?`).get(sol.motorista);
+            criarMotorista(sol.motorista, sol.empresa, usuarioAlvo ? usuarioAlvo.id : null, 'Motorista', 'motorista');
+            if (usuarioAlvo) {
+                dbConn.prepare(`UPDATE usuarios SET empresa = ? WHERE id = ?`).run(sol.empresa, usuarioAlvo.id);
+            }
+        });
+        tx();
         recalcEmpresas();
         return sendJSON(res, { ok: true });
     }
@@ -1021,7 +1218,7 @@ const server = http.createServer(async (req, res) => {
     if (urlPath === '/api/eventos/ativo' && req.method === 'GET') {
         const evento = getEventoAtivo();
         if (!evento) return sendJSON(res, { evento: null });
-        const params = JSON.parse(evento.parametros || '{}');
+        const params = safeJsonParse(evento.parametros);
         return sendJSON(res, { evento: { ...evento, parametros: params } });
     }
 
@@ -1033,12 +1230,12 @@ const server = http.createServer(async (req, res) => {
 
         if (query.empresa) {
             const data = getProgressoEmpresa(evento.id, query.empresa);
-            return sendJSON(res, { progresso: data, evento: { ...evento, parametros: JSON.parse(evento.parametros || '{}') } });
+            return sendJSON(res, { progresso: data, evento: { ...evento, parametros: safeJsonParse(evento.parametros) } });
         }
 
         if (query.motorista) {
             const data = getProgressoMotorista(evento.id, query.motorista);
-            return sendJSON(res, { progresso: data, evento: { ...evento, parametros: JSON.parse(evento.parametros || '{}') } });
+            return sendJSON(res, { progresso: data, evento: { ...evento, parametros: safeJsonParse(evento.parametros) } });
         }
 
         return sendJSON(res, { error: 'Informe empresa ou motorista' }, 400);
@@ -1126,7 +1323,13 @@ const server = http.createServer(async (req, res) => {
     // --- Uploads (from userData dir or local dir) ---
     if (urlPath.startsWith('/uploads/')) {
         const uploadsDir = process.env.CARGOSTATS_UPLOADS_PATH || path.join(__dirname, 'uploads');
-        const uploadPath = path.join(uploadsDir, urlPath.replace('/uploads/', ''));
+        const requested = urlPath.replace('/uploads/', '');
+        const uploadPath = sanitizePath(requested, uploadsDir);
+        if (!uploadPath) {
+            res.writeHead(403);
+            res.end('Acesso negado');
+            return;
+        }
         const ext = path.extname(uploadPath);
         fs.readFile(uploadPath, (err, content) => {
             if (err) {
@@ -1142,7 +1345,13 @@ const server = http.createServer(async (req, res) => {
 
     // --- Site assets (/site/cs/, /site/js/, /site/images/) ---
     if (urlPath.startsWith('/site/')) {
-        const siteAssetPath = path.join(__dirname, urlPath);
+        const requested = urlPath.replace(/^\/site\//, '');
+        const siteAssetPath = sanitizePath(requested, path.join(__dirname, 'site'));
+        if (!siteAssetPath) {
+            res.writeHead(403);
+            res.end('Acesso negado');
+            return;
+        }
         const ext = path.extname(siteAssetPath);
         fs.readFile(siteAssetPath, (err, content) => {
             if (err) {
@@ -1175,12 +1384,17 @@ const server = http.createServer(async (req, res) => {
     let filePath = urlPath === '/' ? '/dashboard_local.html' : urlPath;
     if (urlPath === '/mobile') filePath = '/dashboard_mobile.html';
 
-    filePath = path.join(__dirname, filePath);
+    const safePath = sanitizePath(filePath, __dirname);
+    if (!safePath) {
+        res.writeHead(403);
+        res.end('Acesso negado');
+        return;
+    }
 
-    const ext = path.extname(filePath);
+    const ext = path.extname(safePath);
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
-    fs.readFile(filePath, (err, content) => {
+    fs.readFile(safePath, (err, content) => {
         if (err) {
             if (err.code === 'ENOENT') {
                 res.writeHead(404);
@@ -1202,7 +1416,12 @@ const server = http.createServer(async (req, res) => {
 
     process.on('SIGINT', () => {
         console.log('\nEncerrando servidor...');
-        process.exit(0);
+        server.close(() => {
+            try { getDB().close(); } catch(e) {}
+            console.log('Servidor encerrado.');
+            process.exit(0);
+        });
+        setTimeout(() => process.exit(1), 5000);
     });
 
     server.listen(port, () => {
@@ -1225,6 +1444,18 @@ const server = http.createServer(async (req, res) => {
                 console.error('[EVENTOS] Erro ao gerar:', e.message);
             }
         }, 5 * 60 * 1000);
+
+        const dataDir = process.env.CARGOSTATS_DB_PATH
+            ? require('path').dirname(process.env.CARGOSTATS_DB_PATH)
+            : __dirname;
+        syncHostinger.loadConfig(dataDir);
+        const syncStatus = syncHostinger.getStatus();
+        if (syncStatus.configured && syncStatus.enabled) {
+            syncHostinger.startSyncTimer(dataDir, getDB, getRankingEmpresas, getRankingMotoristas, getStatsGerais);
+            console.log(`[SYNC] Hostinger sync ativo: ${syncStatus.hostingerUrl}`);
+        } else {
+            console.log('[SYNC] Hostinger sync nao configurado (configure no painel admin)');
+        }
     });
 
     return server;

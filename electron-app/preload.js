@@ -30,4 +30,7 @@ contextBridge.exposeInMainWorld('cargoStats', {
     saveCredentials: (data) => ipcRenderer.invoke('save-credentials', data),
     loadCredentials: () => ipcRenderer.invoke('load-credentials'),
     clearCredentials: () => ipcRenderer.invoke('clear-credentials'),
+
+    // ─── Steam Authentication ───────────────────────────
+    steamLogin: () => ipcRenderer.invoke('steam-login'),
 });

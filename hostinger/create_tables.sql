@@ -1,0 +1,38 @@
+CREATE TABLE IF NOT EXISTS ranking_empresas (
+    nome VARCHAR(255) PRIMARY KEY,
+    logo TEXT DEFAULT '',
+    descricao TEXT DEFAULT '',
+    motoristas INT DEFAULT 0,
+    viagens INT DEFAULT 0,
+    km INT DEFAULT 0,
+    pontuacao INT DEFAULT 0,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS ranking_motoristas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    empresa VARCHAR(255) NOT NULL,
+    viagens INT DEFAULT 0,
+    km INT DEFAULT 0,
+    pontuacao INT DEFAULT 0,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_motorista (nome, empresa)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS stats_gerais (
+    id INT PRIMARY KEY DEFAULT 1,
+    total_empresas INT DEFAULT 0,
+    total_motoristas INT DEFAULT 0,
+    total_viagens INT DEFAULT 0,
+    total_km INT DEFAULT 0,
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS sync_log (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    recebido_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    registros_empresas INT DEFAULT 0,
+    registros_motoristas INT DEFAULT 0,
+    ip_origem VARCHAR(45) DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -7,7 +7,9 @@
     "start": "node server.js",
     "dev": "node server.js",
     "seed": "node seed.js",
-    "seed:beta": "node seed_beta.js"
+    "seed:beta": "node seed_beta.js",
+    "test:concurrency": "node teste_concorrencia.js",
+    "test": "node teste_concorrencia.js"
   },
   "keywords": [
     "ets2",

@@ -1567,6 +1567,54 @@ body {
     color: #000;
 }
 
+.auth-divider {
+    display: flex;
+    align-items: center;
+    margin: 16px 0;
+    font-size: 11px;
+    color: #555;
+    letter-spacing: 1px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #333;
+}
+
+.auth-divider span {
+    padding: 0 12px;
+}
+
+.auth-btn-steam {
+    background: #1b2838;
+    border: 1px solid #2a475e;
+    border-radius: 6px;
+    padding: 10px;
+    color: #c7d5e0;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    text-align: center;
+}
+
+.auth-btn-steam:hover {
+    background: #2a475e;
+    border-color: #66c0f4;
+    color: #66c0f4;
+}
+
+.auth-btn-steam:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
 .auth-footer a:hover {
     text-decoration: underline;
 }

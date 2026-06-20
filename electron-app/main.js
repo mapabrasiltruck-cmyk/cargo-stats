@@ -3,6 +3,7 @@ const { autoUpdater } = require('electron-updater');
 const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const { authenticateWithSteam } = require('./steam-auth');
 
 const RENDER_URL = 'https://cargo-stats-oficial.onrender.com';
 const SERVER_PORT = 3000;
@@ -399,6 +400,15 @@ ipcMain.handle('get-diagnostics', () => {
         isDev: isDev(),
         version: app.getVersion()
     };
+});
+
+ipcMain.handle('steam-login', async () => {
+    try {
+        const result = await authenticateWithSteam(SERVER_PORT);
+        return { success: true, ...result };
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
 });
 
 const CREDENTIALS_PATH = path.join(app.getPath('userData'), 'credentials.json');

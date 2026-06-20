@@ -177,6 +177,12 @@ function initDB() {
         if (!userCols.some(c => c.name === 'discord_webhook')) {
             db.exec(`ALTER TABLE usuarios ADD COLUMN discord_webhook TEXT DEFAULT ''`);
         }
+        if (!userCols.some(c => c.name === 'steam_id')) {
+            db.exec(`ALTER TABLE usuarios ADD COLUMN steam_id TEXT DEFAULT ''`);
+        }
+        if (!userCols.some(c => c.name === 'avatar')) {
+            db.exec(`ALTER TABLE usuarios ADD COLUMN avatar TEXT DEFAULT ''`);
+        }
     } catch (e) {
     }
 
@@ -846,6 +852,24 @@ function buscarUsuarioPorId(id) {
     return db.prepare(`SELECT * FROM usuarios WHERE id = ?`).get(id);
 }
 
+function buscarUsuarioPorSteamId(steamId) {
+    const db = getDB();
+    return db.prepare(`SELECT * FROM usuarios WHERE steam_id = ?`).get(steamId);
+}
+
+function criarUsuarioSteam(steamId, nome, avatar) {
+    const db = getDB();
+    const email = `steam_${steamId}@cargostats.local`;
+    const hash = 'steam_auth_no_password';
+    const stmt = db.prepare(`INSERT INTO usuarios (email, senha_hash, nome, tipo, empresa, steam_id, avatar) VALUES (?, ?, ?, 'motorista', 'Lobo Solitário', ?, ?)`);
+    return stmt.run(email, hash, nome, steamId, avatar || '');
+}
+
+function atualizarAvatar(usuarioId, avatar) {
+    const db = getDB();
+    return db.prepare(`UPDATE usuarios SET avatar = ? WHERE id = ?`).run(avatar, usuarioId);
+}
+
 function criarSessao(token, usuarioId, expiresAt) {
     const db = getDB();
     return db.prepare(`INSERT INTO sessoes (token, usuario_id, expires_at) VALUES (?, ?, ?)`).run(token, usuarioId, expiresAt);
@@ -992,6 +1016,14 @@ function criarViagemCompleta(motorista, empresa, data, origem, destino, km, pont
     const db = getDB();
     const cat = categoriaCarga || 'geral';
     const tx = db.transaction(() => {
+        const existing = db.prepare(`
+            SELECT id FROM viagens
+            WHERE motorista = ? AND data = ? AND origem = ? AND destino = ? AND km = ?
+            LIMIT 1
+        `).get(motorista, data, origem || '', destino || '', km || 0);
+        if (existing) {
+            return { duplicate: true, lastInsertRowid: existing.id, bonusInfo: null };
+        }
         const result = db.prepare(`INSERT INTO viagens (motorista, empresa, data, origem, destino, km, pontuacao, categoria_carga) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(motorista, empresa, data, origem, destino, km || 0, pontuacao || 0, cat);
         let bonusInfo = null;
         if (eventoInfo) {
@@ -1448,6 +1480,9 @@ module.exports = {
     criarUsuario,
     buscarUsuarioPorEmail,
     buscarUsuarioPorId,
+    buscarUsuarioPorSteamId,
+    criarUsuarioSteam,
+    atualizarAvatar,
     criarSessao,
     buscarSessao,
     deletarSessao,

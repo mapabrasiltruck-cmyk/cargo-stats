@@ -5,6 +5,7 @@ let usuarios = [];
 let cargasPendentes = [];
 let eventoAtivo = null;
 let historicoEventos = [];
+let syncStatus = null;
 
 const CARGOS_MOTORISTA = ['Aprendiz', 'Em treinamento', 'Trainee', 'Pleno', 'Senior', 'Master', 'Elite'];
 
@@ -72,6 +73,12 @@ async function carregarDados() {
 
     const resHist = await fetchJSON('/api/eventos/historico');
     historicoEventos = resHist.data ? resHist.data.historico : [];
+
+    const resSync = await authFetch('/api/sync/status');
+    if (resSync) {
+        const sdata = await resSync.json();
+        syncStatus = sdata;
+    }
 }
 
 function renderAdmin() {
@@ -92,13 +99,15 @@ function renderAdmin() {
     tabs.className = 'admin-tabs';
     const pendCount = empresasPendentes.length;
     const cargasCount = cargasPendentes.length;
+    const syncIcon = syncStatus && syncStatus.enabled ? '🟢' : '⚪';
     tabs.innerHTML = `
         <button class="admin-tab active" data-tab="empresas">Empresas</button>
         <button class="admin-tab" data-tab="pendentes">Pendentes${pendCount > 0 ? ` (${pendCount})` : ''}</button>
         <button class="admin-tab" data-tab="cargas">Cargas${cargasCount > 0 ? ` (${cargasCount})` : ''}</button>
         <button class="admin-tab" data-tab="eventos">Eventos${eventoAtivo ? ' 🔥' : ''}</button>
         <button class="admin-tab" data-tab="motoristas">Motoristas</button>
-        <button class="admin-tab" data-tab="usuarios">Usuarios</button>`;
+        <button class="admin-tab" data-tab="usuarios">Usuarios</button>
+        <button class="admin-tab" data-tab="sync">${syncIcon} Sync</button>`;
     frame.appendChild(tabs);
 
     const content = document.createElement('div');
@@ -129,6 +138,7 @@ function renderTab(tab) {
         case 'eventos': renderEventosTab(content); break;
         case 'motoristas': renderMotoristasTab(content); break;
         case 'usuarios': renderUsuariosTab(content); break;
+        case 'sync': renderSyncTab(content); break;
     }
 }
 
@@ -770,6 +780,169 @@ async function encerrarEventoAdmin() {
     if (res && res.ok) {
         await carregarDados();
         renderAdmin();
+    }
+}
+
+// ========== SYNC HOSTINGER TAB ==========
+
+function renderSyncTab(container) {
+    const s = syncStatus || {};
+    const configured = s.configured || false;
+    const enabled = s.enabled || false;
+    const lastSync = s.lastSync ? new Date(s.lastSync).toLocaleString('pt-BR') : 'Nunca';
+    const lastError = s.lastError || null;
+    const interval = s.intervalMs ? (s.intervalMs / 60000) : 5;
+    const url = s.hostingerUrl || '';
+
+    let statusColor = '#ff4444';
+    let statusText = 'Desconfigurado';
+    if (configured && enabled) { statusColor = '#00ff88'; statusText = 'Ativo'; }
+    else if (configured && !enabled) { statusColor = '#ffaa00'; statusText = 'Configurado (desativado)'; }
+
+    let html = `
+        <div class="admin-form" style="border-color:${statusColor}40">
+            <div class="admin-form-title" style="color:${statusColor}">☁️ SYNC HOSTINGER</div>
+            <p style="font-size:11px;color:#888;margin-bottom:12px">
+                Envia ranking consolidado para o site publico na Hostinger periodicamente.
+            </p>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                <div style="background:#0d1117;border:1px solid #333;border-radius:8px;padding:12px;">
+                    <div style="font-size:9px;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Status</div>
+                    <div style="font-size:14px;font-weight:700;color:${statusColor}">${statusText}</div>
+                </div>
+                <div style="background:#0d1117;border:1px solid #333;border-radius:8px;padding:12px;">
+                    <div style="font-size:9px;color:#888;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Ultimo Sync</div>
+                    <div style="font-size:14px;font-weight:700;color:#f5c842">${lastSync}</div>
+                </div>
+            </div>
+
+            ${lastError ? `<div style="background:#ff000010;border:1px solid #ff444440;border-radius:8px;padding:10px;margin-bottom:12px;">
+                <div style="font-size:9px;color:#ff4444;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Ultimo Erro</div>
+                <div style="font-size:11px;color:#ff8888;word-break:break-all;">${lastError}</div>
+            </div>` : ''}
+
+            <div class="admin-form-row">
+                <label style="font-size:10px;color:#888;width:100%;">URL do sync.php (Hostinger)</label>
+                <input type="text" id="sync-url" placeholder="https://seudominio.com/api/sync.php" value="${url}" class="admin-input" style="width:100%;margin-top:4px;">
+            </div>
+            <div class="admin-form-row">
+                <label style="font-size:10px;color:#888;width:100%;">Chave Secreta (mesma do config.php)</label>
+                <input type="password" id="sync-secret" placeholder="Sua chave secreta" class="admin-input" style="width:100%;margin-top:4px;">
+            </div>
+            <div class="admin-form-row">
+                <label style="font-size:10px;color:#888;width:100%;">Intervalo (minutos)</label>
+                <input type="number" id="sync-interval" value="${interval}" min="1" max="60" class="admin-input" style="width:100px;margin-top:4px;">
+            </div>
+            <div class="admin-form-row" style="flex-wrap:wrap;gap:8px;">
+                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:#ccc;">
+                    <input type="checkbox" id="sync-enabled" ${enabled ? 'checked' : ''} style="accent-color:#00ff88;width:16px;height:16px;">
+                    Ativar sync automatico
+                </label>
+            </div>
+            <div class="admin-form-row" style="gap:8px;flex-wrap:wrap;">
+                <button class="admin-btn" onclick="salvarSyncConfig()" style="background:#00ff88;color:#000;">💾 Salvar Configuracao</button>
+                <button class="admin-btn" onclick="forcarSync()" style="background:#f5c842;color:#000;">🔄 Sincronizar Agora</button>
+                <button class="admin-btn" onclick="verificarDadosSync()" style="background:#58a6ff;color:#000;">👁️ Ver Dados</button>
+            </div>
+        </div>
+
+        <div id="sync-preview" style="margin-top:12px;"></div>`;
+
+    container.innerHTML = html;
+}
+
+async function salvarSyncConfig() {
+    const url = document.getElementById('sync-url').value.trim();
+    const secret = document.getElementById('sync-secret').value.trim();
+    const interval = parseInt(document.getElementById('sync-interval').value) || 5;
+    const enabled = document.getElementById('sync-enabled').checked;
+
+    if (!url) return alert('Digite a URL do sync.php');
+    if (!secret) return alert('Digite a chave secreta');
+
+    const res = await authFetch('/api/sync/config', {
+        method: 'POST',
+        body: JSON.stringify({
+            hostingerUrl: url,
+            syncSecret: secret,
+            intervalMs: interval * 60000,
+            enabled: enabled
+        })
+    });
+
+    if (res && res.ok) {
+        const data = await res.json();
+        syncStatus = data.status;
+        alert('Configuracao salva com sucesso!');
+        renderAdmin();
+    }
+}
+
+async function forcarSync() {
+    const btn = event.target;
+    btn.disabled = true;
+    btn.textContent = '⏳ Sincronizando...';
+
+    try {
+        const res = await authFetch('/api/sync/now', { method: 'POST' });
+        if (res) {
+            const data = await res.json();
+            if (data.ok) {
+                alert(`Sync concluido! ${data.empresas} empresas, ${data.motoristas} motoristas enviados.`);
+            } else {
+                alert('Erro: ' + (data.reason || 'desconhecido'));
+            }
+        }
+    } catch(e) {
+        alert('Erro ao sincronizar: ' + e.message);
+    }
+
+    const statusRes = await authFetch('/api/sync/status');
+    if (statusRes) syncStatus = await statusRes.json();
+
+    btn.disabled = false;
+    btn.textContent = '🔄 Sincronizar Agora';
+    renderAdmin();
+}
+
+async function verificarDadosSync() {
+    const preview = document.getElementById('sync-preview');
+    preview.innerHTML = '<div style="color:#888;padding:1rem;">Carregando...</div>';
+
+    try {
+        const res = await authFetch('/api/sync/dados');
+        if (!res) return;
+        const data = await res.json();
+
+        let html = `<div style="background:#0d1117;border:1px solid #333;border-radius:8px;padding:16px;">
+            <div style="font-size:10px;color:#f5c842;font-weight:700;letter-spacing:1px;margin-bottom:12px;">DADOS QUE SERAO ENVIADOS</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+                <div style="text-align:center;"><div style="font-size:20px;font-weight:900;color:#f5c842;">${data.empresas?.length || 0}</div><div style="font-size:9px;color:#888;">Empresas</div></div>
+                <div style="text-align:center;"><div style="font-size:20px;font-weight:900;color:#f5c842;">${data.motoristas?.length || 0}</div><div style="font-size:9px;color:#888;">Motoristas</div></div>
+                <div style="text-align:center;"><div style="font-size:20px;font-weight:900;color:#f5c842;">${data.stats?.totalViagens || 0}</div><div style="font-size:9px;color:#888;">Viagens</div></div>
+                <div style="text-align:center;"><div style="font-size:20px;font-weight:900;color:#f5c842;">${data.stats?.totalKm || 0}</div><div style="font-size:9px;color:#888;">KM Total</div></div>
+            </div>`;
+
+        if (data.empresas && data.empresas.length > 0) {
+            html += `<div style="font-size:9px;color:#666;letter-spacing:1px;margin-bottom:6px;">TOP 5 EMPRESAS</div>`;
+            data.empresas.slice(0, 5).forEach((e, i) => {
+                html += `<div style="font-size:11px;color:#ccc;padding:2px 0;">${i+1}º ${e.nome} — ${e.pontuacao} pts</div>`;
+            });
+        }
+
+        if (data.motoristas && data.motoristas.length > 0) {
+            html += `<div style="font-size:9px;color:#666;letter-spacing:1px;margin:12px 0 6px;">TOP 5 MOTORISTAS</div>`;
+            data.motoristas.slice(0, 5).forEach((m, i) => {
+                html += `<div style="font-size:11px;color:#ccc;padding:2px 0;">${i+1}º ${m.nome} (${m.empresa}) — ${m.pontuacao} pts</div>`;
+            });
+        }
+
+        html += `<div style="font-size:9px;color:#555;margin-top:12px;">Timestamp: ${data.timestamp}</div></div>`;
+        preview.innerHTML = html;
+
+    } catch(e) {
+        preview.innerHTML = '<div style="color:#ff4444;padding:1rem;">Erro ao carregar dados: ' + e.message + '</div>';
     }
 }
 

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CARGO STATS - Telemetria ETS2/ATS</title>
+    <link rel="icon" type="image/png" href="images/cargo.png">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#050508;color:#e0e0e0;font-family:'Segoe UI',Arial,sans-serif;min-height:100vh;overflow-x:hidden}
+        canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+        .site-header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(5,5,8,0.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(245,200,66,0.15);padding:0 2rem;display:flex;align-items:center;height:60px}
+        .site-header .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+        .site-header .logo img{height:28px}
+        .site-header .logo span{color:#f5c842;font-weight:900;font-size:1.1rem;letter-spacing:0.15em}
+        .site-header nav{margin-left:auto;display:flex;gap:1.5rem;align-items:center}
+        .site-header nav a{color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;transition:color 0.3s}
+        .site-header nav a:hover,.site-header nav a.active{color:#f5c842}
+        .site-header nav .btn-app{background:#f5c842;color:#050508!important;padding:0.4rem 1.2rem;border-radius:4px;font-weight:700}
+        .site-header nav .btn-app:hover{background:#ffd84d}
+        .hero{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:2rem}
+        .hero-logo{width:120px;height:120px;margin-bottom:1.5rem;filter:drop-shadow(0 0 30px rgba(245,200,66,0.3));animation:float 3s ease-in-out infinite}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        .hero-title{font-size:3rem;font-weight:900;letter-spacing:0.2em;color:#f5c842;margin-bottom:0.5rem;text-shadow:0 0 40px rgba(245,200,66,0.3)}
+        .hero-subtitle{font-size:1rem;color:rgba(255,255,255,0.5);letter-spacing:0.1em;margin-bottom:3rem}
+        .hero-divider{width:60px;height:2px;background:linear-gradient(90deg,transparent,#f5c842,transparent);margin-bottom:3rem}
+        .hero-menu{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+        .hero-btn{padding:0.8rem 2rem;border:2px solid rgba(245,200,66,0.3);border-radius:8px;color:#f5c842;text-decoration:none;font-size:0.85rem;font-weight:700;letter-spacing:0.1em;transition:all 0.3s;background:rgba(245,200,66,0.05)}
+        .hero-btn:hover{background:rgba(245,200,66,0.15);border-color:#f5c842;transform:translateY(-2px)}
+        .hero-btn.primary{background:#f5c842;color:#050508;border-color:#f5c842}
+        .hero-btn.primary:hover{background:#ffd84d}
+        .hero-truck{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:300px;opacity:0.15;pointer-events:none}
+        .features{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:4rem 2rem;text-align:center}
+        .features h2{color:#f5c842;font-size:1.2rem;letter-spacing:0.15em;margin-bottom:2rem}
+        .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem}
+        .feature-card{background:rgba(255,255,255,0.03);border:1px solid rgba(245,200,66,0.08);border-radius:12px;padding:2rem 1.5rem;text-align:center}
+        .feature-card .icon{font-size:2rem;margin-bottom:0.8rem}
+        .feature-card h3{color:#f5c842;font-size:0.85rem;letter-spacing:0.1em;margin-bottom:0.5rem}
+        .feature-card p{color:rgba(255,255,255,0.4);font-size:0.75rem;line-height:1.5}
+        footer{position:relative;z-index:1;text-align:center;padding:3rem 2rem;color:rgba(255,255,255,0.2);font-size:0.7rem;border-top:1px solid rgba(255,255,255,0.05)}
+        @media(max-width:768px){
+            .site-header{padding:0 1rem}
+            .site-header nav{gap:0.8rem}
+            .site-header nav a{font-size:0.65rem}
+            .hero-title{font-size:2rem}
+            .hero-subtitle{font-size:0.85rem}
+        }
+    </style>
+</head>
+<body>
+    <canvas id="mainCanvas"></canvas>
+
+    <header class="site-header">
+        <a class="logo" href="/">
+            <img src="images/cargo.png" alt="Cargo Stats">
+            <span>CARGO STATS</span>
+        </a>
+        <nav>
+            <a class="active" href="/">Inicio</a>
+            <a href="/rank">Ranking</a>
+            <a href="/download">Download</a>
+            <a href="/regras">Regras</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <img class="hero-logo" src="images/cargo.png" alt="Cargo Stats">
+        <div class="hero-title">CARGO STATS</div>
+        <div class="hero-subtitle">Seu app de telemetria em tempo real para ETS2/ATS</div>
+        <div class="hero-divider"></div>
+        <div class="hero-menu">
+            <a class="hero-btn primary" href="/download">Baixar o App</a>
+            <a class="hero-btn" href="/rank">Ver Ranking</a>
+            <a class="hero-btn" href="/regras">Regras</a>
+        </div>
+        <img class="hero-truck" src="images/scania1.png" alt="">
+    </section>
+
+    <section class="features">
+        <h2>RECURSOS</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="icon">📡</div>
+                <h3>TELEMETRIA AO VIVO</h3>
+                <p>Velocidade, RPM, combustivel, temperatura e muito mais em tempo real.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🏆</div>
+                <h3>RANKING</h3>
+                <p>Compete com outros motoristas e empresas. Suba no ranking!</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">📦</div>
+                <h3>CLASSIFICACAO DE CARGAS</h3>
+                <p>Sistema automatico de categorizacao de cargas por tipo e periculosidade.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🎯</div>
+                <h3>EVENTOS</h3>
+                <p>Desafios semanais e maratonas com bonus de pontos.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🏢</div>
+                <h3>EMPRESAS</h3>
+                <p>Crie sua empresa, gerencie motoristas e competa como equipe.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🎖️</div>
+                <h3>CONQUISTAS</h3>
+                <p>Desbloqueie medalhas e conquistas ao longo da sua jornada.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        CARGO STATS &copy; 2026 - Telemetria ETS2/ATS
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+        window.addEventListener('resize',resize);resize();
+        for(let i=0;i<50;i++)particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:Math.random()*2+1});
+        function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>canvas.width)p.vx*=-1;if(p.y<0||p.y>canvas.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(245,200,66,0.1)';ctx.fill()});requestAnimationFrame(draw)}
+        draw();
+    </script>
+</body>
+</html>

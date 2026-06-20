@@ -5,6 +5,12 @@ services:
     buildCommand: npm install
     startCommand: node server.js
     healthCheckPath: /api/health
+    healthCheckPolicy:
+      response:
+        statuses:
+          - 200
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 3000
