@@ -307,6 +307,11 @@ async function fazerLogout() {
         });
     } catch(e) {}
     clearAuth();
+    localStorage.removeItem('cargo_login_email');
+    localStorage.removeItem('cargo_login_senha');
+    if (window.cargoStats && window.cargoStats.clearCredentials) {
+        window.cargoStats.clearCredentials();
+    }
     window.location.href = window.location.origin + '/login_local.html';
 }
 
