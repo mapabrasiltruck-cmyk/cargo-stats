@@ -1,9 +1,9 @@
-const { BrowserWindow, net } = require('electron');
-const http = require('http');
+const { BrowserWindow } = require('electron');
 const https = require('https');
+const http = require('http');
 
 const STEAM_OPENID_URL = 'https://steamcommunity.com/openid/login';
-const STEAMID_REGEX = /https?:\/\/steamcommunity\.com\/openid\/id\/(\d+)/;
+const STEAMID_REGEX = /steamcommunity\.com[\/%]openid[\/%]id[\/%](\d+)/i;
 const CALLBACK_PATH = '/steam-callback';
 
 function buildSteamOpenIdUrl(returnUrl) {
@@ -24,7 +24,7 @@ function extractSteamId(url) {
 }
 
 function fetchSteamProfile(steamId) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         const url = `https://steamcommunity.com/profiles/${steamId}?xml=1`;
         https.get(url, (res) => {
             let data = '';
@@ -42,7 +42,7 @@ function fetchSteamProfile(steamId) {
                     resolve({ nome: 'Motorista Steam', avatar: '' });
                 }
             });
-        }).on('error', (e) => {
+        }).on('error', () => {
             resolve({ nome: 'Motorista Steam', avatar: '' });
         });
     });
@@ -53,17 +53,17 @@ function authenticateWithSteam(serverPort) {
         const returnUrl = `http://localhost:${serverPort}${CALLBACK_PATH}`;
         const steamUrl = buildSteamOpenIdUrl(returnUrl);
 
+        const parentWindow = BrowserWindow.getFocusedWindow();
         const authWindow = new BrowserWindow({
             width: 520,
             height: 620,
-            modal: true,
-            parent: BrowserWindow.getFocusedWindow() || undefined,
+            modal: !!parentWindow,
+            parent: parentWindow || undefined,
             title: 'Login com Steam',
             autoHideMenuBar: true,
             webPreferences: {
                 nodeIntegration: false,
-                contextIsolation: true,
-                sandbox: true
+                contextIsolation: true
             }
         });
 
@@ -72,9 +72,10 @@ function authenticateWithSteam(serverPort) {
 
         let resolved = false;
 
-        authWindow.webContents.on('will-redirect', (event, url) => {
+        function handleUrl(url) {
             if (resolved) return;
-            const steamId = extractSteamId(url);
+            const decoded = decodeURIComponent(url);
+            const steamId = extractSteamId(url) || extractSteamId(decoded);
             if (steamId) {
                 resolved = true;
                 authWindow.destroy();
@@ -92,28 +93,22 @@ function authenticateWithSteam(serverPort) {
                     });
                 });
             }
-        });
+        }
 
         authWindow.webContents.on('will-navigate', (event, url) => {
-            if (resolved) return;
-            const steamId = extractSteamId(url);
-            if (steamId) {
-                resolved = true;
-                authWindow.destroy();
-                fetchSteamProfile(steamId).then(profile => {
-                    resolve({
-                        steam_id: steamId,
-                        nome: profile.nome,
-                        avatar: profile.avatar
-                    });
-                }).catch(() => {
-                    resolve({
-                        steam_id: steamId,
-                        nome: 'Motorista Steam',
-                        avatar: ''
-                    });
-                });
-            }
+            handleUrl(url);
+        });
+
+        authWindow.webContents.on('will-redirect', (event, url) => {
+            handleUrl(url);
+        });
+
+        authWindow.webContents.on('did-navigate', (event, url) => {
+            handleUrl(url);
+        });
+
+        authWindow.webContents.on('did-navigate-in-page', (event, url) => {
+            handleUrl(url);
         });
 
         authWindow.on('closed', () => {
