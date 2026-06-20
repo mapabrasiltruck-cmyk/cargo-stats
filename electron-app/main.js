@@ -448,6 +448,8 @@ app.whenReady().then(async () => {
         createWindow(`http://localhost:${SERVER_PORT}/update_check.html`);
     } catch (e) {
         console.log('[APP] Servidor local indisponivel, usando modo remoto:', e.message);
+        const { dialog } = require('electron');
+        dialog.showErrorBox('Erro ao iniciar servidor local', e.message + '\n\nO app vai conectar ao servidor remoto.');
         createWindow(RENDER_URL);
     }
 
