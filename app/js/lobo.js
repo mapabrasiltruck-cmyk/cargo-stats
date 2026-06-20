@@ -180,15 +180,33 @@ function abrirModalCriarEmpresa() {
     overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:999;display:flex;align-items:center;justify-content:center;';
 
     overlay.innerHTML = `
-        <div style="background:#0d1117;border:1px solid #f5c84240;border-radius:12px;padding:24px;width:90%;max-width:400px;">
+        <div style="background:#0d1117;border:1px solid #f5c84240;border-radius:12px;padding:24px;width:90%;max-width:400px;max-height:90vh;overflow-y:auto;">
             <div style="color:#f5c842;font-size:14px;font-weight:700;letter-spacing:1px;margin-bottom:16px;text-align:center;">CRIAR EMPRESA</div>
             <div style="margin-bottom:12px;">
                 <label style="font-size:10px;color:#888;letter-spacing:1px;display:block;margin-bottom:4px;">NOME DA EMPRESA *</label>
                 <input type="text" id="criar-emp-nome" placeholder="Ex: Minha Transportadora" maxlength="100" style="width:100%;padding:10px;background:#050508;border:1px solid #333;border-radius:6px;color:#e0e0e0;font-size:13px;box-sizing:border-box;">
             </div>
-            <div style="margin-bottom:16px;">
+            <div style="margin-bottom:12px;">
                 <label style="font-size:10px;color:#888;letter-spacing:1px;display:block;margin-bottom:4px;">DESCRICAO (opcional)</label>
                 <textarea id="criar-emp-desc" placeholder="Sua empresa em poucas palavras" rows="2" maxlength="200" style="width:100%;padding:10px;background:#050508;border:1px solid #333;border-radius:6px;color:#e0e0e0;font-size:13px;box-sizing:border-box;resize:none;"></textarea>
+            </div>
+            <div style="margin-bottom:12px;">
+                <label style="font-size:10px;color:#888;letter-spacing:1px;display:block;margin-bottom:4px;">LOGO DA EMPRESA (opcional)</label>
+                <div id="criar-emp-logo-preview" style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+                    <div id="criar-emp-logo-thumb" style="width:56px;height:56px;border-radius:10px;background:#111;border:1px dashed #333;display:flex;align-items:center;justify-content:center;font-size:24px;color:#555;overflow:hidden;flex-shrink:0;">🏢</div>
+                    <div>
+                        <label for="criar-emp-logo" style="display:inline-block;padding:6px 14px;background:#1a2a1a;border:1px solid #00ff8840;border-radius:6px;color:#00ff88;font-size:11px;cursor:pointer;">Escolher arquivo</label>
+                        <div style="font-size:9px;color:#555;margin-top:4px;">PNG ou JPG, max 2MB</div>
+                    </div>
+                </div>
+                <input type="file" id="criar-emp-logo" accept="image/*" style="display:none;">
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="font-size:10px;color:#888;letter-spacing:1px;display:block;margin-bottom:4px;">BANNER DA EMPRESA (opcional)</label>
+                <div id="criar-emp-banner-preview" style="margin-bottom:6px;">
+                    <div id="criar-emp-banner-thumb" style="width:100%;height:80px;border-radius:8px;background:#111;border:1px dashed #333;display:flex;align-items:center;justify-content:center;font-size:11px;color:#555;overflow:hidden;">Clique para selecionar banner</div>
+                </div>
+                <input type="file" id="criar-emp-banner" accept="image/*" style="display:none;">
             </div>
             <div id="criar-emp-error" style="color:#ff4444;font-size:11px;text-align:center;margin-bottom:10px;"></div>
             <div style="display:flex;gap:10px;">
@@ -205,6 +223,36 @@ function abrirModalCriarEmpresa() {
 
     document.getElementById('criar-emp-cancelar').addEventListener('click', () => overlay.remove());
 
+    const logoInput = document.getElementById('criar-emp-logo');
+    const logoThumb = document.getElementById('criar-emp-logo-thumb');
+    logoInput.addEventListener('change', () => {
+        const file = logoInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                logoThumb.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover;">';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    logoThumb.style.cursor = 'pointer';
+    logoThumb.addEventListener('click', () => logoInput.click());
+
+    const bannerInput = document.getElementById('criar-emp-banner');
+    const bannerThumb = document.getElementById('criar-emp-banner-thumb');
+    bannerInput.addEventListener('change', () => {
+        const file = bannerInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                bannerThumb.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover;">';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    bannerThumb.style.cursor = 'pointer';
+    bannerThumb.addEventListener('click', () => bannerInput.click());
+
     document.getElementById('criar-emp-confirmar').addEventListener('click', async () => {
         const nome = document.getElementById('criar-emp-nome').value.trim();
         const descricao = document.getElementById('criar-emp-desc').value.trim();
@@ -219,9 +267,17 @@ function abrirModalCriarEmpresa() {
         btn.disabled = true;
         btn.textContent = 'CRIANDO...';
 
-        const res = await authFetch('/api/empresas/solicitar', {
+        const formData = new FormData();
+        formData.append('nome', nome);
+        formData.append('descricao', descricao);
+        if (logoInput.files[0]) formData.append('logo', logoInput.files[0]);
+        if (bannerInput.files[0]) formData.append('banner', bannerInput.files[0]);
+
+        const token = getAuthToken();
+        const res = await fetch('/api/empresas/solicitar', {
             method: 'POST',
-            body: JSON.stringify({ nome, descricao })
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: formData
         });
 
         if (res) {
