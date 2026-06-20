@@ -128,6 +128,16 @@ function renderPage() {
         frame.appendChild(grid);
     }
 
+    const criarSection = document.createElement('div');
+    criarSection.style.cssText = 'text-align:center;margin-top:32px;padding:24px;border:1px solid rgba(0,255,136,0.15);border-radius:12px;background:rgba(0,255,136,0.02);';
+    criarSection.innerHTML = `
+        <div style="font-size:28px;margin-bottom:8px;">🚀</div>
+        <div style="color:#f5c842;font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:6px;">CRIAR MINHA EMPRESA</div>
+        <div style="color:#666;font-size:11px;margin-bottom:14px;">Nao encontrou uma empresa? Crie a sua propria!</div>
+        <button id="btn-criar-empresa" class="lobo-btn-pedido" style="background:#f5c842;color:#000;padding:10px 24px;">CRIAR EMPRESA</button>
+    `;
+    frame.appendChild(criarSection);
+
     const footer = document.createElement('div');
     footer.className = 'dashboard-footer';
     footer.innerHTML = `
@@ -136,6 +146,8 @@ function renderPage() {
     frame.appendChild(footer);
 
     app.appendChild(frame);
+
+    document.getElementById('btn-criar-empresa').addEventListener('click', () => abrirModalCriarEmpresa());
 }
 
 async function pedirVaga(empresaNome) {
@@ -161,6 +173,80 @@ async function pedirVaga(empresaNome) {
             alert(result.error || 'Erro ao enviar pedido');
         }
     }
+}
+
+function abrirModalCriarEmpresa() {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:999;display:flex;align-items:center;justify-content:center;';
+
+    overlay.innerHTML = `
+        <div style="background:#0d1117;border:1px solid #f5c84240;border-radius:12px;padding:24px;width:90%;max-width:400px;">
+            <div style="color:#f5c842;font-size:14px;font-weight:700;letter-spacing:1px;margin-bottom:16px;text-align:center;">CRIAR EMPRESA</div>
+            <div style="margin-bottom:12px;">
+                <label style="font-size:10px;color:#888;letter-spacing:1px;display:block;margin-bottom:4px;">NOME DA EMPRESA *</label>
+                <input type="text" id="criar-emp-nome" placeholder="Ex: Minha Transportadora" maxlength="100" style="width:100%;padding:10px;background:#050508;border:1px solid #333;border-radius:6px;color:#e0e0e0;font-size:13px;box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="font-size:10px;color:#888;letter-spacing:1px;display:block;margin-bottom:4px;">DESCRICAO (opcional)</label>
+                <textarea id="criar-emp-desc" placeholder="Sua empresa em poucas palavras" rows="2" maxlength="200" style="width:100%;padding:10px;background:#050508;border:1px solid #333;border-radius:6px;color:#e0e0e0;font-size:13px;box-sizing:border-box;resize:none;"></textarea>
+            </div>
+            <div id="criar-emp-error" style="color:#ff4444;font-size:11px;text-align:center;margin-bottom:10px;"></div>
+            <div style="display:flex;gap:10px;">
+                <button id="criar-emp-cancelar" style="flex:1;padding:10px;background:#222;border:1px solid #333;border-radius:6px;color:#888;font-size:12px;cursor:pointer;">CANCELAR</button>
+                <button id="criar-emp-confirmar" style="flex:1;padding:10px;background:#f5c842;border:none;border-radius:6px;color:#000;font-weight:700;font-size:12px;cursor:pointer;">CRIAR</button>
+            </div>
+        </div>`;
+
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.remove();
+    });
+
+    document.getElementById('criar-emp-cancelar').addEventListener('click', () => overlay.remove());
+
+    document.getElementById('criar-emp-confirmar').addEventListener('click', async () => {
+        const nome = document.getElementById('criar-emp-nome').value.trim();
+        const descricao = document.getElementById('criar-emp-desc').value.trim();
+        const errorDiv = document.getElementById('criar-emp-error');
+        const btn = document.getElementById('criar-emp-confirmar');
+
+        if (!nome) {
+            errorDiv.textContent = 'Digite o nome da empresa';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'CRIANDO...';
+
+        const res = await authFetch('/api/empresas/solicitar', {
+            method: 'POST',
+            body: JSON.stringify({ nome, descricao })
+        });
+
+        if (res) {
+            const data = await res.json();
+            if (data.ok) {
+                overlay.remove();
+                const user = getAuthUser();
+                if (user) {
+                    user.empresa = data.empresa;
+                    setAuth(getAuthToken(), user);
+                }
+                window.location.href = 'empresa_local.html?empresa=' + encodeURIComponent(data.empresa);
+            } else {
+                errorDiv.textContent = data.error || 'Erro ao criar empresa';
+                btn.disabled = false;
+                btn.textContent = 'CRIAR';
+            }
+        } else {
+            errorDiv.textContent = 'Erro de conexao';
+            btn.disabled = false;
+            btn.textContent = 'CRIAR';
+        }
+    });
+
+    document.getElementById('criar-emp-nome').focus();
 }
 
 (async function init() {
