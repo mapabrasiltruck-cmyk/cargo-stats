@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CARGO STATS - Ranking</title>
+    <link rel="stylesheet" href="/site/cs/styles.css" />
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#050508; color:#e0e0e0; font-family:'Segoe UI',Arial,sans-serif; min-height:100vh; }
+        .site-header { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(5,5,8,0.92); backdrop-filter:blur(8px); border-bottom:1px solid rgba(245,200,66,0.15); padding:0 2rem; display:flex; align-items:center; height:60px; }
+        .site-header .logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+        .site-header .logo img { height:28px; }
+        .site-header .logo span { color:#f5c842; font-weight:900; font-size:1.1rem; letter-spacing:0.15em; }
+        .site-header nav { margin-left:auto; display:flex; gap:1.5rem; align-items:center; }
+        .site-header nav a { color:rgba(255,255,255,0.6); text-decoration:none; font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase; transition:color 0.3s; }
+        .site-header nav a:hover, .site-header nav a.active { color:#f5c842; }
+        .site-header nav .btn-app { background:#f5c842; color:#050508 !important; padding:0.4rem 1.2rem; border-radius:4px; font-weight:700; }
+        .site-header nav .btn-app:hover { background:#ffd84d; }
+        main { padding-top:80px; max-width:1200px; margin:0 auto; padding-left:2rem; padding-right:2rem; padding-bottom:4rem; }
+        .page-title { font-size:1.6rem; font-weight:900; letter-spacing:0.1em; color:#f5c842; margin-bottom:0.5rem; }
+        .page-subtitle { color:rgba(255,255,255,0.5); font-size:0.85rem; margin-bottom:2rem; }
+        .stats-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:2.5rem; }
+        .stat-card { background:rgba(255,255,255,0.03); border:1px solid rgba(245,200,66,0.1); border-radius:8px; padding:1.2rem; text-align:center; }
+        .stat-card .value { font-size:1.8rem; font-weight:900; color:#f5c842; }
+        .stat-card .label { font-size:0.7rem; text-transform:uppercase; letter-spacing:0.15em; color:rgba(255,255,255,0.5); margin-top:0.3rem; }
+        .tabs { display:flex; gap:0; margin-bottom:1.5rem; border-bottom:1px solid rgba(255,255,255,0.08); }
+        .tabs button { background:transparent; border:none; color:rgba(255,255,255,0.4); padding:0.8rem 1.5rem; font-size:0.8rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.3s; }
+        .tabs button:hover { color:rgba(255,255,255,0.7); }
+        .tabs button.active { color:#f5c842; border-bottom-color:#f5c842; }
+        .period-filter { display:flex; gap:0.5rem; margin-bottom:1.5rem; }
+        .period-filter button { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.5); padding:0.4rem 1rem; border-radius:4px; font-size:0.75rem; cursor:pointer; transition:all 0.3s; }
+        .period-filter button:hover { border-color:#f5c842; color:#f5c842; }
+        .period-filter button.active { background:rgba(245,200,66,0.15); border-color:#f5c842; color:#f5c842; }
+        .rank-table { width:100%; border-collapse:collapse; }
+        .rank-table th { text-align:left; padding:0.7rem 0.8rem; font-size:0.65rem; text-transform:uppercase; letter-spacing:0.15em; color:rgba(255,255,255,0.35); border-bottom:1px solid rgba(255,255,255,0.06); font-weight:700; }
+        .rank-table td { padding:0.7rem 0.8rem; font-size:0.85rem; border-bottom:1px solid rgba(255,255,255,0.04); }
+        .rank-table tr:hover td { background:rgba(245,200,66,0.03); }
+        .rank-pos { font-weight:900; color:rgba(255,255,255,0.3); width:40px; }
+        .rank-1 { color:#ffd700; }
+        .rank-2 { color:#c0c0c0; }
+        .rank-3 { color:#cd7f32; }
+        .rank-name { font-weight:600; }
+        .rank-name a { color:#f5c842; text-decoration:none; }
+        .rank-name a:hover { text-decoration:underline; }
+        .rank-stat { color:rgba(255,255,255,0.6); }
+        .loading { text-align:center; padding:3rem; color:rgba(255,255,255,0.3); font-size:0.9rem; }
+        .loading::after { content:'...'; animation:dots 1.5s steps(4) infinite; }
+        @keyframes dots { 0% { content:'.'; } 25% { content:'..'; } 50% { content:'...'; } 75% { content:''; } }
+        .error { text-align:center; padding:2rem; color:#ff4444; }
+        @media (max-width:768px) {
+            .site-header { padding:0 1rem; }
+            .site-header nav { gap:0.8rem; }
+            .site-header nav a { font-size:0.65rem; }
+            main { padding-left:1rem; padding-right:1rem; }
+            .stats-row { grid-template-columns:repeat(2,1fr); }
+            .rank-table { font-size:0.75rem; }
+            .rank-table th, .rank-table td { padding:0.5rem 0.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <a class="logo" href="/">
+            <img src="/site/images/cargo.png" alt="Cargo Stats" />
+            <span>CARGO STATS</span>
+        </a>
+        <nav>
+            <a href="/">Início</a>
+            <a class="active" href="/rank">Ranking</a>
+            <a href="/download">Download</a>
+            <a href="/regras">Regras</a>
+            <a class="btn-app" href="/app">Acessar App</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="page-title">RANKING</div>
+        <div class="page-subtitle">Classificação geral de empresas e motoristas</div>
+
+        <div id="stats-container" class="stats-row">
+            <div class="stat-card"><div class="value" id="stat-empresas">-</div><div class="label">Empresas</div></div>
+            <div class="stat-card"><div class="value" id="stat-motoristas">-</div><div class="label">Motoristas</div></div>
+            <div class="stat-card"><div class="value" id="stat-viagens">-</div><div class="label">Viagens</div></div>
+            <div class="stat-card"><div class="value" id="stat-km">-</div><div class="label">KM Rodados</div></div>
+            <div class="stat-card"><div class="value" id="stat-pontos">-</div><div class="label">Pontuação Total</div></div>
+        </div>
+
+        <div class="tabs">
+            <button class="active" data-tab="empresas">Empresas</button>
+            <button data-tab="motoristas">Motoristas</button>
+        </div>
+
+        <div class="period-filter">
+            <button class="active" data-period="geral">Geral</button>
+            <button data-period="mes">Este Mês</button>
+        </div>
+
+        <div id="ranking-content">
+            <div class="loading">Carregando ranking</div>
+        </div>
+    </main>
+
+    <script>
+        const API = window.location.origin;
+        let currentTab = 'empresas';
+        let currentPeriod = 'geral';
+
+        const monthNames = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+        async function loadStats() {
+            try {
+                const r = await fetch(API + '/api/stats?_=' + Date.now());
+                const data = await r.json();
+                document.getElementById('stat-empresas').textContent = data.totalEmpresas || 0;
+                document.getElementById('stat-motoristas').textContent = data.totalMotoristas || 0;
+                document.getElementById('stat-viagens').textContent = data.totalViagens || 0;
+                const km = (data.totalKm || 0) >= 1000
+                    ? (data.totalKm / 1000).toFixed(1) + 'k'
+                    : data.totalKm || 0;
+                document.getElementById('stat-km').textContent = km;
+                document.getElementById('stat-pontos').textContent = '-';
+            } catch(e) {}
+        }
+
+        function getMonthParam() {
+            if (currentPeriod === 'geral') return '';
+            const now = new Date();
+            return '&mes=' + (now.getMonth() + 1) + '&ano=' + now.getFullYear();
+        }
+
+        async function loadRanking() {
+            const container = document.getElementById('ranking-content');
+            container.innerHTML = '<div class="loading">Carregando ranking</div>';
+
+            try {
+                let url;
+                if (currentTab === 'empresas') {
+                    url = API + '/api/ranking/empresas?periodo=' + currentPeriod + getMonthParam();
+                } else {
+                    url = API + '/api/ranking/motoristas?periodo=' + currentPeriod + getMonthParam();
+                }
+                url += '&_=' + Date.now();
+
+                const r = await fetch(url);
+                const data = await r.json();
+                const list = data.ranking || [];
+
+                if (list.length === 0) {
+                    container.innerHTML = '<div class="error">Nenhum dado disponível ainda. Faça o login e registre suas primeiras viagens!</div>';
+                    return;
+                }
+
+                let html = '<table class="rank-table"><thead><tr>' +
+                    '<th>#</th><th>' + (currentTab === 'empresas' ? 'Empresa' : 'Motorista') + '</th>' +
+                    '<th>Viagens</th><th>KM</th><th>Pontuação</th>' +
+                    (currentTab === 'motoristas' ? '<th>Empresa</th>' : '') +
+                    '</tr></thead><tbody>';
+
+                list.forEach((item, i) => {
+                    const pos = i + 1;
+                    const posClass = pos <= 3 ? ' rank-' + pos : '';
+                    const km = (item.km || 0) >= 1000 ? ((item.km / 1000).toFixed(1) + 'k') : (item.km || 0);
+                    const pts = (item.pontuacao || 0) >= 1000 ? ((item.pontuacao / 1000).toFixed(1) + 'k') : (item.pontuacao || 0);
+                    const name = item.nome || item.empresa || '-';
+
+                    html += '<tr><td class="rank-pos' + posClass + '">' + pos + 'º</td>';
+                    html += '<td class="rank-name' + posClass + '">' + name + '</td>';
+                    html += '<td class="rank-stat">' + (item.viagens || 0) + '</td>';
+                    html += '<td class="rank-stat">' + km + '</td>';
+                    html += '<td class="rank-stat" style="color:#f5c842;font-weight:700;">' + pts + '</td>';
+                    if (currentTab === 'motoristas') {
+                        html += '<td class="rank-stat">' + (item.empresa || 'Lobo Solitário') + '</td>';
+                    }
+                    html += '</tr>';
+                });
+
+                html += '</tbody></table>';
+                container.innerHTML = html;
+
+            } catch(e) {
+                container.innerHTML = '<div class="error">Erro ao carregar ranking. Servidor indisponível.</div>';
+            }
+        }
+
+        document.querySelectorAll('.tabs button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTab = btn.dataset.tab;
+                loadRanking();
+            });
+        });
+
+        document.querySelectorAll('.period-filter button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.period-filter button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentPeriod = btn.dataset.period;
+                loadRanking();
+            });
+        });
+
+        loadStats();
+        loadRanking();
+        setInterval(() => { loadStats(); loadRanking(); }, 15000);
+    </script>
+</body>
+</html>

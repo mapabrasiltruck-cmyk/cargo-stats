@@ -1,0 +1,33 @@
+{
+  "totalEmpresas": 5,
+  "totalMotoristas": 18,
+  "totalViagens": 342,
+  "totalKm": 892500,
+  "empresas": [
+    { "nome": "TransBrasil", "pontuacao": 9850, "motoristas": 5, "viagens": 112, "km": 285000 },
+    { "nome": "LogiSul", "pontuacao": 8200, "motoristas": 4, "viagens": 89, "km": 210000 },
+    { "nome": "CargoNorte", "pontuacao": 7450, "motoristas": 3, "viagens": 72, "km": 178000 },
+    { "nome": "RotaLeste", "pontuacao": 6800, "motoristas": 3, "viagens": 45, "km": 132000 },
+    { "nome": "ExpressoCentro", "pontuacao": 5200, "motoristas": 3, "viagens": 24, "km": 87500 }
+  ],
+  "motoristas": [
+    { "nome": "Carlos Silva", "empresa": "TransBrasil", "pontuacao": 2850, "viagens": 38, "km": 95000, "status": "Ativo" },
+    { "nome": "João Pereira", "empresa": "TransBrasil", "pontuacao": 2400, "viagens": 32, "km": 78000, "status": "Ativo" },
+    { "nome": "Antônio Costa", "empresa": "TransBrasil", "pontuacao": 2100, "viagens": 22, "km": 55000, "status": "Ativo" },
+    { "nome": "Pedro Santos", "empresa": "TransBrasil", "pontuacao": 1500, "viagens": 12, "km": 32000, "status": "Férias" },
+    { "nome": "Lucas Oliveira", "empresa": "TransBrasil", "pontuacao": 1000, "viagens": 8, "km": 25000, "status": "Ativo" },
+    { "nome": "Fernando Lima", "empresa": "LogiSul", "pontuacao": 2600, "viagens": 35, "km": 82000, "status": "Ativo" },
+    { "nome": "Roberto Alves", "empresa": "LogiSul", "pontuacao": 2200, "viagens": 28, "km": 65000, "status": "Ativo" },
+    { "nome": "Marcos Souza", "empresa": "LogiSul", "pontuacao": 1800, "viagens": 16, "km": 40000, "status": "Ativo" },
+    { "nome": "Paulo Ferreira", "empresa": "LogiSul", "pontuacao": 1600, "viagens": 10, "km": 23000, "status": "Ativo" },
+    { "nome": "Ricardo Martins", "empresa": "CargoNorte", "pontuacao": 2900, "viagens": 30, "km": 72000, "status": "Ativo" },
+    { "nome": "Eduardo Ribeiro", "empresa": "CargoNorte", "pontuacao": 2450, "viagens": 25, "km": 62000, "status": "Ativo" },
+    { "nome": "Gabriel Araújo", "empresa": "CargoNorte", "pontuacao": 2100, "viagens": 17, "km": 44000, "status": "Ativo" },
+    { "nome": "Thiago Barbosa", "empresa": "RotaLeste", "pontuacao": 2500, "viagens": 20, "km": 55000, "status": "Ativo" },
+    { "nome": "Bruno Carvalho", "empresa": "RotaLeste", "pontuacao": 2200, "viagens": 15, "km": 42000, "status": "Ativo" },
+    { "nome": "Diego Nascimento", "empresa": "RotaLeste", "pontuacao": 2100, "viagens": 10, "km": 35000, "status": "Ativo" },
+    { "nome": "Felipe Gomes", "empresa": "ExpressoCentro", "pontuacao": 2000, "viagens": 10, "km": 35000, "status": "Ativo" },
+    { "nome": "Rafael Mendes", "empresa": "ExpressoCentro", "pontuacao": 1700, "viagens": 8, "km": 28000, "status": "Ativo" },
+    { "nome": "Andre Cardoso", "empresa": "ExpressoCentro", "pontuacao": 1500, "viagens": 6, "km": 24500, "status": "Ativo" }
+  ]
+}

@@ -1,0 +1,283 @@
+{
+  "title": "CARGO STATS",
+  "background": "#0a0a0a",
+  "serverUrl": "http://localhost:25555",
+  "updateIntervalMs": 100,
+  "sections": {
+    "instruments": { "label": "INSTRUMENTOS", "columns": 3 },
+    "fluids": { "label": "FLUIDOS" },
+    "wear": { "label": "DESGASTE" },
+    "data": { "label": "DADOS" },
+    "route": { "label": "ROTA" },
+    "status": { "label": "SISTEMAS" },
+    "info": { "label": "INFO" }
+  },
+  "widgets": [
+    {
+      "type": "gauge",
+      "section": "instruments",
+      "label": "VELOCIDADE",
+      "unit": "km/h",
+      "field": "truck.speed",
+      "min": 0,
+      "max": 140,
+      "color": "#0f0",
+      "ticks": 14,
+      "gradientColors": ["#00ff88", "#ffff00", "#ff4444"]
+    },
+    {
+      "type": "gauge",
+      "section": "instruments",
+      "label": "ROTAÇÕES",
+      "unit": "rpm",
+      "field": "truck.engineRpm",
+      "min": 0,
+      "max": 2500,
+      "color": "#ffaa00",
+      "ticks": 10,
+      "gradientColors": ["#ffaa00", "#ff6600", "#ff0000"]
+    },
+    {
+      "type": "gauge",
+      "section": "instruments",
+      "label": "COMBUSTÍVEL",
+      "unit": "L",
+      "field": "truck.fuel",
+      "min": 0,
+      "max": 700,
+      "color": "#00aaff",
+      "ticks": 7,
+      "gradientColors": ["#ff4444", "#ffff00", "#00ff88"]
+    },
+    {
+      "type": "text",
+      "section": "data",
+      "label": "MARCHA",
+      "field": "truck.gear",
+      "format": "{value:.0f}",
+      "color": "#ffffff"
+    },
+    {
+      "type": "text",
+      "section": "data",
+      "label": "ODÔMETRO",
+      "unit": "km",
+      "field": "truck.odometer",
+      "format": "{value:.0f}",
+      "color": "#aaaaff"
+    },
+    {
+      "type": "text",
+      "section": "data",
+      "label": "CONSUMO",
+      "unit": "L/100km",
+      "field": "truck.fuelAverageConsumption",
+      "format": "{value:.2f}",
+      "color": "#00ffaa"
+    },
+    {
+      "type": "text",
+      "section": "data",
+      "label": "LIMITE",
+      "unit": "km/h",
+      "field": "navigation.speedLimit",
+      "format": "{value:.0f}",
+      "color": "#ff4444"
+    },
+    {
+      "type": "text",
+      "section": "data",
+      "label": "DISTÂNCIA",
+      "unit": "km",
+      "field": "navigation.estimatedDistance",
+      "format": "{value:.0f}",
+      "color": "#44aaff"
+    },
+    {
+      "type": "text",
+      "section": "data",
+      "label": "RENDIMENTO",
+      "unit": "€",
+      "field": "job.income",
+      "format": "{value:.0f}",
+      "color": "#ffff00"
+    },
+    {
+      "type": "progress-bar",
+      "section": "fluids",
+      "label": "ÓLEO MOTOR",
+      "unit": "bar",
+      "field": "truck.oilPressure",
+      "min": 0,
+      "max": 80,
+      "color": "#00ff88"
+    },
+    {
+      "type": "progress-bar",
+      "section": "fluids",
+      "label": "TEMP. ÁGUA",
+      "unit": "°C",
+      "field": "truck.waterTemperature",
+      "min": 0,
+      "max": 110,
+      "color": "#00aaff"
+    },
+    {
+      "type": "progress-bar",
+      "section": "fluids",
+      "label": "BATERIA",
+      "unit": "V",
+      "field": "truck.batteryVoltage",
+      "min": 0,
+      "max": 30,
+      "color": "#ffff00"
+    },
+    {
+      "type": "progress-bar",
+      "section": "fluids",
+      "label": "PRESSÃO AR",
+      "unit": "bar",
+      "field": "truck.airPressure",
+      "min": 0,
+      "max": 150,
+      "color": "#ff8800"
+    },
+    {
+      "type": "progress-bar",
+      "section": "fluids",
+      "label": "TEMP. ÓLEO",
+      "unit": "°C",
+      "field": "truck.oilTemperature",
+      "min": 0,
+      "max": 120,
+      "color": "#ff4444"
+    },
+    {
+      "type": "progress-bar",
+      "section": "wear",
+      "label": "WEAR MOTOR",
+      "unit": "%",
+      "field": "truck.wearEngine",
+      "min": 0,
+      "max": 1,
+      "color": "#ff0000"
+    },
+    {
+      "type": "progress-bar",
+      "section": "wear",
+      "label": "WEAR CHASSIS",
+      "unit": "%",
+      "field": "truck.wearChassis",
+      "min": 0,
+      "max": 1,
+      "color": "#ff6600"
+    },
+    {
+      "type": "progress-bar",
+      "section": "wear",
+      "label": "WEAR CABINE",
+      "unit": "%",
+      "field": "truck.wearCabin",
+      "min": 0,
+      "max": 1,
+      "color": "#ffaa00"
+    },
+    {
+      "type": "progress-bar",
+      "section": "wear",
+      "label": "WEAR REBOQUE",
+      "unit": "%",
+      "field": "trailer.wear",
+      "min": 0,
+      "max": 1,
+      "color": "#ff4488"
+    },
+    {
+      "type": "text",
+      "section": "route",
+      "label": "ORIGEM",
+      "field": "job.sourceCity",
+      "color": "#aaaaff"
+    },
+    {
+      "type": "text",
+      "section": "route",
+      "label": "DESTINO",
+      "field": "job.destinationCity",
+      "color": "#ffaa88"
+    },
+    {
+      "type": "text",
+      "section": "route",
+      "label": "EMP. ORIGEM",
+      "field": "job.sourceCompany",
+      "color": "#88aaff"
+    },
+    {
+      "type": "text",
+      "section": "route",
+      "label": "EMP. DESTINO",
+      "field": "job.destinationCompany",
+      "color": "#ffaa88"
+    },
+    {
+      "type": "status",
+      "section": "status",
+      "label": "SISTEMAS",
+      "field": "truck",
+      "icons": {
+        "engineOn": "M",
+        "electricOn": "E",
+        "lightsBeamLowOn": "L",
+        "lightsBeamHighOn": "H",
+        "blinkerLeftOn": "<",
+        "blinkerRightOn": ">",
+        "wipersOn": "W",
+        "parkBrakeOn": "P",
+        "retarderBrake": "R",
+        "fuelWarningOn": "F",
+        "airPressureWarningOn": "A",
+        "oilPressureWarningOn": "O",
+        "waterTemperatureWarningOn": "T",
+        "batteryVoltageWarningOn": "B"
+      }
+    },
+    {
+      "type": "text",
+      "section": "info",
+      "label": "JOGO",
+      "field": "game.gameName",
+      "color": "#555555"
+    },
+    {
+      "type": "text",
+      "section": "info",
+      "label": "TRUCK",
+      "field": "truck.make",
+      "color": "#555555"
+    },
+    {
+      "type": "text",
+      "section": "info",
+      "label": "MODELO",
+      "field": "truck.model",
+      "color": "#555555"
+    },
+    {
+      "type": "text",
+      "section": "info",
+      "label": "REBOQUE",
+      "field": "trailer.name",
+      "color": "#555555"
+    },
+    {
+      "type": "text",
+      "section": "info",
+      "label": "TIME",
+      "unit": "x",
+      "field": "game.timeScale",
+      "format": "{value:.0f}",
+      "color": "#444444"
+    }
+  ]
+}

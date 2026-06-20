@@ -1,0 +1,100 @@
+{
+  "viagens": [
+    { "id": 1, "motorista": "Carlos Silva", "empresa": "TransBrasil", "data": "2026-06-01", "origem": "São Paulo", "destino": "Curitiba", "km": 420, "pontuacao": 95 },
+    { "id": 2, "motorista": "Carlos Silva", "empresa": "TransBrasil", "data": "2026-06-03", "origem": "Curitiba", "destino": "Porto Alegre", "km": 710, "pontuacao": 140 },
+    { "id": 3, "motorista": "Carlos Silva", "empresa": "TransBrasil", "data": "2026-06-06", "origem": "Porto Alegre", "destino": "Florianópolis", "km": 350, "pontuacao": 80 },
+    { "id": 4, "motorista": "Carlos Silva", "empresa": "TransBrasil", "data": "2026-06-08", "origem": "Florianópolis", "destino": "Joinville", "km": 180, "pontuacao": 55 },
+    { "id": 5, "motorista": "Carlos Silva", "empresa": "TransBrasil", "data": "2026-06-10", "origem": "Joinville", "destino": "São Paulo", "km": 450, "pontuacao": 100 },
+    { "id": 6, "motorista": "Carlos Silva", "empresa": "TransBrasil", "data": "2026-06-12", "origem": "São Paulo", "destino": "Campinas", "km": 110, "pontuacao": 35 },
+    { "id": 7, "motorista": "Carlos Silva", "empresa": "TransBrasil", "data": "2026-05-02", "origem": "São Paulo", "destino": "Rio de Janeiro", "km": 430, "pontuacao": 95 },
+    { "id": 8, "motorista": "Carlos Silva", "empresa": "TransBrasil", "data": "2026-05-07", "origem": "Rio de Janeiro", "destino": "Belo Horizonte", "km": 440, "pontuacao": 98 },
+    { "id": 9, "motorista": "Carlos Silva", "empresa": "TransBrasil", "data": "2026-05-12", "origem": "Belo Horizonte", "destino": "Vitória", "km": 520, "pontuacao": 110 },
+    { "id": 10, "motorista": "Carlos Silva", "empresa": "TransBrasil", "data": "2026-05-18", "origem": "Vitória", "destino": "São Paulo", "km": 880, "pontuacao": 165 },
+
+    { "id": 11, "motorista": "João Pereira", "empresa": "TransBrasil", "data": "2026-06-02", "origem": "São Paulo", "destino": "Goiânia", "km": 930, "pontuacao": 170 },
+    { "id": 12, "motorista": "João Pereira", "empresa": "TransBrasil", "data": "2026-06-05", "origem": "Goiânia", "destino": "Brasília", "km": 180, "pontuacao": 50 },
+    { "id": 13, "motorista": "João Pereira", "empresa": "TransBrasil", "data": "2026-06-09", "origem": "Brasília", "destino": "Tocantins", "km": 750, "pontuacao": 145 },
+    { "id": 14, "motorista": "João Pereira", "empresa": "TransBrasil", "data": "2026-06-13", "origem": "Tocantins", "destino": "São Paulo", "km": 1200, "pontuacao": 210 },
+    { "id": 15, "motorista": "João Pereira", "empresa": "TransBrasil", "data": "2026-05-04", "origem": "São Paulo", "destino": "Curitiba", "km": 420, "pontuacao": 95 },
+    { "id": 16, "motorista": "João Pereira", "empresa": "TransBrasil", "data": "2026-05-10", "origem": "Curitiba", "destino": "Cascavel", "km": 510, "pontuacao": 105 },
+
+    { "id": 17, "motorista": "Antônio Costa", "empresa": "TransBrasil", "data": "2026-06-04", "origem": "São Paulo", "destino": "Salvador", "km": 1960, "pontuacao": 310 },
+    { "id": 18, "motorista": "Antônio Costa", "empresa": "TransBrasil", "data": "2026-06-11", "origem": "Salvador", "destino": "Aracaju", "km": 330, "pontuacao": 75 },
+    { "id": 19, "motorista": "Antônio Costa", "empresa": "TransBrasil", "data": "2026-05-06", "origem": "São Paulo", "destino": "Porto Alegre", "km": 1100, "pontuacao": 195 },
+
+    { "id": 20, "motorista": "Pedro Santos", "empresa": "TransBrasil", "data": "2026-06-07", "origem": "Campinas", "destino": "Ribeirão Preto", "km": 310, "pontuacao": 70 },
+    { "id": 21, "motorista": "Pedro Santos", "empresa": "TransBrasil", "data": "2026-05-15", "origem": "São Paulo", "destino": "Sorocaba", "km": 130, "pontuacao": 40 },
+
+    { "id": 22, "motorista": "Lucas Oliveira", "empresa": "TransBrasil", "data": "2026-06-01", "origem": "São Paulo", "destino": "Presidente Prudente", "km": 460, "pontuacao": 100 },
+    { "id": 23, "motorista": "Lucas Oliveira", "empresa": "TransBrasil", "data": "2026-06-09", "origem": "Presidente Prudente", "destino": "Campo Grande", "km": 520, "pontuacao": 108 },
+
+    { "id": 24, "motorista": "Fernando Lima", "empresa": "LogiSul", "data": "2026-06-01", "origem": "Porto Alegre", "destino": "Florianópolis", "km": 480, "pontuacao": 105 },
+    { "id": 25, "motorista": "Fernando Lima", "empresa": "LogiSul", "data": "2026-06-04", "origem": "Florianópolis", "destino": "Curitiba", "km": 340, "pontuacao": 78 },
+    { "id": 26, "motorista": "Fernando Lima", "empresa": "LogiSul", "data": "2026-06-07", "origem": "Curitiba", "destino": "São Paulo", "km": 420, "pontuacao": 95 },
+    { "id": 27, "motorista": "Fernando Lima", "empresa": "LogiSul", "data": "2026-06-10", "origem": "São Paulo", "destino": "Rio de Janeiro", "km": 430, "pontuacao": 96 },
+    { "id": 28, "motorista": "Fernando Lima", "empresa": "LogiSul", "data": "2026-06-13", "origem": "Rio de Janeiro", "destino": "Belo Horizonte", "km": 440, "pontuacao": 98 },
+    { "id": 29, "motorista": "Fernando Lima", "empresa": "LogiSul", "data": "2026-05-03", "origem": "Porto Alegre", "destino": "São Paulo", "km": 1100, "pontuacao": 195 },
+    { "id": 30, "motorista": "Fernando Lima", "empresa": "LogiSul", "data": "2026-05-11", "origem": "São Paulo", "destino": "Curitiba", "km": 420, "pontuacao": 95 },
+
+    { "id": 31, "motorista": "Roberto Alves", "empresa": "LogiSul", "data": "2026-06-02", "origem": "Porto Alegre", "destino": "Caxias do Sul", "km": 130, "pontuacao": 40 },
+    { "id": 32, "motorista": "Roberto Alves", "empresa": "LogiSul", "data": "2026-06-06", "origem": "Caxias do Sul", "destino": "Curitiba", "km": 480, "pontuacao": 102 },
+    { "id": 33, "motorista": "Roberto Alves", "empresa": "LogiSul", "data": "2026-06-11", "origem": "Curitiba", "destino": "Londrina", "km": 350, "pontuacao": 80 },
+    { "id": 34, "motorista": "Roberto Alves", "empresa": "LogiSul", "data": "2026-05-08", "origem": "Porto Alegre", "destino": "Florianópolis", "km": 480, "pontuacao": 105 },
+
+    { "id": 35, "motorista": "Marcos Souza", "empresa": "LogiSul", "data": "2026-06-03", "origem": "Porto Alegre", "destino": "Pelotas", "km": 280, "pontuacao": 65 },
+    { "id": 36, "motorista": "Marcos Souza", "empresa": "LogiSul", "data": "2026-06-08", "origem": "Pelotas", "destino": "Florianópolis", "km": 530, "pontuacao": 112 },
+
+    { "id": 37, "motorista": "Paulo Ferreira", "empresa": "LogiSul", "data": "2026-06-05", "origem": "Porto Alegre", "destino": "Gramado", "km": 120, "pontuacao": 38 },
+    { "id": 38, "motorista": "Paulo Ferreira", "empresa": "LogiSul", "data": "2026-06-12", "origem": "Gramado", "destino": "Curitiba", "km": 380, "pontuacao": 85 },
+
+    { "id": 39, "motorista": "Ricardo Martins", "empresa": "CargoNorte", "data": "2026-06-01", "origem": "Manaus", "destino": "Boa Vista", "km": 780, "pontuacao": 150 },
+    { "id": 40, "motorista": "Ricardo Martins", "empresa": "CargoNorte", "data": "2026-06-04", "origem": "Boa Vista", "destino": "Macapá", "km": 650, "pontuacao": 130 },
+    { "id": 41, "motorista": "Ricardo Martins", "empresa": "CargoNorte", "data": "2026-06-07", "origem": "Macapá", "destino": "Belém", "km": 520, "pontuacao": 110 },
+    { "id": 42, "motorista": "Ricardo Martins", "empresa": "CargoNorte", "data": "2026-06-10", "origem": "Belém", "destino": "São Luís", "km": 810, "pontuacao": 155 },
+    { "id": 43, "motorista": "Ricardo Martins", "empresa": "CargoNorte", "data": "2026-06-13", "origem": "São Luís", "destino": "Fortaleza", "km": 630, "pontuacao": 128 },
+    { "id": 44, "motorista": "Ricardo Martins", "empresa": "CargoNorte", "data": "2026-05-02", "origem": "Manaus", "destino": "Belém", "km": 1200, "pontuacao": 210 },
+    { "id": 45, "motorista": "Ricardo Martins", "empresa": "CargoNorte", "data": "2026-05-09", "origem": "Belém", "destino": "São Luís", "km": 810, "pontuacao": 155 },
+    { "id": 46, "motorista": "Ricardo Martins", "empresa": "CargoNorte", "data": "2026-05-16", "origem": "São Luís", "destino": "Teresina", "km": 480, "pontuacao": 102 },
+
+    { "id": 47, "motorista": "Eduardo Ribeiro", "empresa": "CargoNorte", "data": "2026-06-02", "origem": "Manaus", "destino": "Itacoatiara", "km": 260, "pontuacao": 62 },
+    { "id": 48, "motorista": "Eduardo Ribeiro", "empresa": "CargoNorte", "data": "2026-06-06", "origem": "Itacoatiara", "destino": "Parintins", "km": 390, "pontuacao": 88 },
+    { "id": 49, "motorista": "Eduardo Ribeiro", "empresa": "CargoNorte", "data": "2026-06-11", "origem": "Parintins", "destino": "Manaus", "km": 480, "pontuacao": 102 },
+    { "id": 50, "motorista": "Eduardo Ribeiro", "empresa": "CargoNorte", "data": "2026-05-05", "origem": "Manaus", "destino": "Boa Vista", "km": 780, "pontuacao": 150 },
+
+    { "id": 51, "motorista": "Gabriel Araújo", "empresa": "CargoNorte", "data": "2026-06-03", "origem": "Manaus", "destino": "Tefé", "km": 520, "pontuacao": 108 },
+    { "id": 52, "motorista": "Gabriel Araújo", "empresa": "CargoNorte", "data": "2026-06-09", "origem": "Tefé", "destino": "Manaus", "km": 520, "pontuacao": 108 },
+
+    { "id": 53, "motorista": "Thiago Barbosa", "empresa": "RotaLeste", "data": "2026-06-01", "origem": "Recife", "destino": "João Pessoa", "km": 140, "pontuacao": 42 },
+    { "id": 54, "motorista": "Thiago Barbosa", "empresa": "RotaLeste", "data": "2026-06-04", "origem": "João Pessoa", "destino": "Natal", "km": 180, "pontuacao": 50 },
+    { "id": 55, "motorista": "Thiago Barbosa", "empresa": "RotaLeste", "data": "2026-06-07", "origem": "Natal", "destino": "Fortaleza", "km": 430, "pontuacao": 96 },
+    { "id": 56, "motorista": "Thiago Barbosa", "empresa": "RotaLeste", "data": "2026-06-10", "origem": "Fortaleza", "destino": "Sobral", "km": 230, "pontuacao": 58 },
+    { "id": 57, "motorista": "Thiago Barbosa", "empresa": "RotaLeste", "data": "2026-06-13", "origem": "Sobral", "destino": "Fortaleza", "km": 230, "pontuacao": 58 },
+    { "id": 58, "motorista": "Thiago Barbosa", "empresa": "RotaLeste", "data": "2026-05-01", "origem": "Recife", "destino": "Salvador", "km": 1200, "pontuacao": 210 },
+
+    { "id": 59, "motorista": "Bruno Carvalho", "empresa": "RotaLeste", "data": "2026-06-02", "origem": "Recife", "destino": "Maceió", "km": 280, "pontuacao": 65 },
+    { "id": 60, "motorista": "Bruno Carvalho", "empresa": "RotaLeste", "data": "2026-06-08", "origem": "Maceió", "destino": "Aracaju", "km": 330, "pontuacao": 76 },
+    { "id": 61, "motorista": "Bruno Carvalho", "empresa": "RotaLeste", "data": "2026-05-10", "origem": "Recife", "destino": "Natal", "km": 320, "pontuacao": 74 },
+
+    { "id": 62, "motorista": "Diego Nascimento", "empresa": "RotaLeste", "data": "2026-06-05", "origem": "Recife", "destino": "Caruaru", "km": 140, "pontuacao": 42 },
+    { "id": 63, "motorista": "Diego Nascimento", "empresa": "RotaLeste", "data": "2026-06-12", "origem": "Caruaru", "destino": "Petrolina", "km": 360, "pontuacao": 82 },
+
+    { "id": 64, "motorista": "Felipe Gomes", "empresa": "ExpressoCentro", "data": "2026-06-01", "origem": "Brasília", "destino": "Goiânia", "km": 180, "pontuacao": 50 },
+    { "id": 65, "motorista": "Felipe Gomes", "empresa": "ExpressoCentro", "data": "2026-06-06", "origem": "Goiânia", "destino": "Uberlândia", "km": 420, "pontuacao": 95 },
+    { "id": 66, "motorista": "Felipe Gomes", "empresa": "ExpressoCentro", "data": "2026-06-11", "origem": "Uberlândia", "destino": "Belo Horizonte", "km": 540, "pontuacao": 115 },
+    { "id": 67, "motorista": "Felipe Gomes", "empresa": "ExpressoCentro", "data": "2026-05-04", "origem": "Brasília", "destino": "Belo Horizonte", "km": 730, "pontuacao": 142 },
+
+    { "id": 68, "motorista": "Rafael Mendes", "empresa": "ExpressoCentro", "data": "2026-06-03", "origem": "Brasília", "destino": "Luziânia", "km": 50, "pontuacao": 20 },
+    { "id": 69, "motorista": "Rafael Mendes", "empresa": "ExpressoCentro", "data": "2026-06-09", "origem": "Luziânia", "destino": "Anápolis", "km": 260, "pontuacao": 62 },
+    { "id": 70, "motorista": "Rafael Mendes", "empresa": "ExpressoCentro", "data": "2026-05-12", "origem": "Brasília", "destino": "Goiânia", "km": 180, "pontuacao": 50 },
+
+    { "id": 71, "motorista": "Andre Cardoso", "empresa": "ExpressoCentro", "data": "2026-06-02", "origem": "Brasília", "destino": "Palmas", "km": 1100, "pontuacao": 195 },
+    { "id": 72, "motorista": "Andre Cardoso", "empresa": "ExpressoCentro", "data": "2026-06-08", "origem": "Palmas", "destino": "Imperatriz", "km": 680, "pontuacao": 135 },
+    { "id": 73, "motorista": "Andre Cardoso", "empresa": "ExpressoCentro", "data": "2026-05-08", "origem": "Brasília", "destino": "Palmas", "km": 1100, "pontuacao": 195 },
+
+    { "id": 74, "motorista": "Carlos Silva", "empresa": "TransBrasil", "data": "2026-04-05", "origem": "São Paulo", "destino": "Curitiba", "km": 420, "pontuacao": 95 },
+    { "id": 75, "motorista": "Carlos Silva", "empresa": "TransBrasil", "data": "2026-04-12", "origem": "Curitiba", "destino": "Porto Alegre", "km": 710, "pontuacao": 140 },
+    { "id": 76, "motorista": "Fernando Lima", "empresa": "LogiSul", "data": "2026-04-08", "origem": "Porto Alegre", "destino": "Curitiba", "km": 720, "pontuacao": 145 },
+    { "id": 77, "motorista": "Ricardo Martins", "empresa": "CargoNorte", "data": "2026-04-15", "origem": "Manaus", "destino": "Belém", "km": 1200, "pontuacao": 210 },
+    { "id": 78, "motorista": "Thiago Barbosa", "empresa": "RotaLeste", "data": "2026-04-10", "origem": "Recife", "destino": "Fortaleza", "km": 610, "pontuacao": 125 }
+  ]
+}

@@ -1,0 +1,355 @@
+#mobile-app {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 12px;
+}
+
+.mobile-status-bar {
+    text-align: center;
+    font-size: 10px;
+    padding: 6px 12px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    background: #0d0d12;
+    border: 1px solid #1e1e28;
+    color: #888;
+    letter-spacing: 1px;
+}
+
+.mobile-status-bar.connected { color: #00ff88; border-color: #00ff88; }
+.mobile-status-bar.job-active { color: #ffaa00; border-color: #ffaa00; }
+.mobile-status-bar.error { color: #ff4444; border-color: #ff4444; }
+
+.mobile-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #00ff88;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 8px 0 12px;
+    border-bottom: 1px solid #1a1a22;
+    margin-bottom: 12px;
+    text-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+}
+
+.mobile-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mobile-card {
+    background: #0d0d12;
+    border: 1px solid #1e1e28;
+    border-radius: 10px;
+    padding: 14px 16px;
+}
+
+.mobile-card-job {
+    border-color: #ff8800;
+    background: #0d0d12;
+}
+
+.mobile-card-job-active {
+    border-color: #00ff88;
+    background: linear-gradient(135deg, #0d0d12 0%, #0a1a0a 100%);
+}
+
+.mobile-card-job .mobile-card-label {
+    color: #ff8800;
+}
+
+.mobile-card-job-active .mobile-card-label {
+    color: #00ff88;
+}
+
+.job-status-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
+}
+
+.job-status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.job-status-dot.active { background: #00ff88; box-shadow: 0 0 8px #00ff88; }
+.job-status-dot.inactive { background: #444; }
+.job-status-dot.waiting { background: #ff8800; box-shadow: 0 0 8px #ff8800; }
+
+.job-status-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: #e0e0e0;
+}
+
+.job-status-cargo {
+    font-size: 11px;
+    color: #888;
+    margin-top: 2px;
+}
+
+.mobile-card-label {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #1a1a22;
+}
+
+.mobile-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.big-speed {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 0;
+}
+
+.big-speed-value {
+    font-size: 56px;
+    font-weight: 700;
+    color: #00ff88;
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+    font-variant-numeric: tabular-nums;
+}
+
+.big-speed-unit {
+    font-size: 16px;
+    font-weight: 600;
+    color: #00ff88;
+    opacity: 0.7;
+}
+
+.mobile-gauges-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.mobile-gauge-item {
+    text-align: center;
+    padding: 8px 4px;
+}
+
+.mobile-gauge-label {
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.mobile-gauge-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #e0e0e0;
+    font-variant-numeric: tabular-nums;
+}
+
+.mobile-gauge-unit {
+    font-size: 10px;
+    color: #666;
+    margin-left: 2px;
+}
+
+.mobile-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px 0;
+    gap: 8px;
+}
+
+.mobile-row-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #666;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    min-width: 64px;
+}
+
+.mobile-row-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e0e0e0;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.mobile-progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
+}
+
+.mobile-progress-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #666;
+    text-transform: uppercase;
+    min-width: 64px;
+    flex-shrink: 0;
+}
+
+.mobile-progress-bar {
+    flex: 1;
+    height: 10px;
+    background: #1a1a22;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.mobile-progress-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+.mobile-progress-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: #aaa;
+    min-width: 60px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.mobile-status-icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px 0;
+}
+
+.mobile-status-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #1a1a22;
+    border: 1px solid #2a2a32;
+    font-size: 13px;
+    font-weight: 700;
+    color: #444;
+    transition: all 0.2s;
+}
+
+.mobile-status-icon.active {
+    background: #0a1a0a;
+    border-color: #00ff88;
+    color: #00ff88;
+    box-shadow: 0 0 6px rgba(0, 255, 136, 0.2);
+}
+
+.mobile-status-icon.warning {
+    background: #1a0a00;
+    border-color: #ff8800;
+    color: #ff8800;
+    box-shadow: 0 0 6px rgba(255, 136, 0, 0.2);
+}
+
+.mobile-footer {
+    text-align: center;
+    font-size: 8px;
+    color: #333;
+    padding: 16px 0 8px;
+    letter-spacing: 1px;
+}
+
+.mobile-refresh-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #555;
+    background: #0d0d12;
+    border: 1px solid #1e1e28;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+}
+
+.mobile-refresh-btn:hover {
+    color: #aaa;
+    background: #1a1a22;
+}
+
+.mobile-refresh-btn:active {
+    color: #00ff88;
+    border-color: #00ff88;
+}
+
+.mobile-evento-banner {
+    border: 1px solid #ff6600;
+    border-left: 3px solid #ff6600;
+}
+
+.mobile-evento-banner .mobile-card-label {
+    color: #ff6600;
+}
+
+.mobile-evento-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffaa00;
+    margin-bottom: 4px;
+}
+
+.mobile-evento-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.mobile-evento-bar {
+    flex: 1;
+    height: 6px;
+    background: #1a1a22;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.mobile-evento-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: #ff8800;
+    transition: width 0.5s;
+}
+
+.mobile-evento-text {
+    font-size: 10px;
+    color: #888;
+    white-space: nowrap;
+}

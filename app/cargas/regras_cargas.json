@@ -1,0 +1,158 @@
+{
+  "categorias": [
+    {
+      "slug": "geral",
+      "nome": "Geral",
+      "palavras_chave": [
+        "kilo","kg","embalado","packaged","varejo","retail","caixa","box",
+        "pacote","pack","pallet","container","correio","mail","encomenda","parcel",
+        "bebida","beverage","comida","food","brinquedo","toy","roupa","clothing",
+        "movel","furniture","escritorio","office","papel","paper",
+        "vidro","glass","plastico","plastic","metal","lata","can","garrafa","bottle",
+        "cosmetico","cosmetic","medicamento","medicine","farmaco","pharmaceutical",
+        "limpeza","cleaning","detergente","detergent","sabao","soap","sabao","shampoo",
+        "perfume","fralda","diaper","absorvente","pad","higiene","hygiene",
+        "eletronico","electronic","eletrodomestico","appliance","computador","computer",
+        "telefone","phone","tv","televisao","television","monitor","impressora","printer",
+        "ferramenta","tool","jardim","garden","decoracao","decoration",
+        "livro","book","revista","magazine","jornal","newspaper","brinde","gift",
+        "presente","present","flor","flower","planta","plant","vaso","vase",
+        "artesanato","handicraft","tapete","rug","cortina","curtain","toalha","towel",
+        "lencol","sheet","travesseiro","pillow","cobertor","blanket","edredom","comforter",
+        "louca","dishware","talher","cutlery","panela","frigideira","frying pan",
+        "copo","prato","plate","xicara","chicara",
+        "supply","suprimento","fornecimento",
+        "fogos","fireworks","artificio"
+      ]
+    },
+    {
+      "slug": "construcao",
+      "nome": "Construcao Civil",
+      "palavras_chave": [
+        "areia","sand","cimento","cement","tijolo","brick","telha","tile",
+        "concreto","concrete","pedra","stone","rocha","rock","gravel","cascalho",
+        "madeira","wood","ferro","steel","metal","calha","gutter","fiacao","wiring",
+        "andaime","scaffolding","viga","beam","casca","chip","poeira","dust",
+        "solo","soil","argila","clay","reforco","reinforcement","barra","bar",
+        "ceramica","ceramic","painel","panel","teto","roof","asfalto","asphalt",
+        "brita","crushed","marmore","marble","granito","granite","cubo","cube",
+        "valvula","valve","bomba","pump","cabo","cable","fio","wire",
+        "gerador","generator","nylon","polimento","polish","selante","sealant",
+        "tinta","paint","massa","putty","telhado","roofing","feltro","felt",
+        "sucata","scrap","cal","lime","gesso","plaster","isolante","insulation",
+        "porta","door","janela","window","escada","stair","ladder","corrimao","railing",
+        "hidraulico","hydraulic","torneira","faucet","tubo","pipe","canal",
+        "eletrico","electric","circuito","circuit","transformador","transformer",
+        "poste","pole","cerca","fence","alvenaria","masonry","bloco","block",
+        "lumber","wshavings","wood shavings"
+      ]
+    },
+    {
+      "slug": "granel",
+      "nome": "Granel",
+      "palavras_chave": [
+        "milho","corn","trigo","wheat","soja","soy","cevada","barley",
+        "centeio","rye","aveia","oats","arroz","rice","feijao","bean","batata","potato",
+        "cebola","onion","tomate","tomato","uva","grape","maca","apple",
+        "laranja","orange","gra","grain","semente","seed","farinha","flour",
+        "acucar","sugar","carvao","coal","minerio","ore","algodao","cotton",
+        "cafe","coffee","sorgo","sorghum","amendoa","almond","noz","nut",
+        "castanha","chestnut","azeitona","olive","azeite","olive oil",
+        "melancia","watermelon","melao","melon","abobora","pumpkin",
+        "pera","pear","pessego","peach","ameixa","plum","cereja","cherry",
+        "morango","strawberry","framboesa","raspberry","kiwi",
+        "manga","mango","abacaxi","pineapple","banana","limao","lemon","lima","lime",
+        "mandioca","cassava","inhame","yam","ervilha","pea","lentilha","lentil",
+        "grao de bico","chickpea"
+      ]
+    },
+    {
+      "slug": "quimicos",
+      "nome": "Quimicos",
+      "palavras_chave": [
+        "acetylene","gasolina","gasoline","diesel","combustivel","fuel",
+        "quimico","chemical","petroleo","petroleum","oleo","oil","gas",
+        "explosivo","explosive","inflamavel","flammable","veneno","poison",
+        "acido","acid","solvente","solvent","tinta","paint","verniz","varnish",
+        "propano","propane","butano","butane","hidrogenio","hydrogen",
+        "nitrogenio","nitrogen","cloro","chlorine","alcool","alcohol",
+        "etanol","ethanol","metanol","methanol","biodiesel","resina","resin",
+        "cola","glue","adesivo","adhesive","peroxido","peroxide",
+        "fosfato","phosphate","nitrato","nitrate","sulfato","sulfate",
+        "carbonato","carbonate","soda","caustico","caustic","liquido","liquid",
+        "corrosivo","corrosive","toxico","toxic","radioativo","radioactive",
+        "pesticida","pesticide","herbicida","herbicide","fungicida",
+        "adubo","fertilizer","fertilizante","cianeto","cyanide","amonia","ammonia",
+        "fogos","fireworks","artificio"
+      ]
+    },
+    {
+      "slug": "carga_viva",
+      "nome": "Carga Viva e Derivados",
+      "palavras_chave": [
+        "gado","cattle","vivo","live","animal","frango","chicken","boi",
+        "cavalo","horse","porco","pig","ovelha","sheep","peixe","fish",
+        "vaca","cow","bezerro","calf","touro","bull","egua","mare","carneiro","ram",
+        "cabra","goat","bode","galinha","hen","galo","rooster","pato","duck",
+        "peru","turkey","coelho","rabbit","abelha","bee","mel","honey",
+        "couro","leather","la","wool","seda","silk","osso","bone",
+        "derivado","by-product","viscera","offal","gordura","fat","sebo","tallow",
+        "pena","feather","chifre","horn","casco","hoof",
+        "leite","milk","queijo","cheese","ovo","egg","iogurte","yogurt",
+        "manteiga","butter"
+      ]
+    },
+    {
+      "slug": "maquinas",
+      "nome": "Maquinas e Tratores",
+      "palavras_chave": [
+        "trator","tractor","maquina","machine","motor","engine",
+        "bomba","pump","rolamento","bearing","tanque","tank",
+        "implemento","implement","colheitadeira","harvester",
+        "retroescavadeira","backhoe","escavadeira","excavator",
+        "pa carregadeira","loader","niveladora","grader","compactador","compactor",
+        "guindaste","crane","empilhadeira","forklift","correia","belt",
+        "peneira","sieve","britador","crusher","moinho","mill","turbina","turbine",
+        "caldeira","boiler","forno","furnace","reator","reactor","prensa","press",
+        "serra","saw","furadeira","drill","lixadeira","sander","solda","weld",
+        "rosca","thread","parafuso","screw","porca","nut","arruela","washer",
+        "mola","spring","engrenagem","gear","polia","pulley","eixo","axle","shaft",
+        "chassi","chassis","radiador","radiator","carburador","carburetor",
+        "pistao","piston","generador","generator","compressor","compressor",
+        "pilot","piloto","bulldozer",
+        "mini excavator","material handler","jcb","volvo ew",
+        "digger","dozer","compactor",
+        "volvo","caterpillar","komatsu","liebherr","hitachi","kobelco",
+        "takeuchi","yanmar","case","new holland","john deere","massey",
+        "handler","excavator","loader","crane","grader","paver",
+        "mexc","ew240","fastrac","articulated"
+      ]
+    },
+    {
+      "slug": "veiculos",
+      "nome": "Veiculos e Pecas",
+      "palavras_chave": [
+        "carro","car","veiculo","vehicle","peca","part","automovel","automobile",
+        "caminhao","truck","onibus","bus","reboque","trailer",
+        "pneu","tire","bateria","battery","para-choque","bumper","farol","headlight",
+        "lateral","side","porta","door","capo","hood","teto","roof",
+        "retrovisor","mirror","vidro","glass","parabrisa","windshield",
+        "radiador","radiator","escapamento","exhaust","silencioso","muffler",
+        "embreagem","clutch","cambio","transmission","suspensao","suspension",
+        "amortecedor","shock","freio","brake","pastilha","pad","disco","disc",
+        "roda","wheel","aro","rim",
+        "carenagem","fairing","guidao","handlebar","selim","seat",
+        "cavalo","horsepower","potencia","power","motor","engine",
+        "cilindro","cylinder","virabrequim","crankshaft","biela","connecting rod",
+        "valvula","valve",
+        "locomotiva","locomotive","vagao","wagon","railcar",
+        "rail","ferrovia","railway",
+        "barco","boat","navio","ship","yacht","iate",
+        "aviao","airplane","helicoptero","helicopter",
+        "forklift","empilhadeira",
+        "brake fluid","motor oil","transmission","truck battery","truck rim",
+        "truck tire","used battery","radiator","oil filter","fuel tank"
+      ]
+    }
+  ]
+}
