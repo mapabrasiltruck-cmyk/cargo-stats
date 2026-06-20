@@ -1117,6 +1117,18 @@ const server = http.createServer(async (req, res) => {
         });
     }
 
+    // ========== STEAM CALLBACK ==========
+
+    if (urlPath === '/steam-callback') {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+        res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Steam Login</title>
+        <style>body{background:#050508;color:#f5c842;font-family:Consolas,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;text-align:center}
+        .box{background:#0d1117;border:1px solid #f5c84240;border-radius:12px;padding:3rem}
+        h1{font-size:1.5rem;margin-bottom:0.5rem}p{color:#888;font-size:0.9rem}</style></head>
+        <body><div class="box"><h1>Login com Steam concluido!</h1><p>Pode fechar esta janela.</p></div></body></html>`);
+        return;
+    }
+
     // ========== SOLICITACOES ==========
 
     if (urlPath === '/api/solicitacoes' && req.method === 'POST') {
