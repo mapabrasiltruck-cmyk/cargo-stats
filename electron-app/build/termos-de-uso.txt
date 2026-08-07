@@ -1,0 +1,56 @@
+TERMOS DE USO - CARGO STATS
+
+1. ACEITACAO DOS TERMOS
+Ao instalar e utilizar o software Cargo Stats ("Software"), o usuario
+declara estar ciente e de acordo com todos os termos e condicoes deste
+documento. Caso nao concorde, o usuario nao deve instalar ou utilizar
+o Software.
+
+2. LICENCA DE USO
+O Software e concedido sob licenca limitada, nao exclusiva, nao
+transferivel e revogavel, para uso pessoal e nao comercial. Esta
+licenca nao constitui venda ou cessao de direitos autorais.
+
+3. PROPRIEDADE INTELECTUAL
+O Software, incluindo seu codigo-fonte, interface, design, logotipos e
+conteudo, e protegido pela Lei de Direitos Autorais (Lei n. 9.610/98)
+e demais legislacoes aplicaveis de propriedade intelectual. E vedada
+a reproducao, distribuicao, modificacao, engenharia reversa ou
+criacao de obras derivadas sem autorizacao expressa dos titulares.
+
+4. OBRIGACOES DO USUARIO
+O usuario concorda em:
+a) Nao utilizar o Software para fins ilicitos;
+b) Nao violar direitos de terceiros;
+c) Nao remover ou alterar avisos de direitos autorais;
+d) Nao realizar engenharia reversa, descompilacao ou desmontagem;
+e) Nao utilizar o Software de forma que prejudique terceiros ou
+   a infraestrutura dos servidores.
+
+5. COLETA DE DADOS E PRIVACIDADE
+O Software pode coletar dados de telemetria do jogo localmente para
+fins de funcionalidade. Dados de uso podem ser enviados a servidores
+para estatisticas e rankings, conforme aceito pelo usuario no ato do
+cadastro. Nenhum dado pessoal sensivel e coletado sem consentimento.
+
+6. LIMITACAO DE RESPONSABILIDADE
+O Software e fornecido "como esta", sem garantias de qualquer tipo,
+expressas ou implicitas. Em nenhuma hipotese os desenvolvedores serao
+responsaveis por danos diretos, indiretos, incidentais ou
+consequenciais decorrentes do uso ou impossibilidade de uso do
+Software, inclusive danos a saves de jogos, perda de dados ou
+lucros cessantes.
+
+7. ATUALIZACOES E MODIFICACOES
+O Software pode receber atualizacoes automaticamente. Os
+desenvolvedores reservam-se o direito de modificar estes termos a
+qualquer momento, notificando os usuarios sobre mudancas relevantes.
+
+8. DISPOSICOES GERAIS
+Este instrumento e regido pelas leis da Republica Federativa do
+Brasil. Fica eleito o foro da comarca do desenvolvedor para dirimir
+quaisquer controversias decorrentes destes termos, com exclusao de
+qualquer outro.
+
+Ao clicar em "Aceito", o usuario confirma que leu, compreendeu e
+concorda com todos os termos acima.

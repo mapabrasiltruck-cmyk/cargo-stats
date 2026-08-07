@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CARGO STATS - Contato</title>
+    <link rel="stylesheet" href="/site/cs/styles.css" />
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#050508; color:#e0e0e0; font-family:'Segoe UI',Arial,sans-serif; min-height:100vh; }
+        .site-header { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(5,5,8,0.92); backdrop-filter:blur(8px); border-bottom:1px solid rgba(245,200,66,0.15); padding:0 2rem; display:flex; align-items:center; height:60px; }
+        .site-header .logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+        .site-header .logo img { height:28px; }
+        .site-header .logo span { color:#f5c842; font-weight:900; font-size:1.1rem; letter-spacing:0.15em; }
+        .site-header nav { margin-left:auto; display:flex; gap:1.5rem; align-items:center; }
+        .site-header nav a { color:rgba(255,255,255,0.6); text-decoration:none; font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase; transition:color 0.3s; }
+        .site-header nav a:hover, .site-header nav a.active { color:#f5c842; }
+        .site-header nav .btn-app { background:#f5c842; color:#050508 !important; padding:0.4rem 1.2rem; border-radius:4px; font-weight:700; }
+        main { padding-top:80px; max-width:800px; margin:0 auto; padding-left:2rem; padding-right:2rem; padding-bottom:4rem; }
+        .page-title { font-size:1.6rem; font-weight:900; letter-spacing:0.1em; color:#f5c842; margin-bottom:0.5rem; }
+        .page-subtitle { color:rgba(255,255,255,0.5); font-size:0.85rem; margin-bottom:2rem; }
+        .section { background:rgba(255,255,255,0.02); border:1px solid rgba(245,200,66,0.08); border-radius:12px; padding:2rem; margin-bottom:1.5rem; text-align:center; }
+        .section h2 { font-size:1.1rem; color:#f5c842; margin-bottom:1rem; }
+        .section p { color:rgba(255,255,255,0.7); font-size:0.9rem; line-height:1.7; }
+        .social-links { display:flex; justify-content:center; gap:1.5rem; flex-wrap:wrap; margin:1.5rem 0; }
+        .social-link { display:flex; flex-direction:column; align-items:center; gap:0.5rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:1.5rem 2rem; text-decoration:none; transition:all 0.3s; min-width:140px; }
+        .social-link:hover { border-color:#f5c842; background:rgba(245,200,66,0.05); transform:translateY(-2px); }
+        .social-link .icon { font-size:2rem; }
+        .social-link .name { color:#e0e0e0; font-weight:700; font-size:0.85rem; }
+        .social-link .desc { color:rgba(255,255,255,0.4); font-size:0.7rem; }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <a class="logo" href="/">
+            <img src="/site/images/cargo.png" alt="Cargo Stats" />
+            <span>CARGO STATS</span>
+        </a>
+        <nav>
+            <a href="/">Início</a>
+            <a href="/rank">Ranking</a>
+            <a href="/download">Download</a>
+            <a href="/regras">Regras</a>
+            <a class="btn-app" href="/app">Acessar App</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="page-title">CONTATO</div>
+        <div class="page-subtitle">Fique por dentro das novidades e entre em contato</div>
+
+        <div class="section">
+            <h2>Sobre o Projeto</h2>
+            <p>
+                Cargo Stats é uma plataforma de telemetria para Euro Truck Simulator 2 e American Truck Simulator.<br>
+                Acompanhe suas viagens em tempo real, dispute rankings, desbloqueie conquistas<br>
+                e participe de eventos com outros motoristas.
+            </p>
+        </div>
+
+        <div class="section">
+            <h2>Canais</h2>
+            <div class="social-links">
+                <a class="social-link" href="#" target="_blank">
+                    <span class="icon">💬</span>
+                    <span class="name">Discord</span>
+                    <span class="desc">Comunidade oficial</span>
+                </a>
+                <a class="social-link" href="#" target="_blank">
+                    <span class="icon">📺</span>
+                    <span class="name">YouTube</span>
+                    <span class="desc">Tutoriais e novidades</span>
+                </a>
+                <a class="social-link" href="#" target="_blank">
+                    <span class="icon">📧</span>
+                    <span class="name">Email</span>
+                    <span class="desc">Suporte e contato</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Reportar Bug</h2>
+            <p>
+                Encontrou algum problema? Abra uma issue no GitHub ou nos avise pelo Discord.<br>
+                <span style="color:rgba(255,255,255,0.4);font-size:0.8rem;">Inclua prints, versão do app e descrição do erro.</span>
+            </p>
+        </div>
+    </main>
+</body>
+</html>

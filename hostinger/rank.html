@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CARGO STATS - Ranking</title>
+    <link rel="icon" type="image/png" href="images/cargo.png">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#050508;color:#e0e0e0;font-family:'Segoe UI',Arial,sans-serif;min-height:100vh}
+        .site-header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(5,5,8,0.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(245,200,66,0.15);padding:0 2rem;display:flex;align-items:center;height:60px}
+        .site-header .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+        .site-header .logo img{height:28px}
+        .site-header .logo span{color:#f5c842;font-weight:900;font-size:1.1rem;letter-spacing:0.15em}
+        .site-header nav{margin-left:auto;display:flex;gap:1.5rem;align-items:center}
+        .site-header nav a{color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;transition:color 0.3s}
+        .site-header nav a:hover,.site-header nav a.active{color:#f5c842}
+        .site-header nav .btn-app{background:#f5c842;color:#050508!important;padding:0.4rem 1.2rem;border-radius:4px;font-weight:700}
+        .site-header nav .btn-app:hover{background:#ffd84d}
+        main{padding-top:80px;max-width:1200px;margin:0 auto;padding-left:2rem;padding-right:2rem;padding-bottom:4rem}
+        .page-title{font-size:1.6rem;font-weight:900;letter-spacing:0.1em;color:#f5c842;margin-bottom:0.5rem}
+        .page-subtitle{color:rgba(255,255,255,0.5);font-size:0.85rem;margin-bottom:2rem}
+        .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2.5rem}
+        .stat-card{background:rgba(255,255,255,0.03);border:1px solid rgba(245,200,66,0.1);border-radius:8px;padding:1.2rem;text-align:center}
+        .stat-card .value{font-size:1.8rem;font-weight:900;color:#f5c842}
+        .stat-card .label{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.15em;color:rgba(255,255,255,0.5);margin-top:0.3rem}
+        .tabs{display:flex;gap:0;margin-bottom:1.5rem;border-bottom:1px solid rgba(255,255,255,0.08)}
+        .tabs button{background:transparent;border:none;color:rgba(255,255,255,0.4);padding:0.8rem 1.5rem;font-size:0.8rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.3s}
+        .tabs button:hover{color:rgba(255,255,255,0.7)}
+        .tabs button.active{color:#f5c842;border-bottom-color:#f5c842}
+        .rank-table{width:100%;border-collapse:collapse}
+        .rank-table th{text-align:left;padding:0.7rem 0.8rem;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.15em;color:rgba(255,255,255,0.35);border-bottom:1px solid rgba(255,255,255,0.06);font-weight:700}
+        .rank-table td{padding:0.7rem 0.8rem;font-size:0.85rem;border-bottom:1px solid rgba(255,255,255,0.04)}
+        .rank-table tr:hover td{background:rgba(245,200,66,0.03)}
+        .rank-pos{font-weight:900;color:rgba(255,255,255,0.3);width:40px}
+        .rank-1{color:#ffd700}
+        .rank-2{color:#c0c0c0}
+        .rank-3{color:#cd7f32}
+        .rank-name{font-weight:600}
+        .rank-stat{color:rgba(255,255,255,0.6)}
+        .loading{text-align:center;padding:3rem;color:rgba(255,255,255,0.3);font-size:0.9rem}
+        .error{text-align:center;padding:2rem;color:#ff4444}
+        .sync-info{text-align:center;padding:1rem;color:rgba(255,255,255,0.3);font-size:0.7rem;margin-top:2rem}
+        footer{text-align:center;padding:2rem;color:rgba(255,255,255,0.2);font-size:0.7rem;border-top:1px solid rgba(255,255,255,0.05)}
+        @media(max-width:768px){
+            .site-header{padding:0 1rem}
+            .site-header nav{gap:0.8rem}
+            .site-header nav a{font-size:0.65rem}
+            main{padding-left:1rem;padding-right:1rem}
+            .stats-row{grid-template-columns:repeat(2,1fr)}
+            .rank-table{font-size:0.75rem}
+            .rank-table th,.rank-table td{padding:0.5rem 0.4rem}
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <a class="logo" href="/">
+            <img src="images/cargo.png" alt="Cargo Stats">
+            <span>CARGO STATS</span>
+        </a>
+        <nav>
+            <a href="/">Inicio</a>
+            <a class="active" href="/rank">Ranking</a>
+            <a href="/download">Download</a>
+            <a href="/regras">Regras</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="page-title">RANKING</div>
+        <div class="page-subtitle">Classificacao geral de empresas e motoristas</div>
+
+        <div id="stats-container" class="stats-row">
+            <div class="stat-card"><div class="value" id="stat-empresas">-</div><div class="label">Empresas</div></div>
+            <div class="stat-card"><div class="value" id="stat-motoristas">-</div><div class="label">Motoristas</div></div>
+            <div class="stat-card"><div class="value" id="stat-viagens">-</div><div class="label">Viagens</div></div>
+            <div class="stat-card"><div class="value" id="stat-km">-</div><div class="label">KM Rodados</div></div>
+        </div>
+
+        <div class="tabs">
+            <button class="active" data-tab="empresas">Empresas</button>
+            <button data-tab="motoristas">Motoristas</button>
+        </div>
+
+        <div id="ranking-content">
+            <div class="loading">Carregando ranking...</div>
+        </div>
+
+        <div class="sync-info" id="sync-info"></div>
+    </main>
+
+    <footer>
+        CARGO STATS &copy; 2026 - Telemetria ETS2/ATS
+    </footer>
+
+    <script src="js/rank.js"></script>
+</body>
+</html>

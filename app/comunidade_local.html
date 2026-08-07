@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CARGO STATS - COMUNIDADE</title>
+    <link rel="icon" type="image/x-icon" href="favicon/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="manifest" href="favicon/site.webmanifest">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .comunidade-header { margin-bottom: 20px; }
+        .comunidade-header .title { font-size: 22px; font-weight: 900; color: #f5c842; letter-spacing: 0.1em; text-transform: uppercase; }
+        .comunidade-header .subtitle { color: #888; font-size: 12px; margin-top: 4px; }
+        .comunidade-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .comunidade-stat { background: #0d1117; border: 1px solid #1e1e28; border-radius: 8px; padding: 14px; text-align: center; }
+        .comunidade-stat .value { font-size: 20px; font-weight: 900; color: #00ff88; }
+        .comunidade-stat .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #666; margin-top: 4px; }
+        .comunidade-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 1px solid #1e1e28; }
+        .comunidade-tabs button { background: transparent; border: none; color: #666; padding: 10px 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .comunidade-tabs button:hover { color: #aaa; }
+        .comunidade-tabs button.active { color: #f5c842; border-bottom-color: #f5c842; }
+        .comunidade-item { background: #0d1117; border: 1px solid #1e1e28; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+        .comunidade-item .pos { font-size: 14px; font-weight: 900; color: #333; min-width: 32px; text-align: center; }
+        .comunidade-item .pos.top-1 { color: #ffd700; }
+        .comunidade-item .pos.top-2 { color: #c0c0c0; }
+        .comunidade-item .pos.top-3 { color: #cd7f32; }
+        .comunidade-item .info { flex: 1; min-width: 0; }
+        .comunidade-item .info .nome { font-size: 13px; font-weight: 700; color: #e0e0e0; }
+        .comunidade-item .info .nome a { color: #e0e0e0; text-decoration: none; }
+        .comunidade-item .info .nome a:hover { color: #00ff88; }
+        .comunidade-item .info .empresa-link { color: #00ff88; font-size: 11px; text-decoration: none; }
+        .comunidade-item .info .empresa-link:hover { text-decoration: underline; }
+        .comunidade-item .info .stats { font-size: 11px; color: #666; margin-top: 2px; }
+        .comunidade-item .info .stats span { margin-right: 12px; }
+        .comunidade-item .info .stats .num { color: #f5c842; font-weight: 700; }
+        .comunidade-item .reacoes { display: flex; gap: 4px; flex-shrink: 0; }
+        .comunidade-item .reacao-btn { display: flex; align-items: center; gap: 3px; padding: 4px 8px; border: 1px solid #2a2a32; border-radius: 6px; background: transparent; color: #888; font-size: 11px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+        .comunidade-item .reacao-btn:hover { border-color: #444; background: #1a1a22; }
+        .comunidade-item .reacao-btn.ativa { border-color: #f5c842; background: #f5c84215; color: #f5c842; }
+        .comunidade-item .reacao-btn .emoji { font-size: 14px; }
+        .comunidade-item .reacao-btn .count { font-weight: 700; font-size: 11px; }
+        .comunidade-offline { text-align: center; padding: 40px 20px; color: #666; }
+        .comunidade-offline .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
+        .comunidade-offline .msg { font-size: 13px; }
+        .comunidade-refresh { text-align: center; margin-top: 8px; }
+        .comunidade-refresh .info { font-size: 10px; color: #444; }
+        .cargo-badge-small { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 3px; border: 1px solid; margin-left: 4px; vertical-align: middle; }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <div id="status" class="status-bar">Carregando comunidade...</div>
+
+    <script src="js/shared.js"></script>
+    <script src="js/comunidade.js"></script>
+</body>
+</html>

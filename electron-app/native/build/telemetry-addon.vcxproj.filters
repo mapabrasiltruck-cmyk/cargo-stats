@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="..">
+      <UniqueIdentifier>{13ED4249-1F9C-5F0F-2651-29A73F3A7059}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..\src">
+      <UniqueIdentifier>{F1003AD6-4B6D-45DF-3F56-5CAC869BF55E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="F:">
+      <UniqueIdentifier>{B528B049-EBF2-8119-EEF0-9943E5FE1000}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="F:\CARGOSTATS-OFICIAL">
+      <UniqueIdentifier>{943C134D-7881-509E-6272-D734766851CD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="F:\CARGOSTATS-OFICIAL\electron-app">
+      <UniqueIdentifier>{9FB5E9AF-A538-FB0D-2A7B-2C5A63042130}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="F:\CARGOSTATS-OFICIAL\electron-app\node_modules">
+      <UniqueIdentifier>{126A39EA-1D28-5689-C126-0DA0AB5837A0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="F:\CARGOSTATS-OFICIAL\electron-app\node_modules\node-gyp">
+      <UniqueIdentifier>{49558BB4-6D34-CA91-A65D-85A65792DC11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="F:\CARGOSTATS-OFICIAL\electron-app\node_modules\node-gyp\src">
+      <UniqueIdentifier>{F1003AD6-4B6D-45DF-3F56-5CAC869BF55E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="..">
+      <UniqueIdentifier>{13ED4249-1F9C-5F0F-2651-29A73F3A7059}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\telemetry-addon.cpp">
+      <Filter>..\src</Filter>
+    </ClCompile>
+    <ClCompile Include="F:\CARGOSTATS-OFICIAL\electron-app\node_modules\node-gyp\src\win_delay_load_hook.cc">
+      <Filter>F:\CARGOSTATS-OFICIAL\electron-app\node_modules\node-gyp\src</Filter>
+    </ClCompile>
+    <None Include="..\binding.gyp">
+      <Filter>..</Filter>
+    </None>
+  </ItemGroup>
+</Project>

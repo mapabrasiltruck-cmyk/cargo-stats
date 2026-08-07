@@ -6,3 +6,7 @@ node_modules/
 .env
 uploads/
 backups/
+dist/
+electron-app/dist/
+electron-app/node_modules/
+app/node_modules/

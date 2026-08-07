@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CARGO STATS - Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0a0e14; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+        
+        .login-box { max-width: 360px; margin: 120px auto; padding: 32px; background: #111820; border: 1px solid #1e2a36; border-radius: 12px; }
+        .login-box h2 { text-align: center; color: #f5c842; margin-bottom: 24px; font-size: 18px; letter-spacing: 2px; }
+        .login-box input { width: 100%; padding: 10px 14px; margin-bottom: 12px; background: #0d1117; border: 1px solid #333; border-radius: 6px; color: #fff; font-size: 14px; }
+        .login-box button { width: 100%; padding: 10px; background: #f5c842; color: #000; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 14px; }
+        .login-box button:hover { background: #e6b800; }
+        .login-error { color: #ff4444; font-size: 12px; text-align: center; margin-bottom: 8px; min-height: 18px; }
+
+        .admin-header { background: #111820; border-bottom: 1px solid #1e2a36; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+        .admin-header h1 { font-size: 16px; color: #f5c842; letter-spacing: 2px; }
+        .admin-header button { background: #333; color: #aaa; border: 1px solid #444; border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 12px; }
+        .admin-header button:hover { background: #444; color: #fff; }
+
+        .tabs { display: flex; gap: 0; background: #111820; border-bottom: 1px solid #1e2a36; padding: 0 24px; }
+        .tab { padding: 12px 24px; background: none; border: none; color: #666; cursor: pointer; font-size: 13px; font-weight: 600; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .tab:hover { color: #aaa; }
+        .tab.active { color: #f5c842; border-bottom-color: #f5c842; }
+
+        .content { max-width: 900px; margin: 0 auto; padding: 24px; }
+
+        .card { background: #111820; border: 1px solid #1e2a36; border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+        .card-title { font-size: 13px; color: #888; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; font-weight: 700; }
+
+        .stats-row { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+        .stat-box { background: #0d1117; border: 1px solid #222; border-radius: 8px; padding: 12px 18px; text-align: center; min-width: 100px; }
+        .stat-num { font-size: 24px; font-weight: 900; color: #f5c842; }
+        .stat-label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { text-align: left; padding: 8px 10px; color: #666; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #1e2a36; }
+        td { padding: 8px 10px; border-bottom: 1px solid #111; vertical-align: middle; }
+        tr:hover { background: #0d1117; }
+
+        select, input[type="text"], input[type="number"], textarea { background: #0d1117; border: 1px solid #333; border-radius: 6px; color: #fff; padding: 6px 10px; font-size: 12px; }
+        select:focus, input:focus, textarea:focus { outline: none; border-color: #f5c842; }
+
+        .btn { padding: 6px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700; transition: all 0.15s; }
+        .btn-primary { background: #f5c842; color: #000; }
+        .btn-primary:hover { background: #e6b800; }
+        .btn-success { background: #00ff88; color: #000; }
+        .btn-success:hover { background: #00cc6a; }
+        .btn-danger { background: #ff4444; color: #fff; }
+        .btn-danger:hover { background: #cc0000; }
+        .btn-secondary { background: #333; color: #aaa; }
+        .btn-secondary:hover { background: #444; color: #fff; }
+        .btn-detalhes { background: none; border: 1px solid #444; color: #58a6ff; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 10px; }
+        .btn-detalhes:hover { background: #58a6ff20; }
+        .log-detalhes-content { padding: 8px 12px; background: #111; border-radius: 4px; max-height: 200px; overflow-y: auto; }
+
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+        .badge-success { background: #00ff8820; color: #00ff88; border: 1px solid #00ff8840; }
+        .badge-warning { background: #ffaa0020; color: #ffaa00; border: 1px solid #ffaa0040; }
+        .badge-danger { background: #ff444420; color: #ff4444; border: 1px solid #ff444440; }
+        .badge-info { background: #58a6ff20; color: #58a6ff; border: 1px solid #58a6ff40; }
+
+        .form-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: end; flex-wrap: wrap; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-group label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+
+        .empty-state { text-align: center; padding: 32px; color: #555; font-size: 13px; }
+
+        .evento-ativo { background: #001a00; border-color: #00ff8840; }
+        .evento-ativo .card-title { color: #00ff88; }
+
+        @media (max-width: 600px) {
+            .content { padding: 12px; }
+            .form-row { flex-direction: column; }
+            .tabs { overflow-x: auto; padding: 0 12px; }
+            .tab { padding: 10px 16px; font-size: 12px; white-space: nowrap; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen" class="login-box">
+    <h2>CARGO STATS ADMIN</h2>
+    <div id="login-error" class="login-error"></div>
+    <input type="password" id="login-senha" placeholder="Senha do admin" onkeypress="if(event.key==='Enter')fazerLogin()">
+    <button onclick="fazerLogin()">ENTRAR</button>
+</div>
+
+<!-- PAINEL -->
+<div id="admin-screen" style="display:none;">
+    <div class="admin-header">
+        <h1>CARGO STATS ADMIN</h1>
+        <button onclick="fazerLogout()">Sair</button>
+    </div>
+    <div class="tabs">
+        <button class="tab active" data-tab="cargas" onclick="trocarTab('cargas')">Classificador</button>
+        <button class="tab" data-tab="eventos" onclick="trocarTab('eventos')">Eventos</button>
+        <button class="tab" data-tab="planos" onclick="trocarTab('planos')">Planos</button>
+        <button class="tab" data-tab="dispositivos" onclick="trocarTab('dispositivos')">Dispositivos</button>
+        <button class="tab" data-tab="ranking" onclick="trocarTab('ranking')">Ranking</button>
+        <button class="tab" data-tab="diagnostico" onclick="trocarTab('diagnostico')">Diagnóstico</button>
+        <button class="tab" data-tab="status" onclick="trocarTab('status')">Status</button>
+    </div>
+    <div class="content" id="admin-content"></div>
+</div>
+
+<script>
+const API = window.location.origin;
+let SESSION = localStorage.getItem('admin_session');
+let currentTab = 'cargas';
+let cargasData = [];
+let mappingData = {};
+let eventoAtivo = null;
+let historicoEventos = [];
+let planosSolicitacoes = [];
+let motoristasLista = [];
+
+const CATEGORIAS = [
+    { slug: 'a_classificar', nome: 'Nao Classificada' },
+    { slug: 'geral', nome: 'Geral' },
+    { slug: 'quimicos', nome: 'Quimicos' },
+    { slug: 'construcao', nome: 'Construcao Civil' },
+    { slug: 'veiculos', nome: 'Veiculos e Pecas' },
+    { slug: 'carga_viva', nome: 'Carga Viva e Derivados' },
+    { slug: 'maquinas', nome: 'Maquinas e Tratores' },
+    { slug: 'granel', nome: 'Granel' },
+    { slug: 'coletivo', nome: 'Coletivo' }
+];
+
+// ========== AUTH ==========
+
+function fazerLogin() {
+    const senha = document.getElementById('login-senha').value;
+    const errDiv = document.getElementById('login-error');
+    errDiv.textContent = '';
+
+    fetch(API + '/admin/login.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ senha })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            SESSION = data.session;
+            localStorage.setItem('admin_session', SESSION);
+            mostrarPainel();
+        } else {
+            errDiv.textContent = data.error || 'Senha incorreta';
+        }
+    })
+    .catch(() => { errDiv.textContent = 'Erro de conexao'; });
+}
+
+function fazerLogout() {
+    SESSION = null;
+    localStorage.removeItem('admin_session');
+    document.getElementById('login-screen').style.display = 'block';
+    document.getElementById('admin-screen').style.display = 'none';
+}
+
+function mostrarPainel() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-screen').style.display = 'block';
+    carregarDados();
+}
+
+// ========== TABS ==========
+
+function trocarTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
+    renderizar();
+}
+
+// ========== DATA ==========
+
+async function carregarDados() {
+    try {
+        const r = await fetch(API + '/admin/dados.php?secret=' + SESSION);
+        const data = await r.json();
+        if (!data.ok) { if (data.error === 'Sessao invalida') fazerLogout(); return; }
+        cargasData = data.cargas_pendentes || [];
+        mappingData = data.mapping || {};
+        eventoAtivo = data.evento || null;
+        historicoEventos = data.historico || [];
+        planosSolicitacoes = data.planos_solicitacoes || [];
+        motoristasLista = data.motoristas || [];
+        renderizar();
+    } catch(e) { console.error('Erro ao carregar:', e); }
+}
+
+function renderizar() {
+    const el = document.getElementById('admin-content');
+    if (currentTab === 'cargas') renderizarCargas(el);
+    else if (currentTab === 'eventos') renderizarEventos(el);
+    else if (currentTab === 'planos') renderizarPlanos(el);
+    else if (currentTab === 'dispositivos') renderizarDispositivos(el);
+    else if (currentTab === 'ranking') renderizarRanking(el);
+    else if (currentTab === 'diagnostico') renderizarDiagnostico(el);
+    else if (currentTab === 'status') renderizarStatus(el);
+}
+
+// ========== CARGAS ==========
+
+function renderizarCargas(el) {
+    const pendentes = cargasData.filter(c => !c.classificada_em);
+    const classificadas = cargasData.filter(c => c.classificada_em);
+
+    let html = `
+        <div class="stats-row">
+            <div class="stat-box"><div class="stat-num">${pendentes.length}</div><div class="stat-label">Pendentes</div></div>
+            <div class="stat-box"><div class="stat-num">${classificadas.length}</div><div class="stat-label">Classificadas</div></div>
+            <div class="stat-box"><div class="stat-num">${Object.keys(mappingData).length}</div><div class="stat-label">No Mapping</div></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">CARGAS A CLASSIFICAR</div>
+            ${pendentes.length === 0 ? '<div class="empty-state">Nenhuma carga pendente no momento</div>' : ''}`;
+
+    if (pendentes.length > 0) {
+        html += `<table><thead><tr>
+            <th>Carga</th><th>ID</th><th>Ocorrencias</th><th>PC Origem</th><th>Categoria</th><th>Acao</th>
+        </tr></thead><tbody>`;
+
+        pendentes.forEach(c => {
+            const catOptions = CATEGORIAS.map(cat =>
+                `<option value="${cat.slug}">${cat.nome}</option>`
+            ).join('');
+            html += `<tr>
+                <td style="font-weight:600;">${escapeHtml(c.nome_original)}</td>
+                <td style="color:#555;font-size:11px;">${escapeHtml(c.cargo_id || '-')}</td>
+                <td>${c.ocorrencias || 1}</td>
+                <td><span class="badge badge-info">${escapeHtml(c.pc_origem || '?')}</span></td>
+                <td><select id="cat-${c.id}" style="width:160px;">${catOptions}</select></td>
+                <td>
+                    <button class="btn btn-success" onclick="classificarCarga(${c.id})">Classificar</button>
+                    <button class="btn btn-danger" onclick="excluirCarga(${c.id})">Excluir</button>
+                </td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+    }
+    html += '</div>';
+
+    html += `<div style="margin-top:12px;">
+        <button class="btn btn-primary" onclick="sincronizarMapping()">Sincronizar Mapping</button>
+        <button class="btn btn-secondary" onclick="backfillCargas()" style="margin-left:8px;">Recarregar Pendentes</button>
+    </div>`;
+
+    el.innerHTML = html;
+}
+
+async function classificarCarga(id) {
+    const select = document.getElementById('cat-' + id);
+    if (!select) return;
+    const categoria = select.value;
+    await fetch(API + '/admin/cargas.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: SESSION, action: 'classificar', id, categoria })
+    });
+    carregarDados();
+}
+
+async function excluirCarga(id) {
+    if (!confirm('Excluir esta carga pendente?')) return;
+    await fetch(API + '/admin/cargas.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: SESSION, action: 'excluir', id })
+    });
+    carregarDados();
+}
+
+async function sincronizarMapping() {
+    const r = await fetch(API + '/admin/cargas.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: SESSION, action: 'sincronizar' })
+    });
+    const data = await r.json();
+    alert(data.ok ? `${data.sincronizadas} cargas sincronizadas para o mapping!` : 'Erro: ' + (data.error || 'desconhecido'));
+    carregarDados();
+}
+
+async function backfillCargas() {
+    if (!confirm('Recarregar cargas pendentes a partir dos registros existentes?')) return;
+    const r = await fetch(API + '/admin/cargas.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: SESSION, action: 'backfill' })
+    });
+    const data = await r.json();
+    if (data.ok) {
+        alert(`${data.inseridas} cargas recuperadas (${data.ignoradas} ja existentes)`);
+        carregarDados();
+    } else {
+        alert('Erro: ' + (data.error || 'desconhecido'));
+    }
+}
+
+// ========== EVENTOS ==========
+
+const TIPOS_EVENTO = {
+    maratona_viagens: { label: 'Maratona de Viagens', placeholder: 'Complete 5 entregas em 24h' },
+    desafio_km: { label: 'Desafio de KM', placeholder: 'Percorra 1500km em 24h' },
+    foco_carga: { label: 'Foco em Carga', placeholder: 'Transporte 3 cargas de Combustiveis' },
+    foco_coletivo: { label: 'Foco em Coletivo/Ônibus', placeholder: 'Transporte 3 cargas de Coletivo' },
+    caixa_pontos: { label: 'Caça aos Pontos', placeholder: 'Acumule 10000 pontos em 24h' },
+    explorador_cidades: { label: 'Explorador de Cidades', placeholder: 'Entregue em 4 cidades diferentes' },
+    corrida_relampago: { label: 'Corrida Relâmpago', placeholder: 'Complete 4 entregas em 6h' }
+};
+
+function renderizarEventos(el) {
+    let html = `
+        <div class="card">
+            <div class="card-title">CRIAR EVENTO</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <select id="ev-tipo" style="width:200px;">
+                        ${Object.entries(TIPOS_EVENTO).map(([v,c]) => `<option value="${v}">${c.label}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Titulo</label>
+                    <input type="text" id="ev-titulo" placeholder="Titulo do evento" style="width:200px;">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Meta</label>
+                    <input type="number" id="ev-meta" placeholder="5" value="5" style="width:80px;">
+                </div>
+                <div class="form-group">
+                    <label>Bonus pts</label>
+                    <input type="number" id="ev-bonus" placeholder="2000" value="2000" style="width:100px;">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group" style="flex:1;">
+                    <label>Descricao</label>
+                    <input type="text" id="ev-desc" placeholder="Descricao (opcional)" style="width:100%;">
+                </div>
+            </div>
+            <div class="form-row">
+                <button class="btn btn-primary" onclick="criarEvento()">Criar Evento (24h)</button>
+            </div>
+        </div>`;
+
+    if (eventoAtivo) {
+        const params = eventoAtivo.parametros || {};
+        const inicio = new Date(eventoAtivo.data_inicio).toLocaleString('pt-BR');
+        const fim = new Date(eventoAtivo.data_fim).toLocaleString('pt-BR');
+        html += `
+        <div class="card evento-ativo">
+            <div class="card-title">EVENTO ATIVO</div>
+            <div style="font-size:15px;font-weight:700;color:#ff8800;margin-bottom:8px;">${escapeHtml(eventoAtivo.titulo)}</div>
+            <div style="font-size:12px;color:#aaa;margin-bottom:8px;">${escapeHtml(eventoAtivo.descricao || '')}</div>
+            <div style="font-size:11px;color:#666;">
+                Tipo: ${eventoAtivo.tipo} | Meta: ${params.meta || '?'} | Bonus: ${params.bonus_pontos || 0}pts<br>
+                Inicio: ${inicio}<br>
+                Fim: ${fim}
+            </div>
+            <div style="margin-top:12px;">
+                <button class="btn btn-danger" onclick="encerrarEvento()">Encerrar Evento</button>
+            </div>
+        </div>`;
+    } else {
+        html += `
+        <div class="card" style="border-color:#ff444440;">
+            <div class="card-title" style="color:#ff4444;">NENHUM EVENTO ATIVO</div>
+            <p style="font-size:12px;color:#666;">O sistema gera eventos automaticamente. Use o formulario acima para criar manualmente.</p>
+        </div>`;
+    }
+
+    if (historicoEventos.length > 0) {
+        html += `<div class="card">
+            <div class="card-title">ULTIMOS EVENTOS</div>
+            <table><thead><tr><th>Titulo</th><th>Tipo</th><th>Inicio</th><th>Fim</th><th>Acao</th></tr></thead><tbody>`;
+        historicoEventos.slice(0, 10).forEach(e => {
+            html += `<tr>
+                <td style="color:#ff8800;">${escapeHtml(e.titulo)}</td>
+                <td>${e.tipo}</td>
+                <td style="font-size:11px;">${new Date(e.data_inicio).toLocaleString('pt-BR')}</td>
+                <td style="font-size:11px;">${new Date(e.data_fim).toLocaleString('pt-BR')}</td>
+                <td><button class="btn btn-danger" onclick="limparEvento(${e.id})" style="padding:3px 8px;font-size:10px;">Limpar</button></td>
+            </tr>`;
+        });
+        html += '</tbody></table></div>';
+    }
+
+    el.innerHTML = html;
+}
+
+async function criarEvento() {
+    const tipo = document.getElementById('ev-tipo').value;
+    const titulo = document.getElementById('ev-titulo').value.trim();
+    const meta = parseInt(document.getElementById('ev-meta').value) || 5;
+    const bonus = parseInt(document.getElementById('ev-bonus').value) || 2000;
+    const desc = document.getElementById('ev-desc').value.trim() || `Complete ${meta} entregas em 24h e ganhe ${bonus} pontos!`;
+
+    if (!titulo) { alert('Digite um titulo'); return; }
+
+    const TIPO_META_MAP = { maratona_viagens: 'viagens', desafio_km: 'km', foco_carga: 'carga', caixa_pontos: 'pontos', explorador_cidades: 'cidades', corrida_relampago: 'viagens' };
+
+    await fetch(API + '/admin/eventos.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            secret: SESSION, action: 'criar',
+            tipo, titulo, descricao: desc, meta, bonus_pontos: bonus,
+            tipo_meta: TIPO_META_MAP[tipo] || 'viagens'
+        })
+    });
+    carregarDados();
+}
+
+async function encerrarEvento() {
+    if (!confirm('Encerrar o evento ativo agora?')) return;
+    await fetch(API + '/admin/eventos.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: SESSION, action: 'encerrar' })
+    });
+    carregarDados();
+}
+
+async function limparEvento(id) {
+    if (!confirm('Limpar este evento do historico?')) return;
+    await fetch(API + '/admin/eventos.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: SESSION, action: 'limpar', id })
+    });
+    carregarDados();
+}
+
+// ========== STATUS ==========
+
+function renderizarStatus(el) {
+    const lastSync = cargasData.length > 0 ? 'Dados presentes' : 'Aguardando primeiro sync';
+    el.innerHTML = `
+        <div class="card">
+            <div class="card-title">STATUS DO SISTEMA</div>
+            <div class="stats-row">
+                <div class="stat-box"><div class="stat-num">${cargasData.length}</div><div class="stat-label">Cargas Total</div></div>
+                <div class="stat-box"><div class="stat-num">${Object.keys(mappingData).length}</div><div class="stat-label">Mappings</div></div>
+                <div class="stat-box"><div class="stat-num">${eventoAtivo ? 1 : 0}</div><div class="stat-label">Eventos Ativos</div></div>
+                <div class="stat-box"><div class="stat-num">${historicoEventos.length}</div><div class="stat-label">Historico</div></div>
+            </div>
+            <p style="font-size:11px;color:#555;margin-top:8px;">Os dados sao atualizados a cada sync dos PCs (a cada 5 minutos).</p>
+        </div>
+        <div class="card" style="border-color:#ff444440;margin-top:16px;">
+            <div class="card-title" style="color:#ff4444;">ZONA DE PERIGO</div>
+            <p style="font-size:11px;color:#888;margin-bottom:12px;">Reseta todos os dados do servidor (ranking, cargas, eventos). O app continuara funcionando e reenviara os dados no proximo sync.</p>
+            <button class="btn btn-danger" onclick="resetarServidor()" style="padding:10px 20px;font-size:14px;font-weight:700;">💥 RESETAR DADOS DO SERVIDOR</button>
+        </div>`;
+}
+
+async function resetarServidor() {
+    if (!confirm('⚠️ ATENCAO: Isso vai apagar todo o ranking, cargas e eventos do servidor Hostinger. Tem certeza?')) return;
+    if (!confirm('🔥 CONFIRMAR: Todos os dados de ranking serao perdidos. Os apps reenviarao os dados no proximo sync.')) return;
+    const resposta = prompt('💥 Digite RESETAR para confirmar:');
+    if (resposta !== 'RESETAR') { alert('Reset cancelado.'); return; }
+    try {
+        const r = await fetch(API + '/admin/reset.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ secret: SESSION })
+        });
+        const data = await r.json();
+        if (data.ok) {
+            alert('✅ Reset do servidor concluido! Os dados serao reenviados pelos apps no proximo sync.');
+            carregarDados();
+        } else {
+            alert('Erro: ' + (data.error || 'Falha ao resetar'));
+        }
+    } catch(e) {
+        alert('Erro de conexao: ' + e.message);
+    }
+}
+
+// ========== PLANOS ==========
+
+function renderizarPlanos(el) {
+    const pendentes = planosSolicitacoes.filter(s => s.status === 'pendente');
+    const aplicados = planosSolicitacoes.filter(s => s.status === 'aplicado');
+    const erros = planosSolicitacoes.filter(s => s.status === 'erro');
+
+    let html = `
+        <div class="stats-row">
+            <div class="stat-box"><div class="stat-num">${pendentes.length}</div><div class="stat-label">Pendentes</div></div>
+            <div class="stat-box"><div class="stat-num">${aplicados.length}</div><div class="stat-label">Aplicados</div></div>
+            <div class="stat-box"><div class="stat-num">${motoristasLista.length}</div><div class="stat-label">Motoristas</div></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">NOVA SOLICITACAO DE PLANO</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Motorista</label>
+                    <input type="text" id="plano-motorista" placeholder="Nome do motorista" list="plano-mot-list" style="width:200px;">
+                    <datalist id="plano-mot-list">
+                        ${motoristasLista.map(m => `<option value="${escapeHtml(m.nome)}">`).join('')}
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label>Plano</label>
+                    <select id="plano-tipo" style="width:120px;">
+                        <option value="gold">Gold</option>
+                        <option value="vip">VIP</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Dias</label>
+                    <input type="number" id="plano-dias" value="30" min="1" max="365" style="width:80px;">
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary" onclick="criarSolicitacaoPlano()">Solicitar Ativacao</button>
+                </div>
+            </div>
+            <div style="font-size:10px;color:#888;margin-top:4px;">A ativacao sera aplicada no proximo sync do app (ate 5 min).</div>
+        </div>`;
+
+    // Pendentes
+    if (pendentes.length > 0) {
+        html += `<div class="card">
+            <div class="card-title">SOLICITACOES PENDENTES (${pendentes.length})</div>
+            <table><thead><tr>
+                <th>ID</th><th>Motorista</th><th>Plano</th><th>Dias</th><th>Criado em</th><th>Acao</th>
+            </tr></thead><tbody>`;
+        pendentes.forEach(s => {
+            const badge = s.plano === 'gold' ? '<span style="color:#ffd700;font-weight:700;">Gold</span>' : '<span style="color:#b366ff;font-weight:700;">VIP</span>';
+            html += `<tr>
+                <td style="color:#555;">#${s.id}</td>
+                <td style="font-weight:600;">${escapeHtml(s.motorista_nome)}</td>
+                <td>${badge}</td>
+                <td>${s.dias}</td>
+                <td style="font-size:11px;color:#888;">${s.criado_em || '-'}</td>
+                <td><button class="btn btn-danger" onclick="cancelarSolicitacao(${s.id})" style="padding:3px 8px;font-size:10px;">Cancelar</button></td>
+            </tr>`;
+        });
+        html += '</tbody></table></div>';
+    }
+
+    // Aplicados recentes
+    if (aplicados.length > 0) {
+        html += `<div class="card" style="margin-top:12px;">
+            <div class="card-title">ULTIMOS APLICADOS</div>
+            <table><thead><tr>
+                <th>ID</th><th>Motorista</th><th>Plano</th><th>Dias</th><th>Aplicado em</th>
+            </tr></thead><tbody>`;
+        aplicados.slice(0, 10).forEach(s => {
+            const badge = s.plano === 'gold' ? '<span style="color:#ffd700;font-weight:700;">Gold</span>' : '<span style="color:#b366ff;font-weight:700;">VIP</span>';
+            html += `<tr>
+                <td style="color:#555;">#${s.id}</td>
+                <td>${escapeHtml(s.motorista_nome)}</td>
+                <td>${badge}</td>
+                <td>${s.dias}</td>
+                <td style="font-size:11px;color:#888;">${s.aplicado_em || '-'}</td>
+            </tr>`;
+        });
+        html += '</tbody></table></div>';
+    }
+
+    // Erros
+    if (erros.length > 0) {
+        html += `<div class="card" style="border-color:#ff444440;margin-top:12px;">
+            <div class="card-title" style="color:#ff4444;">SOLICITACOES COM ERRO</div>
+            <table><thead><tr>
+                <th>ID</th><th>Motorista</th><th>Plano</th><th>Criado em</th>
+            </tr></thead><tbody>`;
+        erros.forEach(s => {
+            html += `<tr>
+                <td style="color:#555;">#${s.id}</td>
+                <td>${escapeHtml(s.motorista_nome)}</td>
+                <td>${s.plano}</td>
+                <td style="font-size:11px;color:#888;">${s.criado_em || '-'}</td>
+            </tr>`;
+        });
+        html += '</tbody></table></div>';
+    }
+
+    if (pendentes.length === 0 && aplicados.length === 0 && erros.length === 0) {
+        html += `<div class="card"><div class="empty-state">Nenhuma solicitacao de plano ainda</div></div>`;
+    }
+
+    el.innerHTML = html;
+}
+
+async function criarSolicitacaoPlano() {
+    const motorista = document.getElementById('plano-motorista').value.trim();
+    const plano = document.getElementById('plano-tipo').value;
+    const dias = parseInt(document.getElementById('plano-dias').value) || 30;
+
+    if (!motorista) { alert('Digite o nome do motorista'); return; }
+    if (!confirm(`Solicitar ativacao de plano ${plano.toUpperCase()} para "${motorista}" por ${dias} dias?`)) return;
+
+    const r = await fetch(API + '/admin/planos.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: SESSION, action: 'criar', motorista, plano, dias })
+    });
+    const data = await r.json();
+    if (data.ok) {
+        alert('Solicitacao criada! O plano sera ativado no proximo sync do app.');
+        carregarDados();
+    } else {
+        alert('Erro: ' + (data.error || 'desconhecido'));
+    }
+}
+
+async function cancelarSolicitacao(id) {
+    if (!confirm('Cancelar esta solicitacao?')) return;
+    const r = await fetch(API + '/admin/planos.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: SESSION, action: 'confirmar', id, status: 'cancelado' })
+    });
+    const data = await r.json();
+    if (data.ok) carregarDados();
+    else alert('Erro: ' + (data.error || 'desconhecido'));
+}
+
+// ========== DISPOSITIVOS ==========
+
+async function renderizarDispositivos(el) {
+    const r = await fetch(API + '/admin/dispositivos.php?secret=' + SESSION);
+    const data = await r.json();
+    if (!data.ok) { el.innerHTML = '<div class="empty-state">Erro ao carregar dispositivos</div>'; return; }
+
+    let html = `<div class="stats-row">
+        <div class="stat-box"><div class="stat-num">${data.dispositivos.length}</div><div class="stat-label">Dispositivos</div></div>
+        <div class="stat-box"><div class="stat-num">${data.orfãos.empresas + data.orfãos.motoristas + data.orfãos.viagens}</div><div class="stat-label">Orfãos</div></div>
+    </div>`;
+
+    if (data.orfãos.empresas > 0 || data.orfãos.motoristas > 0 || data.orfãos.viagens > 0) {
+        html += `<div style="background:#ffaa0015;border:1px solid #ffaa0080;border-radius:8px;padding:10px;margin-bottom:12px;">
+            <span style="color:#ffaa00;">⚠️ Orfãos: ${data.orfãos.empresas} empresas, ${data.orfãos.motoristas} motoristas, ${data.orfãos.viagens} viagens</span>
+            <button class="btn btn-danger" onclick="limparOrfaosWeb()" style="margin-left:12px;">Limpar Orfãos</button>
+        </div>`;
+    }
+
+    if (data.dispositivos.length === 0) {
+        html += '<div class="card"><div class="empty-state">Nenhum dispositivo conectado</div></div>';
+        el.innerHTML = html; return;
+    }
+
+    html += `<div class="card"><div class="card-title">DISPOSITIVOS</div>
+        <table><thead><tr>
+            <th>Nome</th><th>PC ID</th><th>Ultimo Sync</th><th>Emp</th><th>Mot</th><th>Via</th><th>Acao</th>
+        </tr></thead><tbody>`;
+
+    data.dispositivos.forEach(d => {
+        const ultimo = d.ultimo_sync ? new Date(d.ultimo_sync + 'Z').toLocaleString('pt-BR') : 'Nunca';
+        html += `<tr>
+            <td style="font-weight:600;">${escapeHtml(d.nome || '?')}</td>
+            <td style="font-size:10px;color:#888;">${escapeHtml(d.pc_id)}</td>
+            <td style="font-size:11px;color:#aaa;">${ultimo}</td>
+            <td>${d.empresas || 0}</td>
+            <td>${d.motoristas || 0}</td>
+            <td>${d.viagens || 0}</td>
+            <td><button class="btn btn-danger" onclick="resetarPc('${escapeHtml(d.pc_id)}')" style="padding:3px 8px;font-size:10px;">Resetar</button></td>
+        </tr>`;
+    });
+
+    html += '</tbody></table></div>';
+    el.innerHTML = html;
+}
+
+async function resetarPc(pcId) {
+    if (!confirm(`Resetar dados do PC ${pcId} no servidor?`)) return;
+    const r = await fetch(API + '/admin/executar.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: SESSION, action: 'reset_pc', pc_id: pcId })
+    });
+    const data = await r.json();
+    if (data.ok) { alert('PC resetado!'); renderizarDispositivos(document.getElementById('admin-content')); }
+    else { alert('Erro: ' + (data.error || '')); }
+}
+
+async function limparOrfaosWeb() {
+    if (!confirm('Limpar todos os dados orfaos (sem pc_id)?')) return;
+    const r = await fetch(API + '/admin/executar.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: SESSION, action: 'limpar_orfaos' })
+    });
+    const data = await r.json();
+    if (data.ok) { alert('Orfãos limpos!'); trocarTab('dispositivos'); }
+    else { alert('Erro: ' + (data.error || '')); }
+}
+
+// ========== RANKING ==========
+
+let rankingTab = 'empresas';
+let rankingPcFilter = '';
+
+async function renderizarRanking(el) {
+    const params = new URLSearchParams({ secret: SESSION, t: rankingTab });
+    if (rankingPcFilter) params.set('pc_id', rankingPcFilter);
+    const r = await fetch(API + '/admin/ranking.php?' + params.toString());
+    const data = await r.json();
+    if (!data.ok) { el.innerHTML = '<div class="empty-state">Erro ao carregar ranking</div>'; return; }
+
+    let html = `<div class="form-row">
+        <div class="form-group">
+            <label>Tipo</label>
+            <select onchange="rankingTab=this.value;renderizarRanking(document.getElementById('admin-content'))">
+                <option value="empresas" ${rankingTab==='empresas'?'selected':''}>Empresas</option>
+                <option value="motoristas" ${rankingTab==='motoristas'?'selected':''}>Motoristas</option>
+                <option value="viagens" ${rankingTab==='viagens'?'selected':''}>Viagens</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Filtrar PC</label>
+            <input type="text" placeholder="pc_id (opcional)" value="${escapeHtml(rankingPcFilter)}" style="width:200px;"
+                onchange="rankingPcFilter=this.value;renderizarRanking(document.getElementById('admin-content'))">
+        </div>
+        <div class="form-group">
+            <label>&nbsp;</label>
+            <button class="btn btn-secondary" onclick="rankingPcFilter='';rankingTab='empresas';trocarTab('ranking')">Limpar</button>
+        </div>
+    </div>`;
+
+    const dados = data.dados || [];
+    if (dados.length === 0) {
+        html += '<div class="card"><div class="empty-state">Nenhum dado encontrado</div></div>';
+        el.innerHTML = html; return;
+    }
+
+    html += `<div class="card"><div class="card-title">${rankingTab.toUpperCase()} (${dados.length})</div><table><thead><tr>`;
+
+    if (rankingTab === 'empresas') {
+        html += '<th>#</th><th>Nome</th><th>Motoristas</th><th>Viagens</th><th>KM</th><th>Pts</th><th>PC ID</th><th>Acao</th>';
+    } else if (rankingTab === 'motoristas') {
+        html += '<th>#</th><th>Nome</th><th>Empresa</th><th>Viagens</th><th>KM</th><th>Pts</th><th>PC ID</th>';
+    } else {
+        html += '<th>Motorista</th><th>Empresa</th><th>Data</th><th>KM</th><th>PC ID</th>';
+    }
+    html += '</tr></thead><tbody>';
+
+    dados.forEach((item, i) => {
+        const pcId = item.pc_id || '<span style="color:#ff4444;">ORFÃO</span>';
+        if (rankingTab === 'empresas') {
+            html += `<tr>
+                <td style="color:#555;">${i+1}</td>
+                <td style="font-weight:600;">${escapeHtml(item.nome)}</td>
+                <td>${item.motoristas || 0}</td>
+                <td>${item.viagens || 0}</td>
+                <td>${(item.km || 0).toLocaleString()}</td>
+                <td>${(item.pontuacao || 0).toLocaleString()}</td>
+                <td style="font-size:10px;color:#888;">${pcId}</td>
+                <td><button class="btn btn-danger" onclick="deletarEmpresaWeb('${escapeHtml(item.nome)}','${escapeHtml(item.pc_id||'')}')" style="padding:2px 6px;font-size:9px;">Del</button></td>
+            </tr>`;
+        } else if (rankingTab === 'motoristas') {
+            html += `<tr>
+                <td style="color:#555;">${i+1}</td>
+                <td style="font-weight:600;">${escapeHtml(item.nome)}</td>
+                <td>${escapeHtml(item.empresa || '')}</td>
+                <td>${item.viagens || 0}</td>
+                <td>${(item.km || 0).toLocaleString()}</td>
+                <td>${(item.pontuacao || 0).toLocaleString()}</td>
+                <td style="font-size:10px;color:#888;">${pcId}</td>
+            </tr>`;
+        } else {
+            html += `<tr>
+                <td>${escapeHtml(item.motorista)}</td>
+                <td>${escapeHtml(item.empresa || '')}</td>
+                <td style="font-size:11px;">${item.data || ''}</td>
+                <td>${(item.km || 0).toLocaleString()}</td>
+                <td style="font-size:10px;color:#888;">${pcId}</td>
+            </tr>`;
+        }
+    });
+
+    html += '</tbody></table></div>';
+    el.innerHTML = html;
+}
+
+async function deletarEmpresaWeb(nome, pcId) {
+    if (!confirm(`Deletar empresa "${nome}"${pcId ? ' do PC ' + pcId : ''}?`)) return;
+    const r = await fetch(API + '/admin/executar.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: SESSION, action: 'delete_empresa', nome, pc_id: pcId || undefined })
+    });
+    const data = await r.json();
+    if (data.ok) { alert('Empresa removida!'); renderizarRanking(document.getElementById('admin-content')); }
+    else { alert('Erro: ' + (data.error || '')); }
+}
+
+// ========== DIAGNOSTICO ==========
+
+async function renderizarDiagnostico(el) {
+    const r = await fetch(API + '/admin/dispositivos.php?secret=' + SESSION);
+    const data = await r.json();
+    if (!data.ok) { el.innerHTML = '<div class="empty-state">Erro ao carregar diagnostico</div>'; return; }
+
+    const totalEmp = data.dispositivos.reduce((s, d) => s + (d.empresas || 0), 0) + (data.orfãos?.empresas || 0);
+    const totalMot = data.dispositivos.reduce((s, d) => s + (d.motoristas || 0), 0) + (data.orfãos?.motoristas || 0);
+    const totalVia = data.dispositivos.reduce((s, d) => s + (d.viagens || 0), 0) + (data.orfãos?.viagens || 0);
+
+    let html = `
+        <div class="stats-row">
+            <div class="stat-box"><div class="stat-num">${totalEmp}</div><div class="stat-label">Empresas</div></div>
+            <div class="stat-box"><div class="stat-num">${totalMot}</div><div class="stat-label">Motoristas</div></div>
+            <div class="stat-box"><div class="stat-num">${totalVia}</div><div class="stat-label">Viagens</div></div>
+            <div class="stat-box"><div class="stat-num">${data.dispositivos.length}</div><div class="stat-label">Dispositivos</div></div>
+            <div class="stat-box"><div class="stat-num">${data.reset_token || 0}</div><div class="stat-label">Reset Token</div></div>
+        </div>`;
+
+    if (data.orfãos && (data.orfãos.empresas > 0 || data.orfãos.motoristas > 0 || data.orfãos.viagens > 0)) {
+        html += `<div style="background:#ffaa0015;border:1px solid #ffaa0080;border-radius:8px;padding:10px;margin-bottom:12px;">
+            <span style="color:#ffaa00;">⚠️ Dados orfãos: ${data.orfãos.empresas} empresas, ${data.orfãos.motoristas} motoristas, ${data.orfãos.viagens} viagens</span>
+            <button class="btn btn-danger" onclick="limparOrfaosWeb()" style="margin-left:12px;">Limpar</button>
+        </div>`;
+    }
+
+    html += `<div class="card" style="border-color:#ff444440;margin-top:16px;">
+        <div class="card-title" style="color:#ff4444;">ZONA DE PERIGO</div>
+        <p style="font-size:12px;color:#888;margin-bottom:12px;">
+            ⚠️ Reset global: limpa TODOS os dados do servidor e força todos os PCs a resetarem.
+            <br>Tokens sao incrementados — PCs antigos serao rejeitados ate atualizarem.
+        </p>
+        <button class="btn btn-danger" onclick="resetGlobalWeb()" style="padding:10px 20px;font-size:14px;font-weight:700;">💥 RESET GLOBAL</button>
+        <button class="btn btn-secondary" onclick="limparOrfaosWeb()" style="margin-left:8px;">🧹 Limpar Orfãos</button>
+    </div>`;
+
+    el.innerHTML = html;
+}
+
+async function resetGlobalWeb() {
+    if (!confirm('⚠️ ISSO VAI LIMPAR TODOS OS DADOS DO SERVIDOR!')) return;
+    if (!confirm('🔥 TODOS OS PCs SERAO FORÇADOS A RESETAR NO PROXIMO SYNC!')) return;
+    const resp = prompt('💥 Digite RESETAR para confirmar:');
+    if (resp !== 'RESETAR') { alert('Cancelado.'); return; }
+    const r = await fetch(API + '/admin/executar.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: SESSION, action: 'reset_global' })
+    });
+    const data = await r.json();
+    if (data.ok) { alert('✅ Reset global concluido! Token: ' + data.reset_token); trocarTab('diagnostico'); }
+    else { alert('Erro: ' + (data.error || '')); }
+}
+
+// ========== UTILS ==========
+
+function escapeHtml(t) {
+    if (!t) return '';
+    return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;').replace(/'/g,'&#039;').replace(/`/g,'&#96;');
+}
+
+// ========== INIT ==========
+
+if (SESSION) {
+    mostrarPainel();
+} else {
+    document.getElementById('login-screen').style.display = 'block';
+}
+</script>
+</body>
+</html>

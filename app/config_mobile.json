@@ -1,0 +1,151 @@
+{
+  "title": "CARGO STATS",
+  "background": "#0a0a0a",
+  "updateIntervalMs": 250,
+  "sections": {
+    "job": { "label": "JOB ATIVO" },
+    "gauges": { "label": "INSTRUMENTOS" },
+    "route": { "label": "ROTA" },
+    "data": { "label": "DADOS" },
+    "fluids": { "label": "FLUIDOS" },
+    "status": { "label": "SISTEMAS" }
+  },
+  "widgets": [
+    {
+      "type": "job-status",
+      "section": "job",
+      "label": "STATUS DO JOB"
+    },
+    {
+      "type": "big-text",
+      "section": "gauges",
+      "label": "VELOCIDADE",
+      "unit": "km/h",
+      "field": "truck.speed",
+      "format": "{value:.0f}",
+      "color": "#00ff88"
+    },
+    {
+      "type": "text",
+      "section": "gauges",
+      "label": "ROTAÇÕES",
+      "unit": "rpm",
+      "field": "truck.engineRpm",
+      "format": "{value:.0f}",
+      "color": "#ffaa00"
+    },
+    {
+      "type": "text",
+      "section": "gauges",
+      "label": "MARCHA",
+      "field": "truck.gear",
+      "format": "{value:.0f}",
+      "color": "#ffffff"
+    },
+    {
+      "type": "progress-bar",
+      "section": "fluids",
+      "label": "COMBUSTÍVEL",
+      "unit": "L",
+      "field": "truck.fuel",
+      "min": 0,
+      "max": 700,
+      "color": "#00aaff"
+    },
+    {
+      "type": "text",
+      "section": "route",
+      "label": "ORIGEM",
+      "field": "job.sourceCity",
+      "color": "#aaaaff"
+    },
+    {
+      "type": "text",
+      "section": "route",
+      "label": "DESTINO",
+      "field": "job.destinationCity",
+      "color": "#ffaa88"
+    },
+    {
+      "type": "text",
+      "section": "route",
+      "label": "EMPRESA ORIGEM",
+      "field": "job.sourceCompany",
+      "color": "#88aaff"
+    },
+    {
+      "type": "text",
+      "section": "route",
+      "label": "EMPRESA DESTINO",
+      "field": "job.destinationCompany",
+      "color": "#ffaa88"
+    },
+    {
+      "type": "text",
+      "section": "data",
+      "label": "RENDIMENTO",
+      "unit": "€",
+      "field": "job.income",
+      "format": "{value:.0f}",
+      "color": "#ffff00"
+    },
+    {
+      "type": "text",
+      "section": "data",
+      "label": "DISTÂNCIA",
+      "unit": "km",
+      "field": "navigation.estimatedDistance",
+      "format": "{value:.0f}",
+      "color": "#44aaff"
+    },
+    {
+      "type": "text",
+      "section": "data",
+      "label": "LIMITE",
+      "unit": "km/h",
+      "field": "navigation.speedLimit",
+      "format": "{value:.0f}",
+      "color": "#ff4444"
+    },
+    {
+      "type": "text",
+      "section": "data",
+      "label": "ODÔMETRO",
+      "unit": "km",
+      "field": "truck.odometer",
+      "format": "{value:.0f}",
+      "color": "#aaaaff"
+    },
+    {
+      "type": "text",
+      "section": "data",
+      "label": "CONSUMO",
+      "unit": "L/100km",
+      "field": "truck.fuelAverageConsumption",
+      "format": "{value:.2f}",
+      "color": "#00ffaa"
+    },
+    {
+      "type": "status",
+      "section": "status",
+      "label": "SISTEMAS",
+      "field": "truck",
+      "icons": {
+        "engineOn": "M",
+        "electricOn": "E",
+        "lightsBeamLowOn": "L",
+        "lightsBeamHighOn": "H",
+        "blinkerLeftOn": "<",
+        "blinkerRightOn": ">",
+        "wipersOn": "W",
+        "parkBrakeOn": "P",
+        "retarderBrake": "R",
+        "fuelWarningOn": "F",
+        "airPressureWarningOn": "A",
+        "oilPressureWarningOn": "O",
+        "waterTemperatureWarningOn": "T",
+        "batteryVoltageWarningOn": "B"
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+RewriteEngine On
+
+# Clean URLs
+RewriteRule ^rank$ rank.html [L]
+RewriteRule ^regras$ regras.html [L]
+RewriteRule ^download$ download.html [L]
+
+# Block direct access to api/config.php
+RewriteRule ^api/config\.php$ - [F,L]
+
+# Block database files
+RewriteRule \.db$ - [F,L]
+RewriteRule \.db-shm$ - [F,L]
+RewriteRule \.db-wal$ - [F,L]
+RewriteRule \.sqlite$ - [F,L]
+RewriteRule \.sqlite3$ - [F,L]
+
+# Block legacy JSON data files
+RewriteRule ^api/.*\.json$ - [F,L]
+
+# Block .env file
+RewriteRule ^api/\.env$ - [F,L]
+
+# Block test/debug endpoints
+RewriteRule ^api/test\.php$ - [F,L]
+
+# CORS headers for API
+<FilesMatch "\.php$">
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+</FilesMatch>
+
+# Cache static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+</IfModule>
+
+# Security headers
+Header set X-Content-Type-Options "nosniff"
+Header set X-Frame-Options "SAMEORIGIN"
+Header set X-XSS-Protection "1; mode=block"
+Header set Referrer-Policy "strict-origin-when-cross-origin"
+Header set Permissions-Policy "geolocation=(), camera=(), microphone=()"

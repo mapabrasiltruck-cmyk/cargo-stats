@@ -1,0 +1,416 @@
+let empresasData = [];
+let solicitacoesEnviadas = {};
+let vagasData = [];
+let convitesRecebidos = [];
+
+async function loadData() {
+    const user = getAuthUser();
+    if (!user) {
+        window.location.href = 'login_local.html';
+        return false;
+    }
+    if (user.empresa && user.empresa !== 'Lobo Solitário') {
+        window.location.href = 'empresa_local.html?empresa=' + encodeURIComponent(user.empresa);
+        return false;
+    }
+
+    const [resEmp, resSol, resVagas, resConv] = await Promise.all([
+        fetchJSON('/api/empresas'),
+        authFetch('/api/solicitacoes'),
+        fetchJSON('/api/vagas'),
+        authFetch('/api/convites')
+    ]);
+
+    if (resEmp.data) {
+        empresasData = (resEmp.data.empresas || []).filter(e => e.nome !== 'Lobo Solitário');
+    }
+
+    if (resSol) {
+        const solData = await resSol.json();
+        if (solData.ok && solData.solicitacoes) {
+            solData.solicitacoes.forEach(s => {
+                solicitacoesEnviadas[s.empresa] = s.status;
+            });
+        }
+    }
+
+    if (resVagas.data) vagasData = (resVagas.data.vagas || []).slice(0, 6);
+
+    if (resConv) {
+        const convData = await resConv.json();
+        if (convData.ok) convitesRecebidos = (convData.convites || []).filter(c => c.status === 'pendente');
+    }
+
+    document.getElementById('status').innerText = `● ${empresasData.length} empresas disponiveis`;
+    document.getElementById('status').className = 'status-bar connected';
+    return true;
+}
+
+function renderPage() {
+    const app = document.getElementById('app');
+    app.innerHTML = '';
+
+    const nav = renderNav('lobo_local.html');
+    app.appendChild(nav);
+
+    const frame = document.createElement('div');
+    frame.className = 'dashboard-frame';
+
+    const title = document.createElement('div');
+    title.className = 'dashboard-title';
+    title.textContent = 'ENCONTRAR EMPRESA';
+    frame.appendChild(title);
+
+    const subtitle = document.createElement('div');
+    subtitle.style.cssText = 'text-align:center;color:#888;font-size:12px;margin-bottom:24px;';
+    subtitle.textContent = 'Escolha uma empresa e envie seu pedido de vaga';
+    frame.appendChild(subtitle);
+
+    const user = getAuthUser();
+    if (user && user.empresa && user.empresa !== 'Lobo Solitário') {
+        const link = document.createElement('div');
+        link.style.cssText = 'text-align:center;padding:8px;margin-bottom:16px;';
+        link.innerHTML = `<a href="empresa_local.html?empresa=${encodeURIComponent(user.empresa)}" style="color:#00ff88;font-size:13px;font-weight:700;">VER MINHA EMPRESA: ${user.empresa.toUpperCase()}</a>`;
+        frame.appendChild(link);
+    }
+
+    if (empresasData.length === 0) {
+        const empty = document.createElement('div');
+        empty.style.cssText = 'text-align:center;padding:60px 20px;';
+        empty.innerHTML = `
+            <div style="font-size:48px;margin-bottom:16px;">🏢</div>
+            <div style="color:#888;font-size:14px;">Nenhuma empresa disponivel</div>`;
+        frame.appendChild(empty);
+    } else {
+        const grid = document.createElement('div');
+        grid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;padding:0 4px;';
+
+        empresasData.forEach(emp => {
+            const card = document.createElement('div');
+            card.className = 'lobo-empresa-card';
+
+            const user = getAuthUser();
+            const normalizado = (s) => String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '').replace(/\./g, '');
+            const souMembro = user && user.empresa && normalizado(user.empresa) === normalizado(emp.nome);
+            const statusSol = solicitacoesEnviadas[emp.nome];
+            let btnHtml = '';
+            if (souMembro) {
+                btnHtml = `<a href="empresa_local.html?empresa=${encodeURIComponent(emp.nome)}" class="lobo-btn-pedido" style="background:#00ff88;color:#000;text-decoration:none;display:inline-block;">VER MINHA EMPRESA</a>`;
+            } else if (statusSol === 'pendente') {
+                btnHtml = `<button class="lobo-btn-pedido" disabled style="background:#333;color:#888;cursor:default;">PEDIDO ENVIADO</button>`;
+            } else if (statusSol === 'aceita') {
+                btnHtml = `<a href="empresa_local.html?empresa=${encodeURIComponent(emp.nome)}" class="lobo-btn-pedido" style="background:#00ff88;color:#000;text-decoration:none;display:inline-block;">VER MINHA EMPRESA</a>`;
+            } else {
+                btnHtml = `<button class="lobo-btn-pedido" onclick="pedirVaga('${emp.nome.replace(/'/g, "\\'")}')">PEDIR VAGA</button>`;
+            }
+
+            const logoHtml = emp.logo
+                ? `<img src="${emp.logo}" style="width:48px;height:48px;border-radius:10px;object-fit:cover;border:2px solid #00ff88;">`
+                : `<div style="width:48px;height:48px;border-radius:10px;background:#1a2a1a;border:2px solid #00ff88;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🏢</div>`;
+
+            card.innerHTML = `
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+                    ${logoHtml}
+                    <div style="flex:1;min-width:0;">
+                        <a href="empresa_local.html?empresa=${encodeURIComponent(emp.nome)}" style="color:#00ff88;font-size:15px;font-weight:700;letter-spacing:1px;text-decoration:none;">${emp.nome}</a>
+                        ${emp.descricao ? `<div style="color:#888;font-size:11px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${emp.descricao}</div>` : ''}
+                    </div>
+                </div>
+                <div style="display:flex;gap:12px;margin-bottom:14px;">
+                    <div style="flex:1;text-align:center;background:#0d1117;border-radius:8px;padding:10px 6px;">
+                        <div style="color:#00ff88;font-size:18px;font-weight:700;">${emp.motoristas || 0}</div>
+                        <div style="color:#666;font-size:9px;letter-spacing:1px;">MOTORISTAS</div>
+                    </div>
+                    <div style="flex:1;text-align:center;background:#0d1117;border-radius:8px;padding:10px 6px;">
+                        <div style="color:#00ff88;font-size:18px;font-weight:700;">${emp.viagens || 0}</div>
+                        <div style="color:#666;font-size:9px;letter-spacing:1px;">VIAGENS</div>
+                    </div>
+                    <div style="flex:1;text-align:center;background:#0d1117;border-radius:8px;padding:10px 6px;">
+                        <div style="color:#00ff88;font-size:18px;font-weight:700;">${(emp.km || 0).toLocaleString()}</div>
+                        <div style="color:#666;font-size:9px;letter-spacing:1px;">KM</div>
+                    </div>
+                    <div style="flex:1;text-align:center;background:#0d1117;border-radius:8px;padding:10px 6px;">
+                        <div style="color:#ffd700;font-size:18px;font-weight:700;">${(emp.pontuacao || 0).toLocaleString()}</div>
+                        <div style="color:#666;font-size:9px;letter-spacing:1px;">PONTOS</div>
+                    </div>
+                </div>
+                <div style="text-align:center;">
+                    ${btnHtml}
+                </div>`;
+
+            grid.appendChild(card);
+        });
+
+        frame.appendChild(grid);
+    }
+
+    if (convitesRecebidos.length > 0) {
+        const convSection = document.createElement('div');
+        convSection.style.cssText = 'margin-top:24px;padding:16px;border:1px solid #ffaa0030;border-radius:12px;background:#ffaa0008;';
+        convSection.innerHTML = `<div style="color:#ffaa00;font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:12px;">📩 CONVITES RECEBIDOS (${convitesRecebidos.length})</div>`;
+        convitesRecebidos.forEach(c => {
+            convSection.innerHTML += `
+                <div style="display:flex;align-items:center;gap:12px;padding:10px;background:#0d1117;border-radius:8px;margin-bottom:6px;border:1px solid #1e1e28;">
+                    <div style="width:32px;height:32px;border-radius:50%;background:#1a2a1a;border:2px solid #ffaa00;display:flex;align-items:center;justify-content:center;font-size:14px;">✉️</div>
+                    <div style="flex:1;">
+                        <a href="empresa_local.html?empresa=${encodeURIComponent(c.empresa)}" style="color:#ffaa00;font-weight:700;font-size:12px;text-decoration:none;">${escapeHTML(c.empresa)}</a>
+                        ${c.mensagem ? `<div style="color:#888;font-size:10px;margin-top:2px;">${escapeHTML(c.mensagem)}</div>` : ''}
+                    </div>
+                    <div style="display:flex;gap:6px;">
+                        <button onclick="aceitarConvite(${c.id})" style="padding:5px 12px;background:#00ff88;color:#000;border:none;border-radius:6px;font-weight:700;font-size:10px;cursor:pointer;">ACEITAR</button>
+                        <button onclick="recusarConvite(${c.id})" style="padding:5px 12px;background:#ff4444;color:#fff;border:none;border-radius:6px;font-weight:700;font-size:10px;cursor:pointer;">RECUSAR</button>
+                    </div>
+                </div>`;
+        });
+        frame.appendChild(convSection);
+    }
+
+    if (vagasData.length > 0) {
+        const vagasSection = document.createElement('div');
+        vagasSection.style.cssText = 'margin-top:24px;padding:16px;border:1px solid #00ff8830;border-radius:12px;background:#00ff8808;';
+        vagasSection.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div style="color:#00ff88;font-size:12px;font-weight:700;letter-spacing:1px;">📋 VAGAS EM DESTAQUE</div><a href="vagas_local.html" style="color:#00ff88;font-size:10px;text-decoration:none;">VER TODAS →</a></div>`;
+        const vagasGrid = document.createElement('div');
+        vagasGrid.style.cssText = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;';
+        vagasData.forEach(v => {
+            const catIcons = { 'geral':'📦','quimicos':'🧪','construcao':'🏗️','veiculos':'🚗','carga_viva':'🐄','maquinas':'🚜','granel':'🌾','passageiros':'🚌' };
+            const item = document.createElement('div');
+            item.style.cssText = 'padding:10px;background:#0d1117;border-radius:8px;border:1px solid #1e1e28;display:flex;align-items:center;gap:10px;';
+            item.innerHTML = `
+                <div style="font-size:18px;">${catIcons[v.categoria] || '📦'}</div>
+                <div style="flex:1;min-width:0;">
+                    <div style="color:#e0e0e0;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHTML(v.titulo)}</div>
+                    <div style="color:#00ff88;font-size:10px;">${escapeHTML(v.empresa)} · ${v.qtd_vagas} vaga(s)</div>
+                </div>`;
+            vagasGrid.appendChild(item);
+        });
+        vagasSection.appendChild(vagasGrid);
+        frame.appendChild(vagasSection);
+    }
+
+    const criarSection = document.createElement('div');
+    criarSection.style.cssText = 'text-align:center;margin-top:32px;padding:24px;border:1px solid rgba(0,255,136,0.15);border-radius:12px;background:rgba(0,255,136,0.02);';
+    criarSection.innerHTML = `
+        <div style="font-size:28px;margin-bottom:8px;">🚀</div>
+        <div style="color:#f5c842;font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:6px;">CRIAR MINHA EMPRESA</div>
+        <div style="color:#666;font-size:11px;margin-bottom:14px;">Nao encontrou uma empresa? Crie a sua propria!</div>
+        <button id="btn-criar-empresa" class="lobo-btn-pedido" style="background:#f5c842;color:#000;padding:10px 24px;">CRIAR EMPRESA</button>
+    `;
+    frame.appendChild(criarSection);
+
+    const footer = document.createElement('div');
+    footer.className = 'dashboard-footer';
+    footer.innerHTML = `
+        <div class="footer-line">App desktop para Windows 10+ | Telemetria ETS2/ATS em tempo real</div>
+        <div class="footer-line footer-copy">&copy; 2026 Cargo Stats - Mapa Brasil Truck. Todos os direitos reservados.</div>`;
+    frame.appendChild(footer);
+
+    app.appendChild(frame);
+
+    document.getElementById('btn-criar-empresa').addEventListener('click', () => abrirModalCriarEmpresa());
+}
+
+async function pedirVaga(empresaNome) {
+    const user = getAuthUser();
+    if (!user) {
+        window.location.href = 'login_local.html';
+        return;
+    }
+
+    if (!confirm(`Enviar pedido de vaga para ${empresaNome}?`)) return;
+
+    const res = await authFetch('/api/solicitacoes', {
+        method: 'POST',
+        body: JSON.stringify({ empresa: empresaNome })
+    });
+
+    if (res) {
+        const result = await res.json();
+        if (result.ok) {
+            solicitacoesEnviadas[empresaNome] = 'pendente';
+            renderPage();
+        } else {
+            alert(result.error || 'Erro ao enviar pedido');
+        }
+    }
+}
+
+function abrirModalCriarEmpresa() {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:999;display:flex;align-items:center;justify-content:center;';
+
+    overlay.innerHTML = `
+        <div style="background:#0d1117;border:1px solid #f5c84240;border-radius:12px;padding:24px;width:90%;max-width:400px;max-height:90vh;overflow-y:auto;">
+            <div style="color:#f5c842;font-size:14px;font-weight:700;letter-spacing:1px;margin-bottom:16px;text-align:center;">CRIAR EMPRESA</div>
+            <div style="margin-bottom:12px;">
+                <label style="font-size:10px;color:#888;letter-spacing:1px;display:block;margin-bottom:4px;">NOME DA EMPRESA *</label>
+                <input type="text" id="criar-emp-nome" placeholder="Ex: Minha Transportadora" maxlength="100" style="width:100%;padding:10px;background:#050508;border:1px solid #333;border-radius:6px;color:#e0e0e0;font-size:13px;box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:12px;">
+                <label style="font-size:10px;color:#888;letter-spacing:1px;display:block;margin-bottom:4px;">DESCRICAO (opcional)</label>
+                <textarea id="criar-emp-desc" placeholder="Sua empresa em poucas palavras" rows="2" maxlength="200" style="width:100%;padding:10px;background:#050508;border:1px solid #333;border-radius:6px;color:#e0e0e0;font-size:13px;box-sizing:border-box;resize:none;"></textarea>
+            </div>
+            <div style="margin-bottom:12px;">
+                <label style="font-size:10px;color:#888;letter-spacing:1px;display:block;margin-bottom:4px;">LOGO DA EMPRESA (opcional)</label>
+                <div id="criar-emp-logo-preview" style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+                    <div id="criar-emp-logo-thumb" style="width:56px;height:56px;border-radius:10px;background:#111;border:1px dashed #333;display:flex;align-items:center;justify-content:center;font-size:24px;color:#555;overflow:hidden;flex-shrink:0;">🏢</div>
+                    <div>
+                        <label for="criar-emp-logo" style="display:inline-block;padding:6px 14px;background:#1a2a1a;border:1px solid #00ff8840;border-radius:6px;color:#00ff88;font-size:11px;cursor:pointer;">Escolher arquivo</label>
+                        <div style="font-size:9px;color:#555;margin-top:4px;">PNG ou JPG, max 2MB</div>
+                    </div>
+                </div>
+                <input type="file" id="criar-emp-logo" accept="image/*" style="display:none;">
+            </div>
+            <div style="margin-bottom:16px;">
+                <label style="font-size:10px;color:#888;letter-spacing:1px;display:block;margin-bottom:4px;">BANNER DA EMPRESA (opcional)</label>
+                <div id="criar-emp-banner-preview" style="margin-bottom:6px;">
+                    <div id="criar-emp-banner-thumb" style="width:100%;height:80px;border-radius:8px;background:#111;border:1px dashed #333;display:flex;align-items:center;justify-content:center;font-size:11px;color:#555;overflow:hidden;">Clique para selecionar banner</div>
+                </div>
+                <input type="file" id="criar-emp-banner" accept="image/*" style="display:none;">
+            </div>
+            <div id="criar-emp-error" style="color:#ff4444;font-size:11px;text-align:center;margin-bottom:10px;"></div>
+            <div style="display:flex;gap:10px;">
+                <button id="criar-emp-cancelar" style="flex:1;padding:10px;background:#222;border:1px solid #333;border-radius:6px;color:#888;font-size:12px;cursor:pointer;">CANCELAR</button>
+                <button id="criar-emp-confirmar" style="flex:1;padding:10px;background:#f5c842;border:none;border-radius:6px;color:#000;font-weight:700;font-size:12px;cursor:pointer;">CRIAR</button>
+            </div>
+        </div>`;
+
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.remove();
+    });
+
+    document.getElementById('criar-emp-cancelar').addEventListener('click', () => overlay.remove());
+
+    const logoInput = document.getElementById('criar-emp-logo');
+    const logoThumb = document.getElementById('criar-emp-logo-thumb');
+    logoInput.addEventListener('change', () => {
+        const file = logoInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                logoThumb.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover;">';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    logoThumb.style.cursor = 'pointer';
+    logoThumb.addEventListener('click', () => logoInput.click());
+
+    const bannerInput = document.getElementById('criar-emp-banner');
+    const bannerThumb = document.getElementById('criar-emp-banner-thumb');
+    bannerInput.addEventListener('change', () => {
+        const file = bannerInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                bannerThumb.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover;">';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    bannerThumb.style.cursor = 'pointer';
+    bannerThumb.addEventListener('click', () => bannerInput.click());
+
+    document.getElementById('criar-emp-confirmar').addEventListener('click', async () => {
+        const nome = document.getElementById('criar-emp-nome').value.trim();
+        const descricao = document.getElementById('criar-emp-desc').value.trim();
+        const errorDiv = document.getElementById('criar-emp-error');
+        const btn = document.getElementById('criar-emp-confirmar');
+
+        if (!nome) {
+            errorDiv.textContent = 'Digite o nome da empresa';
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'CRIANDO...';
+
+        const formData = new FormData();
+        formData.append('nome', nome);
+        formData.append('descricao', descricao);
+        if (logoInput.files[0]) formData.append('logo', logoInput.files[0]);
+        if (bannerInput.files[0]) formData.append('banner', bannerInput.files[0]);
+
+        errorDiv.style.color = '#ffaa00';
+        errorDiv.textContent = '📤 Enviando dados da empresa...';
+
+        const token = getAuthToken();
+        const res = await fetch('/api/empresas/solicitar', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: formData
+        });
+
+        if (res) {
+            const data = await res.json();
+            if (data.ok) {
+                let msg = '✅ Empresa criada!';
+                if (data.upload) {
+                    if (logoInput.files[0]) msg += data.upload.logo === 'uploaded' ? ' ✅ Logo no servidor' : ' ❌ Logo local';
+                    if (bannerInput.files[0]) msg += data.upload.banner === 'uploaded' ? ' ✅ Banner no servidor' : ' ❌ Banner local';
+                }
+                if (data.sync && !data.sync.configured) msg += ' ⚠️ Sync desconfigurado';
+                msg += ' ⏳ Redirecionando...';
+                errorDiv.style.color = logoInput.files[0] || bannerInput.files[0] ? (data.upload?.logo === 'uploaded' || data.upload?.banner === 'uploaded' ? '#00ff88' : '#ffaa00') : '#00ff88';
+                errorDiv.textContent = msg;
+                setTimeout(() => {
+                    overlay.remove();
+                    const user = getAuthUser();
+                    if (user) {
+                        user.empresa = data.empresa;
+                        setAuth(getAuthToken(), user);
+                    }
+                    window.location.href = 'empresa_local.html?empresa=' + encodeURIComponent(data.empresa);
+                }, 2000);
+            } else {
+                errorDiv.textContent = data.error || 'Erro ao criar empresa';
+                btn.disabled = false;
+                btn.textContent = 'CRIAR';
+            }
+        } else {
+            errorDiv.textContent = 'Erro de conexao';
+            btn.disabled = false;
+            btn.textContent = 'CRIAR';
+        }
+    });
+
+    document.getElementById('criar-emp-nome').focus();
+}
+
+async function aceitarConvite(id) {
+    if (!confirm('Aceitar este convite e transferir-se para esta empresa?')) return;
+    const res = await authFetch('/api/convites/' + id + '/aceitar', { method: 'PUT' });
+    if (res) {
+        const data = await res.json();
+        if (data.ok) {
+            showToast('Convite aceito! Transferido com sucesso.', 'success');
+            const user = getAuthUser();
+            if (user) {
+                const conv = convitesRecebidos.find(c => c.id === id);
+                if (conv) { user.empresa = conv.empresa; setAuth(getAuthToken(), user); }
+            }
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            showToast(data.error || 'Erro ao aceitar convite', 'error');
+        }
+    }
+}
+
+async function recusarConvite(id) {
+    if (!confirm('Recusar este convite?')) return;
+    const res = await authFetch('/api/convites/' + id + '/recusar', { method: 'PUT' });
+    if (res) {
+        const data = await res.json();
+        if (data.ok) {
+            showToast('Convite recusado', 'info');
+            convitesRecebidos = convitesRecebidos.filter(c => c.id !== id);
+            renderPage();
+        }
+    }
+}
+
+(async function init() {
+    const ok = await loadData();
+    if (ok) renderPage();
+})();
