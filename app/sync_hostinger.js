@@ -40,7 +40,7 @@ function loadConfig(dataDir) {
     const path = require('path');
     const configPath = path.join(dataDir, 'sync_config.json');
     syncConfig._dataDir = dataDir;
-    // Clear any stale reset flag from a previous crash
+    // Default: not in reset
     resetInProgress = false;
     try {
         if (fs.existsSync(configPath)) {
@@ -53,7 +53,9 @@ function loadConfig(dataDir) {
             syncConfig.pcId = saved.pcId || generatePcId();
             syncConfig.resetToken = saved.resetToken || 0;
             syncConfig.pcNome = saved.pcNome || os.hostname();
-            console.log(`[${timestamp()}] [SYNC] Config carregada: ${syncConfig.hostingerUrl ? 'URL configurada' : 'URL vazia'}, enabled=${syncConfig.enabled}, pcId=${syncConfig.pcId}`);
+            // Restore resetInProgress from saved config (persisted across restarts)
+            if (saved.resetInProgress) resetInProgress = true;
+            console.log(`[${timestamp()}] [SYNC] Config carregada: ${syncConfig.hostingerUrl ? 'URL configurada' : 'URL vazia'}, enabled=${syncConfig.enabled}, pcId=${syncConfig.pcId}, resetInProgress=${resetInProgress}`);
             return true;
         } else {
             // Fallback: try the app directory (where sync_hostinger.js lives)
@@ -75,6 +77,7 @@ function loadConfig(dataDir) {
                     syncConfig.pcId = saved.pcId || generatePcId();
                     syncConfig.resetToken = saved.resetToken || 0;
                     syncConfig.pcNome = saved.pcNome || os.hostname();
+                    if (saved.resetInProgress) resetInProgress = true;
                     // Save a copy to dataDir for future runs
                     try {
                         fs.mkdirSync(dataDir, { recursive: true });
@@ -107,7 +110,8 @@ function saveConfig(dataDir) {
             enabled: syncConfig.enabled,
             pcId: syncConfig.pcId,
             resetToken: syncConfig.resetToken,
-            pcNome: syncConfig.pcNome
+            pcNome: syncConfig.pcNome,
+            resetInProgress: resetInProgress
         }, null, 2));
     } catch (e) {
         console.error('[SYNC] Erro ao salvar config:', e.message);
@@ -365,7 +369,8 @@ async function syncNow(getDB, getRankingEmpresas, getRankingMotoristas, getStats
                             console.error('[SYNC] Erro ao baixar dados remotos:', remoteErr.message);
                         }
                     } else {
-                        console.log('[SYNC] Reset em andamento, pulando importacao de dados remotos');
+                        console.log('[SYNC] Pos-reset: upload vazio ok, liberando importacao no proximo ciclo');
+                        setResetInProgress(false);
                     }
 
                     isSyncing = false;
@@ -1002,7 +1007,8 @@ async function testConnection() {
 
 function setResetInProgress(value) {
     resetInProgress = value;
-    console.log(`[SYNC] Reset flag: ${value}`);
+    // Persist to config so it survives app restarts
+    if (syncConfig._dataDir) saveConfig(syncConfig._dataDir);
 }
 
 function getResetInProgress() {

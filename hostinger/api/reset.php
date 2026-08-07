@@ -56,7 +56,16 @@ try {
             'message' => "Dados do PC {$pcId} limpos"
         ]);
     } else {
-        // Global reset: delete EVERYTHING and increment reset_token
+        // Global reset: increment token FIRST to block other PCs from uploading
+        // during the delete window (prevents race condition)
+        $stmt = $db->prepare("UPDATE server_config SET valor = CAST(CAST(valor AS INTEGER) + 1 AS TEXT) WHERE chave = ?");
+        $stmt->execute(['reset_token']);
+
+        $stmt = $db->prepare("SELECT valor FROM server_config WHERE chave = ?");
+        $stmt->execute(['reset_token']);
+        $newToken = $stmt->fetchColumn();
+
+        // Now delete everything - any PC that syncs with old token will be rejected
         $db->exec('DELETE FROM ranking_empresas');
         $db->exec('DELETE FROM ranking_motoristas');
         $db->exec('DELETE FROM ranking_viagens');
@@ -68,14 +77,9 @@ try {
         $db->exec('DELETE FROM eventos');
         $db->exec('DELETE FROM planos_solicitacoes');
         $db->exec('DELETE FROM dispositivos');
-
-        // Increment global reset token - all PCs will be forced to reset on next sync
-        $stmt = $db->prepare("UPDATE server_config SET valor = CAST(CAST(valor AS INTEGER) + 1 AS TEXT) WHERE chave = ?");
-        $stmt->execute(['reset_token']);
-
-        $stmt = $db->prepare("SELECT valor FROM server_config WHERE chave = ?");
-        $stmt->execute(['reset_token']);
-        $newToken = $stmt->fetchColumn();
+        $db->exec('DELETE FROM vagas_sync');
+        $db->exec('DELETE FROM candidaturas_sync');
+        $db->exec('DELETE FROM solicitacoes_sync');
 
         // Clean up uploaded images
         $uploadDir = __DIR__ . '/../uploads';

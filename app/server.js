@@ -552,11 +552,17 @@ const server = http.createServer(async (req, res) => {
             if (user) {
                 criarMotorista(nome, 'Lobo Solitário', user.id, 'Motorista');
                 if (avatar) {
-                    atualizarMotorista(nome, 'Lobo Solitário', { foto: avatar });
+                    const motDb = getDB().prepare(`SELECT empresa FROM motoristas WHERE nome = ?`).get(nome);
+                    const empresaMot = motDb ? motDb.empresa : 'Lobo Solitário';
+                    atualizarMotorista(nome, empresaMot, { foto: avatar });
                 }
             }
         } else if (avatar && avatar !== user.avatar) {
             atualizarAvatar(user.id, avatar);
+            const motDb = getDB().prepare(`SELECT empresa FROM motoristas WHERE nome = ?`).get(nome);
+            if (motDb) {
+                atualizarMotorista(nome, motDb.empresa, { foto: avatar });
+            }
             user.avatar = avatar;
             user = buscarUsuarioPorSteamId(steam_id);
         }
@@ -1052,9 +1058,12 @@ const server = http.createServer(async (req, res) => {
             const motoristasAfter = dbLog.prepare(`SELECT COUNT(*) as c FROM motoristas`).get()?.c || 0;
             console.log('[DIAG] DEPOIS do reset: empresas=' + empresasAfter + ' viagens=' + viagensAfter + ' motoristas=' + motoristasAfter);
 
-            // Only release import lock if remote was successfully cleared
+            // Keep import lock active after reset - first sync will upload empty
+            // data but skip pulling. Next sync (after lock is cleared) will pull fresh.
+            // This prevents "old data" reappearing from other PCs that synced between
+            // the server clear and this PC's first pull.
             if (remoteCleared) {
-                syncHostinger.setResetInProgress(false);
+                console.log('[DIAG] Bloqueio de import mantido ate primeiro sync pos-reset');
             } else {
                 console.log('[DIAG] Mantendo bloqueio de import remoto — use "Limpar Remoto" manualmente');
             }
