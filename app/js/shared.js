@@ -1556,6 +1556,19 @@ function initUpdateBanner() {
             document.getElementById('update-progress-bar').style.display = 'none';
             document.getElementById('update-btn-restart').style.display = 'inline-block';
         });
+        window.cargoStats.onUpdateNotAvailable(() => {
+            document.getElementById('update-text').textContent = 'App atualizado! Nenhuma nova versao disponivel.';
+            document.getElementById('update-btn-download').style.display = 'none';
+            setTimeout(() => {
+                document.getElementById('update-banner').style.display = 'none';
+            }, 3000);
+        });
+        window.cargoStats.onUpdateError((msg) => {
+            document.getElementById('update-text').textContent = 'Erro ao verificar atualizacoes: ' + (msg || 'desconhecido');
+            setTimeout(() => {
+                document.getElementById('update-banner').style.display = 'none';
+            }, 5000);
+        });
     }
 
     document.getElementById('update-btn-download').addEventListener('click', () => {

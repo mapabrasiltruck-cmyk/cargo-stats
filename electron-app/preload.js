@@ -8,11 +8,17 @@ contextBridge.exposeInMainWorld('cargoStats', {
     onUpdateAvailable: (callback) => {
         ipcRenderer.on('update_available', (_e, version) => callback(version));
     },
+    onUpdateNotAvailable: (callback) => {
+        ipcRenderer.on('update_not_available', () => callback());
+    },
     onUpdateProgress: (callback) => {
         ipcRenderer.on('update_progress', (_e, percent) => callback(percent));
     },
     onUpdateDownloaded: (callback) => {
         ipcRenderer.on('update_downloaded', () => callback());
+    },
+    onUpdateError: (callback) => {
+        ipcRenderer.on('update_error', (_e, msg) => callback(msg));
     },
 
     // ─── Telemetry Status ───────────────────────────────

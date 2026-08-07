@@ -33,7 +33,12 @@ autoUpdater.setFeedURL({
 autoUpdater.autoDownload = false;
 
 autoUpdater.on('update-available', (info) => {
+    console.log('[UPDATER] Atualizacao disponivel:', info.version);
     if (mainWindow) mainWindow.webContents.send('update_available', info.version);
+});
+autoUpdater.on('update-not-available', () => {
+    console.log('[UPDATER] App esta atualizado.');
+    if (mainWindow) mainWindow.webContents.send('update_not_available');
 });
 autoUpdater.on('download-progress', (p) => {
     if (mainWindow) mainWindow.webContents.send('update_progress', p.percent);
@@ -41,11 +46,16 @@ autoUpdater.on('download-progress', (p) => {
 autoUpdater.on('update-downloaded', () => {
     if (mainWindow) mainWindow.webContents.send('update_downloaded');
 });
+autoUpdater.on('error', (err) => {
+    console.error('[UPDATER] Erro:', err.message);
+    if (mainWindow) mainWindow.webContents.send('update_error', err.message);
+});
 
 function checkForUpdates() {
     setTimeout(() => {
         autoUpdater.checkForUpdates().catch((err) => {
             console.error('[UPDATER] Erro ao verificar atualizacoes:', err.message);
+            if (mainWindow) mainWindow.webContents.send('update_error', err.message);
         });
     }, 5000);
 }
