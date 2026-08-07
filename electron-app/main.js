@@ -43,8 +43,25 @@ autoUpdater.on('update-not-available', () => {
 autoUpdater.on('download-progress', (p) => {
     if (mainWindow) mainWindow.webContents.send('update_progress', p.percent);
 });
-autoUpdater.on('update-downloaded', () => {
+autoUpdater.on('update-downloaded', (info) => {
+    console.log('[UPDATER] Update baixado, instalando...');
     if (mainWindow) mainWindow.webContents.send('update_downloaded');
+    // Auto-install: close all windows then run installer
+    setTimeout(() => {
+        try {
+            // Force close all windows
+            if (mainWindow) {
+                mainWindow.removeAllListeners('close');
+                mainWindow.destroy();
+            }
+            if (tray) tray.destroy();
+            autoUpdater.quitAndInstall(false, true);
+        } catch (e) {
+            console.error('[UPDATER] Erro no quitAndInstall:', e.message);
+            // Fallback: just quit and let NSIS handle it
+            app.quit();
+        }
+    }, 2000);
 });
 autoUpdater.on('error', (err) => {
     console.error('[UPDATER] Erro:', err.message);
@@ -559,7 +576,17 @@ ipcMain.handle('download-update', () => {
 });
 
 ipcMain.handle('restart-and-update', () => {
-    autoUpdater.quitAndInstall();
+    try {
+        if (mainWindow) {
+            mainWindow.removeAllListeners('close');
+            mainWindow.destroy();
+        }
+        if (tray) tray.destroy();
+        autoUpdater.quitAndInstall(false, true);
+    } catch (e) {
+        console.error('[UPDATER] Erro no restart-and-update:', e.message);
+        app.quit();
+    }
 });
 
 ipcMain.handle('get-diagnostics', () => {
