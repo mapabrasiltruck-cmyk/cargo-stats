@@ -225,7 +225,7 @@ async function syncNow(getDB, getRankingEmpresas, getRankingMotoristas, getStats
                    c.motorista, c.motorista_empresa, c.mensagem, c.status, c.criada_em
             FROM candidaturas c JOIN vagas v ON c.vaga_id = v.id
         `).all();
-        const solicitacoes = db.prepare(`SELECT id, motorista, empresa, status, mensagem, tipo, vaga_id, criada_em FROM solicitacoes WHERE tipo = 'convite'`).all();
+        const solicitacoes = db.prepare(`SELECT id, motorista, empresa, status, mensagem, tipo, vaga_id, criada_em FROM solicitacoes WHERE tipo IN ('convite', 'pedido')`).all();
 
         const payload = {
             secret: syncConfig.syncSecret,
