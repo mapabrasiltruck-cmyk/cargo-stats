@@ -297,6 +297,13 @@ function initDB() {
         $db->prepare("INSERT INTO server_config (chave, valor) VALUES (?, ?)")->execute(['reset_token', '0']);
     }
 
+    // Inicializar sync_generation se nao existir
+    $stmt = $db->prepare("SELECT valor FROM server_config WHERE chave = ?");
+    $stmt->execute(['sync_generation']);
+    if (!$stmt->fetch()) {
+        $db->prepare("INSERT INTO server_config (chave, valor) VALUES (?, ?)")->execute(['sync_generation', '0']);
+    }
+
     // Index para sync_log (performance)
     try { $db->exec("CREATE INDEX IF NOT EXISTS idx_sync_log_criado_em ON sync_log(criado_em)"); } catch (PDOException $e) {}
 

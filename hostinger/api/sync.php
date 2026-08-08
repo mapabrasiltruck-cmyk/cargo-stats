@@ -51,6 +51,7 @@ try {
         exit;
     }
     $pcToken = (int)($input['reset_token'] ?? 0);
+    $pcGeneration = (int)($input['sync_generation'] ?? 0);
     $pcNome = trim($input['pc_nome'] ?? '');
     $pcVersao = trim($input['pc_versao'] ?? '');
     $dataVersion = (int)($input['data_version'] ?? 0);
@@ -60,6 +61,15 @@ try {
     $stmt->execute(['reset_token']);
     $row = $stmt->fetch();
     $serverToken = $row ? (int)$row['valor'] : 0;
+
+    // Get current server sync generation
+    $stmt = $db->prepare("SELECT valor FROM server_config WHERE chave = ?");
+    $stmt->execute(['sync_generation']);
+    $rowGen = $stmt->fetch();
+    $serverGeneration = $rowGen ? (int)$rowGen['valor'] : 0;
+
+    // Detect first sync after reset: PC's generation is older than server's
+    $isFirstSyncAfterReset = ($pcGeneration > 0 && $pcGeneration < $serverGeneration);
 
     // If PC has pcId and is stale, reject upload and tell it to reset
     if ($pcId !== '' && $serverToken > $pcToken) {
@@ -162,11 +172,21 @@ try {
                         $bannerFinal = $existing['banner'];
                     }
                 }
-                // MERGE: pegar o MAIOR valor de cada campo numerico entre local e remoto
-                $mergedMotoristas = max((int)$existing['motoristas'], $e['motoristas']);
-                $mergedViagens = max((int)$existing['viagens'], $e['viagens']);
-                $mergedKm = max((int)$existing['km'], $e['km']);
-                $mergedPontuacao = max((int)$existing['pontuacao'], $e['pontuacao']);
+
+                if ($isFirstSyncAfterReset) {
+                    // FIRST SYNC AFTER RESET: use incoming values directly (REPLACE)
+                    // Don't use MAX() - the PC has fresh data after reset
+                    $mergedMotoristas = $e['motoristas'];
+                    $mergedViagens = $e['viagens'];
+                    $mergedKm = $e['km'];
+                    $mergedPontuacao = $e['pontuacao'];
+                } else {
+                    // NORMAL SYNC: merge using MAX to preserve best values across PCs
+                    $mergedMotoristas = max((int)$existing['motoristas'], $e['motoristas']);
+                    $mergedViagens = max((int)$existing['viagens'], $e['viagens']);
+                    $mergedKm = max((int)$existing['km'], $e['km']);
+                    $mergedPontuacao = max((int)$existing['pontuacao'], $e['pontuacao']);
+                }
                 $stmtUpdateEmp->execute([
                     $logoFinal,
                     $bannerFinal,
@@ -203,17 +223,26 @@ try {
             $stmtCheckMot->execute([$m['nome'], $m['empresa']]);
             $existingMot = $stmtCheckMot->fetch();
             if ($existingMot) {
-                // MERGE: pegar o MAIOR valor de cada campo numerico
-                $mergedViagensMot = max((int)$existingMot['viagens'], $m['viagens']);
-                $mergedKmMot = max((int)$existingMot['km'], $m['km']);
-                $mergedPtsMot = max((int)$existingMot['pontuacao'], $m['pontuacao']);
-                // Para cs_gold: SOMAR (o motorista pode ganhar gold em ambos PCs)
-                $mergedGold = (int)$existingMot['cs_gold'] + $m['cs_gold'];
-                // Para plano: pegar o mais alto (vip > gold > bronze)
-                $planoRank = ['bronze' => 0, 'gold' => 1, 'vip' => 2];
-                $existingPlanoRank = $planoRank[$existingMot['plano'] ?? 'bronze'] ?? 0;
-                $newPlanoRank = $planoRank[$m['plano'] ?? 'bronze'] ?? 0;
-                $mergedPlano = $newPlanoRank > $existingPlanoRank ? $m['plano'] : ($existingMot['plano'] ?? 'bronze');
+                if ($isFirstSyncAfterReset) {
+                    // FIRST SYNC AFTER RESET: use incoming values directly (REPLACE)
+                    $mergedViagensMot = $m['viagens'];
+                    $mergedKmMot = $m['km'];
+                    $mergedPtsMot = $m['pontuacao'];
+                    $mergedGold = $m['cs_gold'];
+                    $mergedPlano = $m['plano'];
+                } else {
+                    // NORMAL SYNC: merge using MAX to preserve best values across PCs
+                    $mergedViagensMot = max((int)$existingMot['viagens'], $m['viagens']);
+                    $mergedKmMot = max((int)$existingMot['km'], $m['km']);
+                    $mergedPtsMot = max((int)$existingMot['pontuacao'], $m['pontuacao']);
+                    // Para cs_gold: SOMAR (o motorista pode ganhar gold em ambos PCs)
+                    $mergedGold = (int)$existingMot['cs_gold'] + $m['cs_gold'];
+                    // Para plano: pegar o mais alto (vip > gold > bronze)
+                    $planoRank = ['bronze' => 0, 'gold' => 1, 'vip' => 2];
+                    $existingPlanoRank = $planoRank[$existingMot['plano'] ?? 'bronze'] ?? 0;
+                    $newPlanoRank = $planoRank[$m['plano'] ?? 'bronze'] ?? 0;
+                    $mergedPlano = $newPlanoRank > $existingPlanoRank ? $m['plano'] : ($existingMot['plano'] ?? 'bronze');
+                }
                 // Foto: usar a remota se existir, senao manter a local
                 $fotoFinal = ($m['foto'] && $m['foto'] !== '') ? $m['foto'] : '';
                 $stmtUpdateMot->execute([
@@ -440,7 +469,9 @@ try {
             'imagens' => $imagensAtualizadas,
             'warnings' => $warnings,
             'reset_token' => $serverToken,
+            'sync_generation' => $serverGeneration,
             'data_version' => $dataVersion,
+            'first_sync_after_reset' => $isFirstSyncAfterReset,
             'timestamp' => date('c')
         ]);
     } catch (\Throwable $e) {

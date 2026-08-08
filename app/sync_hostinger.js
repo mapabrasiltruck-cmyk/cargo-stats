@@ -15,6 +15,7 @@ let syncConfig = {
     enabled: false,
     pcId: '',
     resetToken: 0,
+    syncGeneration: 0,
     pcNome: ''
 };
 
@@ -52,6 +53,7 @@ function loadConfig(dataDir) {
             syncConfig.enabled = saved.enabled || false;
             syncConfig.pcId = saved.pcId || generatePcId();
             syncConfig.resetToken = saved.resetToken || 0;
+            syncConfig.syncGeneration = saved.syncGeneration || 0;
             syncConfig.pcNome = saved.pcNome || os.hostname();
             // Restore resetInProgress from saved config (persisted across restarts)
             if (saved.resetInProgress) resetInProgress = true;
@@ -76,6 +78,7 @@ function loadConfig(dataDir) {
                     syncConfig.enabled = saved.enabled || false;
                     syncConfig.pcId = saved.pcId || generatePcId();
                     syncConfig.resetToken = saved.resetToken || 0;
+                    syncConfig.syncGeneration = saved.syncGeneration || 0;
                     syncConfig.pcNome = saved.pcNome || os.hostname();
                     if (saved.resetInProgress) resetInProgress = true;
                     // Save a copy to dataDir for future runs
@@ -228,6 +231,7 @@ async function syncNow(getDB, getRankingEmpresas, getRankingMotoristas, getStats
             secret: syncConfig.syncSecret,
             pc_id: syncConfig.pcId,
             reset_token: syncConfig.resetToken,
+            sync_generation: syncConfig.syncGeneration || 0,
             pc_nome: syncConfig.pcNome || os.hostname(),
             pc_versao: '3.0',
             data_version: DATA_VERSION,
@@ -315,7 +319,8 @@ async function syncNow(getDB, getRankingEmpresas, getRankingMotoristas, getStats
                     // Check for global reset signal
                     if (result.data && result.data.need_reset) {
                         const newToken = result.data.new_reset_token || 0;
-                        console.log(`[SYNC] SINAL DE RESET GLOBAL detectado! Novo token: ${newToken}`);
+                        const newGeneration = result.data.sync_generation || 0;
+                        console.log(`[SYNC] SINAL DE RESET GLOBAL detectado! Novo token: ${newToken}, generation: ${newGeneration}`);
                         // Clear local data and save new token
                         try {
                             const { dropAllTables, resetDatabase } = require('./database.js');
@@ -326,6 +331,7 @@ async function syncNow(getDB, getRankingEmpresas, getRankingMotoristas, getStats
                             console.error('[SYNC] Erro ao limpar dados locais apos reset global:', resetErr.message);
                         }
                         syncConfig.resetToken = newToken;
+                        syncConfig.syncGeneration = newGeneration;
                         if (syncConfig._dataDir) saveConfig(syncConfig._dataDir);
                         // Re-pull remote data right away (banco local ficou vazio).
                         try {
@@ -340,9 +346,13 @@ async function syncNow(getDB, getRankingEmpresas, getRankingMotoristas, getStats
                         return { ok: true, need_reset: true, new_reset_token: newToken, message: 'Reset global aplicado. Dados locais limpos.' };
                     }
 
-                    // Save reset_token from server
+                    // Save reset_token and sync_generation from server
                     if (result.data && result.data.reset_token !== undefined) {
                         syncConfig.resetToken = result.data.reset_token;
+                        if (syncConfig._dataDir) saveConfig(syncConfig._dataDir);
+                    }
+                    if (result.data && result.data.sync_generation !== undefined) {
+                        syncConfig.syncGeneration = result.data.sync_generation;
                         if (syncConfig._dataDir) saveConfig(syncConfig._dataDir);
                     }
 
@@ -649,9 +659,12 @@ async function processRemoteData(getDB) {
             }
         }
 
-        // Save reset_token from server
+        // Save reset_token and sync_generation from server
         if (result.data.reset_token !== undefined) {
             syncConfig.resetToken = result.data.reset_token;
+        }
+        if (result.data.sync_generation !== undefined) {
+            syncConfig.syncGeneration = result.data.sync_generation;
         }
 
         // ========== VAGAS SYNC ==========
@@ -973,7 +986,9 @@ async function clearRemoteData(pcIdOrSecret) {
         if (result.status === 200 && result.data && result.data.ok) {
             if (result.data.reset_token !== undefined) {
                 syncConfig.resetToken = result.data.reset_token;
-                if (syncConfig._dataDir) saveConfig(syncConfig._dataDir);
+            }
+            if (result.data.sync_generation !== undefined) {
+                syncConfig.syncGeneration = result.data.sync_generation;
             }
             return { ok: true, reset_token: result.data.reset_token };
         }
@@ -1089,10 +1104,23 @@ async function resetAllRemote() {
         });
         if (result.status === 200 && result.data && result.data.ok) {
             const newToken = result.data.reset_token || 0;
+            const newGeneration = result.data.sync_generation || 0;
             syncConfig.resetToken = newToken;
+            syncConfig.syncGeneration = newGeneration;
             if (syncConfig._dataDir) saveConfig(syncConfig._dataDir);
-            console.log(`[RESET] Reset global remoto concluido. Novo token: ${newToken}`);
-            return { ok: true, reset_token: newToken, message: result.data.message };
+
+            // CRITICAL: Clear local database to prevent old data from being re-uploaded
+            try {
+                const { dropAllTables, resetDatabase } = require('./database.js');
+                dropAllTables();
+                resetDatabase();
+                console.log('[RESET] Dados locais limpos apos reset remoto');
+            } catch (localResetErr) {
+                console.error('[RESET] Erro ao limpar dados locais:', localResetErr.message);
+            }
+
+            console.log(`[RESET] Reset global remoto concluido. Novo token: ${newToken}, generation: ${newGeneration}`);
+            return { ok: true, reset_token: newToken, sync_generation: newGeneration, message: result.data.message };
         }
         return { ok: false, error: result.data?.error || 'unknown' };
     } catch (e) {

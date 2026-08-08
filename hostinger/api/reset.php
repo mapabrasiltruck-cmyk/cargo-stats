@@ -65,6 +65,14 @@ try {
         $stmt->execute(['reset_token']);
         $newToken = $stmt->fetchColumn();
 
+        // Increment sync_generation to detect first sync after reset
+        $stmt = $db->prepare("UPDATE server_config SET valor = CAST(CAST(valor AS INTEGER) + 1 AS TEXT) WHERE chave = ?");
+        $stmt->execute(['sync_generation']);
+
+        $stmt = $db->prepare("SELECT valor FROM server_config WHERE chave = ?");
+        $stmt->execute(['sync_generation']);
+        $newGeneration = $stmt->fetchColumn();
+
         // Now delete everything - any PC that syncs with old token will be rejected
         $db->exec('DELETE FROM ranking_empresas');
         $db->exec('DELETE FROM ranking_motoristas');
@@ -95,7 +103,8 @@ try {
         echo json_encode([
             'ok' => true,
             'message' => 'Todos os dados remotos foram limpos',
-            'reset_token' => (int)$newToken
+            'reset_token' => (int)$newToken,
+            'sync_generation' => (int)$newGeneration
         ]);
     }
 
