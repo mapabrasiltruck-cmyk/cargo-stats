@@ -1792,6 +1792,14 @@ function getSolicitacoesPorEmpresa(empresa) {
     return dbConn.prepare(`SELECT * FROM solicitacoes WHERE empresa = ? ORDER BY criada_em DESC`).all(empresa);
 }
 
+function getSolicitacoesPorEmpresaFuzzy(empresa) {
+    const dbConn = getDB();
+    const all = dbConn.prepare(`SELECT * FROM solicitacoes ORDER BY criada_em DESC`).all();
+    const norm = (s) => String(s || '').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '');
+    const target = norm(empresa);
+    return all.filter(s => norm(s.empresa) === target);
+}
+
 function getSolicitacoesPendentesCount(empresa) {
     const dbConn = getDB();
     const row = dbConn.prepare(`SELECT COUNT(*) as total FROM solicitacoes WHERE empresa = ? AND status = 'pendente'`).get(empresa);
@@ -2585,6 +2593,7 @@ module.exports = {
     getPremiacaoMotorista,
     criarSolicitacao,
     getSolicitacoesPorEmpresa,
+    getSolicitacoesPorEmpresaFuzzy,
     getSolicitacoesPendentesCount,
     responderSolicitacao,
     getSolicitacaoPendente,

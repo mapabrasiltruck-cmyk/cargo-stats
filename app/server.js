@@ -23,7 +23,7 @@ const {
     sincronizarRankingCargas, getRankingCargasWeb,
     getCargasPendentes, adicionarCargaPendente, classificarCargaPendente, deletarCargaPendente, migrarClassificacoesParaMapping, backfillCargasPendentes,
     getPremiacaoEmpresa, getPremiacaoMotorista,
-    criarSolicitacao, getSolicitacoesPorEmpresa, getSolicitacoesPendentesCount, responderSolicitacao, getSolicitacaoPendente,
+    criarSolicitacao, getSolicitacoesPorEmpresa, getSolicitacoesPorEmpresaFuzzy, getSolicitacoesPendentesCount, responderSolicitacao, getSolicitacaoPendente,
     getEventoAtivo, getEventoPorId, criarEvento, encerrarEvento, finalizarEventosExpirados,
     atualizarProgressoEvento, getProgressoEmpresa, getProgressoMotorista,
     getHistoricoEventos, gerarEventoAleatorio, adicionarBonusViagem, deletarEvento,
@@ -2200,7 +2200,8 @@ const server = http.createServer(async (req, res) => {
         const query = parseQuery(req.url);
 
         if (query.count === 'true' && query.empresa) {
-            const count = getSolicitacoesPendentesCount(query.empresa);
+            const solicitacoesAll = getSolicitacoesPorEmpresaFuzzy(query.empresa);
+            const count = solicitacoesAll.filter(s => s.status === 'pendente').length;
             return sendJSON(res, { ok: true, count });
         }
 
@@ -2213,7 +2214,7 @@ const server = http.createServer(async (req, res) => {
             if (!isDonoOuCriador) {
                 return sendJSON(res, { error: 'Acesso negado' }, 403);
             }
-            const solicitacoes = getSolicitacoesPorEmpresa(query.empresa);
+            const solicitacoes = getSolicitacoesPorEmpresaFuzzy(query.empresa);
             return sendJSON(res, { ok: true, solicitacoes });
         }
 

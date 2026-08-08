@@ -703,12 +703,13 @@ async function processRemoteData(getDB) {
         let solsProcessadas = 0;
         if (result.data.solicitacoes) {
             const stmtCheckSol = db.prepare(`SELECT id FROM solicitacoes WHERE motorista = ? AND empresa = ? AND tipo = ? AND status = 'pendente'`);
-            const stmtInsertSol = db.prepare(`INSERT OR IGNORE INTO solicitacoes (motorista, empresa, status, mensagem, tipo, criada_em) VALUES (?, ?, ?, ?, ?, ?)`);
+            const stmtInsertSol = db.prepare(`INSERT OR IGNORE INTO solicitacoes (motorista, empresa, status, mensagem, tipo, vaga_id, criada_em) VALUES (?, ?, ?, ?, ?, ?, ?)`);
             for (const s of result.data.solicitacoes) {
                 if (!s.motorista || !s.empresa) continue;
-                const dup = stmtCheckSol.get(s.motorista, s.empresa, s.tipo || 'convite');
+                const tipoSol = s.tipo || 'pedido';
+                const dup = stmtCheckSol.get(s.motorista, s.empresa, tipoSol);
                 if (!dup) {
-                    stmtInsertSol.run(s.motorista, s.empresa, s.status || 'pendente', s.mensagem || '', s.tipo || 'convite', s.criada_em || '');
+                    stmtInsertSol.run(s.motorista, s.empresa, s.status || 'pendente', s.mensagem || '', tipoSol, s.vaga_id || 0, s.criada_em || '');
                     solsProcessadas++;
                 }
             }
