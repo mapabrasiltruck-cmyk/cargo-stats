@@ -2246,6 +2246,10 @@ const server = http.createServer(async (req, res) => {
             if (usuarioAlvo) {
                 dbConn.prepare(`UPDATE usuarios SET empresa = ? WHERE id = ?`).run(sol.empresa, usuarioAlvo.id);
             }
+            const loboMot = dbConn.prepare(`SELECT nome FROM motoristas WHERE nome = ? AND (empresa = 'Lobo Solitário' OR empresa = 'Lobo Solitario')`).get(sol.motorista);
+            if (loboMot) {
+                dbConn.prepare(`DELETE FROM motoristas WHERE nome = ? AND (empresa = 'Lobo Solitário' OR empresa = 'Lobo Solitario')`).run(sol.motorista);
+            }
         });
         tx();
         recalcEmpresas();
