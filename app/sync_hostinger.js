@@ -702,7 +702,7 @@ async function processRemoteData(getDB) {
         // ========== SOLICITACOES/CONVITES SYNC ==========
         let solsProcessadas = 0;
         if (result.data.solicitacoes) {
-            const stmtCheckSol = db.prepare(`SELECT id FROM solicitacoes WHERE motorista = ? AND empresa = ? AND tipo = ? AND status = 'pendente'`);
+            const stmtCheckSol = db.prepare(`SELECT id FROM solicitacoes WHERE motorista = ? AND empresa = ? AND tipo = ? AND (status = 'pendente' OR status = 'aceita' OR status = 'recusada')`);
             const stmtInsertSol = db.prepare(`INSERT OR IGNORE INTO solicitacoes (motorista, empresa, status, mensagem, tipo, vaga_id, criada_em) VALUES (?, ?, ?, ?, ?, ?, ?)`);
             for (const s of result.data.solicitacoes) {
                 if (!s.motorista || !s.empresa) continue;

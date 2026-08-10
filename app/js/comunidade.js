@@ -84,7 +84,7 @@ async function loadData() {
     const user = getAuthUser();
     usuarioAtual = user ? user.nome : null;
 
-    loadCache();
+    if (firstLoad) loadCache();
     await loadSyncStatus();
 
     const [resEmp, resMot, resStats, resReac] = await Promise.all([
@@ -483,10 +483,12 @@ function getCargoBadgeClass(cargo) {
 }
 
 let pollTimer = null;
+let firstLoad = true;
 
 (async function init() {
     const ok = await loadData();
     renderPage();
+    firstLoad = false;
     pollTimer = setInterval(async () => {
         const ok = await loadData();
         if (ok) renderPage();
