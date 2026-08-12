@@ -671,7 +671,7 @@ function getMotoristas(empresa, mes, ano) {
             COALESCE(SUM(v.km), 0) AS km,
             COALESCE(SUM(v.pontuacao), 0) AS pontuacao
         FROM motoristas m
-        LEFT JOIN viagens v ON v.motorista = m.nome AND v.status = 'completa'${joinExtra}
+        LEFT JOIN viagens v ON v.motorista = m.nome AND v.empresa = m.empresa AND v.status = 'completa'${joinExtra}
         ${whereExtra}
         GROUP BY m.nome
         ORDER BY pontuacao DESC
@@ -792,7 +792,7 @@ function getStatsMotorista(nome) {
             COALESCE(SUM(v.km), 0) AS km,
             COALESCE(SUM(v.pontuacao), 0) AS pontuacao
         FROM motoristas m
-        LEFT JOIN viagens v ON v.motorista = m.nome AND v.status = 'completa'
+        LEFT JOIN viagens v ON v.motorista = m.nome AND v.empresa = m.empresa AND v.status = 'completa'
         WHERE m.nome = ?
         GROUP BY m.nome
     `).get(nome);
@@ -965,7 +965,7 @@ function getPremiacaoEmpresa(empresa) {
             COALESCE(SUM(v.km), 0) AS km,
             COALESCE(SUM(v.pontuacao), 0) AS pontuacao
         FROM motoristas m
-        LEFT JOIN viagens v ON v.motorista = m.nome
+        LEFT JOIN viagens v ON v.motorista = m.nome AND v.empresa = m.empresa
         WHERE m.empresa = ?
         GROUP BY m.nome
         ORDER BY pontuacao DESC
@@ -1581,25 +1581,6 @@ function criarViagemCompleta(motorista, empresa, data, origem, destino, km, pont
         `).get(motorista, data, origem || '', destino || '', km || 0);
         if (existing) {
             return { duplicate: true, lastInsertRowid: existing.id, bonusInfo: null };
-        }
-        const recente = db.prepare(`
-            SELECT id FROM viagens
-            WHERE motorista = ? AND origem = ? AND destino = ?
-              AND ABS(km - ?) <= 10
-              AND data = ?
-            LIMIT 1
-        `).get(motorista, origem || '', destino || '', km || 0, data);
-        if (recente) {
-            return { duplicate: true, lastInsertRowid: recente.id, bonusInfo: null };
-        }
-        const mesmaRota = db.prepare(`
-            SELECT id FROM viagens
-            WHERE motorista = ? AND data = ? AND origem = ? AND destino = ?
-              AND status = 'completa' AND ABS(km - ?) <= 5
-            LIMIT 1
-        `).get(motorista, data, origem || '', destino || '', km || 0);
-        if (mesmaRota) {
-            return { duplicate: true, lastInsertRowid: mesmaRota.id, bonusInfo: null };
         }
         const result = db.prepare(`INSERT INTO viagens (motorista, empresa, data, origem, destino, km, pontuacao, categoria_carga, status, job_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(motorista, empresa, data, origem, destino, km || 0, pontuacao || 0, cat, viagemStatus, jt);
         if (viagemStatus === 'completa') {

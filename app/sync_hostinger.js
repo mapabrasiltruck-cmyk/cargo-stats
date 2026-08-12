@@ -636,8 +636,8 @@ async function processRemoteData(getDB) {
                         updateParams.push(mot.foto);
                     }
 
-                    // MERGE cs_gold: SUM (motorista pode ganhar gold em ambos PCs)
-                    const mergedGold = (existing.cs_gold || 0) + (mot.cs_gold || 0);
+                    // MERGE cs_gold: MAX (valor absoluto do motorista, nao somar a cada sync)
+                    const mergedGold = Math.max(existing.cs_gold || 0, mot.cs_gold || 0);
                     updateFields.push('cs_gold = ?');
                     updateParams.push(mergedGold);
 

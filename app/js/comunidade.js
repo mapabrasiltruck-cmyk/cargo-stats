@@ -256,7 +256,6 @@ function renderSyncBar() {
         <span style="color:#e0e0e0;">${lastSync}</span>
         ${isSyncing ? '<span style="color:#f5c842;">🔄 Sincronizando...</span>' : ''}
         ${lastError ? `<span style="color:#ff8888;font-size:10px;margin-left:4px;">(último erro: ${lastError.substring(0, 50)})</span>` : ''}
-        <button class="reacao-btn" onclick="forcarSync(this)" style="margin-left:auto;padding:4px 12px;font-size:10px;" title="Sincronizar agora">🔄 Sincronizar</button>
     </div>`;
 }
 

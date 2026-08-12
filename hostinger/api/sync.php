@@ -235,8 +235,8 @@ try {
                     $mergedViagensMot = max((int)$existingMot['viagens'], $m['viagens']);
                     $mergedKmMot = max((int)$existingMot['km'], $m['km']);
                     $mergedPtsMot = max((int)$existingMot['pontuacao'], $m['pontuacao']);
-                    // Para cs_gold: SOMAR (o motorista pode ganhar gold em ambos PCs)
-                    $mergedGold = (int)$existingMot['cs_gold'] + $m['cs_gold'];
+                    // Para cs_gold: MAX (evitar crescimento infinito)
+                    $mergedGold = max((int)$existingMot['cs_gold'], $m['cs_gold']);
                     // Para plano: pegar o mais alto (vip > gold > bronze)
                     $planoRank = ['bronze' => 0, 'gold' => 1, 'vip' => 2];
                     $existingPlanoRank = $planoRank[$existingMot['plano'] ?? 'bronze'] ?? 0;
