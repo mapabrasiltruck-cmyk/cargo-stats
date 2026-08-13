@@ -436,12 +436,10 @@ function recalcularEmpresa(nomeEmpresa) {
     const row = db.prepare(`
         SELECT
             (SELECT COUNT(DISTINCT m.nome) FROM motoristas m WHERE m.empresa = ?) AS motoristas,
-            COUNT(*) AS viagens,
-            COALESCE(SUM(v.km), 0) AS km,
-            COALESCE(SUM(v.pontuacao), 0) AS pontuacao
-        FROM viagens v
-        WHERE v.empresa = ? AND v.status = 'completa'
-    `).get(nomeEmpresa, nomeEmpresa);
+            (SELECT COUNT(*) FROM viagens v WHERE v.motorista IN (SELECT m.nome FROM motoristas m WHERE m.empresa = ?) AND v.status = 'completa') AS viagens,
+            (SELECT COALESCE(SUM(v.km), 0) FROM viagens v WHERE v.motorista IN (SELECT m.nome FROM motoristas m WHERE m.empresa = ?) AND v.status = 'completa') AS km,
+            (SELECT COALESCE(SUM(v.pontuacao), 0) FROM viagens v WHERE v.motorista IN (SELECT m.nome FROM motoristas m WHERE m.empresa = ?) AND v.status = 'completa') AS pontuacao
+    `).get(nomeEmpresa, nomeEmpresa, nomeEmpresa, nomeEmpresa);
     const m = row.motoristas || 0, v = row.viagens || 0, k = row.km || 0, p = row.pontuacao || 0;
     const exists = db.prepare(`SELECT nome FROM empresas WHERE nome = ?`).get(nomeEmpresa);
     if (exists) {
@@ -647,6 +645,8 @@ function getMotoristas(empresa, mes, ano) {
     const params = [];
     const subParams = [];
     let joinExtraSub = '';
+    let groupByClause = 'GROUP BY m.nome';
+    let selectEmpresa = `MAX(CASE WHEN m.empresa != 'Lobo Solitário' AND m.empresa != 'Lobo Solitario' THEN m.empresa ELSE 'Lobo Solitário' END) AS empresa`;
     let whereExtra = '';
 
     if (mes && ano) {
@@ -656,12 +656,14 @@ function getMotoristas(empresa, mes, ano) {
     if (empresa) {
         whereExtra = ` WHERE m.empresa = ?`;
         params.push(empresa);
+        groupByClause = 'GROUP BY m.nome, m.empresa';
+        selectEmpresa = 'm.empresa';
     }
 
     return db.prepare(`
         SELECT
             m.nome,
-            m.empresa,
+            ${selectEmpresa},
             m.status,
             m.cargo,
             m.funcao,
@@ -678,6 +680,7 @@ function getMotoristas(empresa, mes, ano) {
             GROUP BY motorista
         ) v_agg ON v_agg.motorista = m.nome
         ${whereExtra}
+        ${groupByClause}
         ORDER BY pontuacao DESC
     `).all(...subParams, ...params);
 }
