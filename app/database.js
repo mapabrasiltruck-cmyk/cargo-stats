@@ -645,13 +645,13 @@ function getEmpresasPendentes() {
 function getMotoristas(empresa, mes, ano) {
     const db = getDB();
     const params = [];
-    const joinParams = [];
-    let joinExtra = '';
+    const subParams = [];
+    let joinExtraSub = '';
     let whereExtra = '';
 
     if (mes && ano) {
-        joinExtra += ` AND CAST(strftime('%m', v.data) AS INTEGER) = ? AND CAST(strftime('%Y', v.data) AS INTEGER) = ?`;
-        joinParams.push(mes, ano);
+        joinExtraSub += ` AND CAST(strftime('%m', data) AS INTEGER) = ? AND CAST(strftime('%Y', data) AS INTEGER) = ?`;
+        subParams.push(mes, ano);
     }
     if (empresa) {
         whereExtra = ` WHERE m.empresa = ?`;
@@ -667,15 +667,19 @@ function getMotoristas(empresa, mes, ano) {
             m.funcao,
             m.plano,
             m.plano_expira,
-            COUNT(v.id) AS viagens,
-            COALESCE(SUM(v.km), 0) AS km,
-            COALESCE(SUM(v.pontuacao), 0) AS pontuacao
+            COALESCE(v_agg.viagens, 0) AS viagens,
+            COALESCE(v_agg.km, 0) AS km,
+            COALESCE(v_agg.pontuacao, 0) AS pontuacao
         FROM motoristas m
-        LEFT JOIN viagens v ON v.motorista = m.nome AND v.empresa = m.empresa AND v.status = 'completa'${joinExtra}
+        LEFT JOIN (
+            SELECT motorista, COUNT(id) AS viagens, SUM(km) AS km, SUM(pontuacao) AS pontuacao
+            FROM viagens
+            WHERE status = 'completa'${joinExtraSub}
+            GROUP BY motorista
+        ) v_agg ON v_agg.motorista = m.nome
         ${whereExtra}
-        GROUP BY m.nome
         ORDER BY pontuacao DESC
-    `).all(...joinParams, ...params);
+    `).all(...subParams, ...params);
 }
 
 function getViagens(filtros) {
