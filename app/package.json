@@ -1,6 +1,6 @@
 {
   "name": "cargo-stats-dashboard",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "description": "Dashboard de telemetria ETS2/ATS configurável por JSON",
   "main": "server.js",
   "bin": "server.js",
