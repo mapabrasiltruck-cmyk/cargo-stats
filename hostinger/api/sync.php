@@ -270,6 +270,11 @@ try {
             }
         }
 
+        // Dedup: remove Lobo Solitário entries when motorista has a real company
+        try {
+            $db->exec("DELETE FROM ranking_motoristas WHERE (empresa = 'Lobo Solitário' OR empresa = 'Lobo Solitario') AND nome IN (SELECT nome FROM ranking_motoristas WHERE empresa != 'Lobo Solitário' AND empresa != 'Lobo Solitario')");
+        } catch (\Throwable $e) {}
+
         // ========== VIAGENS INDIVIDUAIS ==========
         // Hash inclui pontuacao para evitar conflitos de deduplicacao
 

@@ -245,7 +245,13 @@ async function syncNow(getDB, getRankingEmpresas, getRankingMotoristas, getStats
                 km: e.km || 0,
                 pontuacao: e.pontuacao || 0
             })),
-            motoristas: motoristas.map(m => ({
+            motoristas: motoristas.filter(m => {
+                if (m.empresa === 'Lobo Solitário' || m.empresa === 'Lobo Solitario') {
+                    const hasRealCompany = motoristas.some(other => other.nome === m.nome && other.empresa !== 'Lobo Solitário' && other.empresa !== 'Lobo Solitario');
+                    if (hasRealCompany) return false;
+                }
+                return true;
+            }).map(m => ({
                 nome: m.nome,
                 empresa: m.empresa,
                 foto: m.foto || '',

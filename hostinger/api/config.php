@@ -314,6 +314,11 @@ function initDB() {
     try { $db->exec("ALTER TABLE ranking_empresas ADD COLUMN pc_id TEXT DEFAULT ''"); } catch (PDOException $e) {}
     try { $db->exec("ALTER TABLE ranking_motoristas ADD COLUMN pc_id TEXT DEFAULT ''"); } catch (PDOException $e) {}
     try { $db->exec("ALTER TABLE ranking_viagens ADD COLUMN pc_id TEXT DEFAULT ''"); } catch (PDOException $e) {}
+
+    // Auto-dedup: remove Lobo Solitário entries when motorista has a real company
+    try {
+        $db->exec("DELETE FROM ranking_motoristas WHERE (empresa = 'Lobo Solitário' OR empresa = 'Lobo Solitario') AND nome IN (SELECT nome FROM ranking_motoristas WHERE empresa != 'Lobo Solitário' AND empresa != 'Lobo Solitario')");
+    } catch (PDOException $e) {}
 }
 
 /**
