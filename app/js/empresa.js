@@ -3,6 +3,7 @@ let empresaInfo = null;
 let motoristasEmpresa = [];
 let cargasStats = [];
 let viagensEmpresa = [];
+let rankingMotoristasData = [];
 let isOwner = false;
 let solicitacoesPendentes = [];
 let vagasEmpresa = [];
@@ -44,11 +45,12 @@ async function loadData() {
         return false;
     }
 
-    const [resEmp, resMot, resCargas, resViagens] = await Promise.all([
+    const [resEmp, resMot, resCargas, resViagens, resRanking] = await Promise.all([
         fetchJSON('/api/empresas'),
         fetchJSON(`/api/motoristas?empresa=${encodeURIComponent(empresaNome)}`),
         fetchJSON(`/api/cargas/estatisticas?empresa=${encodeURIComponent(empresaNome)}`),
-        fetchJSON(`/api/viagens?empresa=${encodeURIComponent(empresaNome)}`)
+        fetchJSON(`/api/viagens?empresa=${encodeURIComponent(empresaNome)}`),
+        fetchJSON(`/api/ranking/motoristas?empresa=${encodeURIComponent(empresaNome)}`)
     ]);
 
     if (resEmp.data) {
@@ -63,6 +65,7 @@ async function loadData() {
     motoristasEmpresa = (resMot.data && resMot.data.motoristas) || [];
     cargasStats = (resCargas.data && resCargas.data.cargas) || [];
     viagensEmpresa = (resViagens.data && resViagens.data.viagens) || [];
+    rankingMotoristasData = (resRanking.data && resRanking.data.ranking) || [];
     isOwner = isEmpresaOwner();
 
     if (isOwner) {
@@ -423,6 +426,15 @@ function renderPage() {
             motViagens[v.motorista].viagens++;
             motViagens[v.motorista].km += v.km;
             motViagens[v.motorista].pontuacao += v.pontuacao;
+        });
+        const rankingData = rankingMotoristasData;
+        rankingData.forEach(r => {
+            if (!r.nome) return;
+            if (!motViagens[r.nome]) motViagens[r.nome] = { viagens: 0, km: 0, pontuacao: 0 };
+            const cur = motViagens[r.nome];
+            if (r.viagens > cur.viagens) cur.viagens = r.viagens;
+            if (r.km > cur.km) cur.km = r.km;
+            if (r.pontuacao > cur.pontuacao) cur.pontuacao = r.pontuacao;
         });
         const sortedMot = [...motoristasEmpresa].sort((a, b) => {
             const funcaoOrder = { 'dono': 0, 'diretor': 1, 'chefe_rh': 2, 'motorista': 3 };
