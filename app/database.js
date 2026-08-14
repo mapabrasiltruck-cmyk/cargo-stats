@@ -646,7 +646,7 @@ function getMotoristas(empresa, mes, ano) {
     const subParams = [];
     let joinExtraSub = '';
     let groupByClause = 'GROUP BY m.nome';
-    let selectEmpresa = `MAX(CASE WHEN m.empresa != 'Lobo Solitário' AND m.empresa != 'Lobo Solitario' THEN m.empresa ELSE 'Lobo Solitário' END) AS empresa`;
+    let selectEmpresa = `COALESCE(MAX(CASE WHEN m.empresa != 'Lobo Solitário' AND m.empresa != 'Lobo Solitario' THEN m.empresa END), MAX(m.empresa)) AS empresa`;
     let whereExtra = '';
 
     if (mes && ano) {

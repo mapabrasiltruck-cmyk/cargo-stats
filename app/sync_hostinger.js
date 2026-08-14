@@ -615,22 +615,34 @@ async function processRemoteData(getDB) {
             for (const mot of result.data.motoristas) {
                 if (!mot.nome) continue;
                 const empresaBusca = mot.empresa || 'Lobo Solitario';
-                // Buscar por nome + empresa para evitar conflitos
-                const existing = db.prepare(`SELECT nome, empresa, foto, cs_gold, plano FROM motoristas WHERE nome = ? AND empresa = ?`).get(mot.nome, empresaBusca);
-                if (!existing) {
-                    // Also check if exists under Lobo Solitario and transfer
-                    const lobo = db.prepare(`SELECT nome, empresa FROM motoristas WHERE nome = ? AND (empresa = 'Lobo Solitario' OR empresa = 'Lobo Solitario')`).get(mot.nome);
-                    if (lobo && empresaBusca !== 'Lobo Solitario' && empresaBusca !== 'Lobo Solitario') {
-                        db.prepare(`UPDATE motoristas SET empresa = ?, cs_gold = ?, plano = ? WHERE nome = ? AND (empresa = 'Lobo Solitario' OR empresa = 'Lobo Solitario')`).run(
-                            empresaBusca, mot.cs_gold || 0, mot.plano || 'bronze', mot.nome
-                        );
-                        motProcessados++;
-                    } else {
-                        db.prepare(`INSERT INTO motoristas (nome, empresa, foto, status, cargo, funcao, cs_gold, plano) VALUES (?, ?, ?, 'Ativo', 'Motorista', 'motorista', ?, ?)`).run(
-                            mot.nome, empresaBusca, mot.foto || '', mot.cs_gold || 0, mot.plano || 'bronze'
-                        );
-                        motProcessados++;
+                // Check if motorista exists under ANY company
+                const anyExisting = db.prepare(`SELECT nome, empresa, foto, cs_gold, plano FROM motoristas WHERE nome = ?`).get(mot.nome);
+                if (!anyExisting) {
+                    // New motorista - insert
+                    db.prepare(`INSERT INTO motoristas (nome, empresa, foto, status, cargo, funcao, cs_gold, plano) VALUES (?, ?, ?, 'Ativo', 'Motorista', 'motorista', ?, ?)`).run(
+                        mot.nome, empresaBusca, mot.foto || '', mot.cs_gold || 0, mot.plano || 'bronze'
+                    );
+                    motProcessados++;
+                } else if (anyExisting.empresa !== empresaBusca) {
+                    // Motorista exists under different company - update stats but keep local company
+                    const updateFields = [];
+                    const updateParams = [];
+                    if (mot.cs_gold && mot.cs_gold > 0) {
+                        updateFields.push('cs_gold = MAX(cs_gold, ?)');
+                        updateParams.push(mot.cs_gold);
                     }
+                    if (mot.plano && mot.plano !== 'bronze') {
+                        const planoRank = { bronze: 0, gold: 1, vip: 2 };
+                        if ((planoRank[mot.plano] || 0) > (planoRank[anyExisting.plano] || 0)) {
+                            updateFields.push('plano = ?');
+                            updateParams.push(mot.plano);
+                        }
+                    }
+                    if (updateFields.length > 0) {
+                        updateParams.push(mot.nome);
+                        db.prepare(`UPDATE motoristas SET ${updateFields.join(', ')} WHERE nome = ?`).run(...updateParams);
+                    }
+                    motProcessados++;
                 } else {
                     // MERGE: update foto, cs_gold (sum), plano (highest)
                     const updateFields = [];

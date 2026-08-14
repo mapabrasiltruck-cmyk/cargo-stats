@@ -23,7 +23,7 @@ if ($type === 'empresas') {
         $stmt = $db->prepare("SELECT nome, empresa, viagens, km, pontuacao FROM ranking_motoristas WHERE empresa = ? ORDER BY pontuacao DESC");
         $stmt->execute([$empresa]);
     } else {
-        $stmt = $db->query("SELECT nome, empresa, viagens, km, pontuacao FROM ranking_motoristas ORDER BY pontuacao DESC");
+        $stmt = $db->query("SELECT nome, COALESCE(MAX(CASE WHEN empresa != 'Lobo Solitário' AND empresa != 'Lobo Solitario' THEN empresa END), MAX(empresa)) AS empresa, SUM(viagens) AS viagens, SUM(km) AS km, SUM(pontuacao) AS pontuacao FROM ranking_motoristas GROUP BY nome ORDER BY pontuacao DESC");
     }
     $rows = $stmt->fetchAll();
     echo json_encode(['ranking' => $rows]);
