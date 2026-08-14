@@ -1,6 +1,6 @@
 {
   "name": "cargo-stats",
-  "version": "1.0.27",
+  "version": "1.0.28",
   "description": "Cargo Stats — Telemetria ETS2/ATS",
   "main": "main.js",
   "author": "Cargo Stats",
