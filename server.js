@@ -1144,24 +1144,33 @@ process.on('SIGINT', () => {
     process.exit(0);
 });
 
-server.listen(PORT, () => {
-    console.log(`CARGO STATS rodando em http://localhost:${PORT}`);
-    const nets = os.networkInterfaces();
-    for (const name of Object.keys(nets)) {
-        for (const net of nets[name]) {
-            if (net.family === 'IPv4' && !net.internal) {
-                console.log(`Acesso mobile: http://${net.address}:${PORT}/mobile`);
+function startServer(port = PORT, telemetryBridge = null) {
+    server.listen(port, () => {
+        console.log(`CARGO STATS rodando em http://localhost:${port}`);
+        const nets = os.networkInterfaces();
+        for (const name of Object.keys(nets)) {
+            for (const net of nets[name]) {
+                if (net.family === 'IPv4' && !net.internal) {
+                    console.log(`Acesso mobile: http://${net.address}:${port}/mobile`);
+                }
             }
         }
-    }
-    console.log('Pressione Ctrl+C para parar');
-    setInterval(() => limparSessoesExpiradas(), 30 * 60 * 1000);
-    setInterval(() => {
-        try {
-            const criado = gerarEventoAleatorio();
-            if (criado) console.log(`[EVENTOS] Novo evento gerado!`);
-        } catch (e) {
-            console.error('[EVENTOS] Erro ao gerar:', e.message);
-        }
-    }, 5 * 60 * 1000);
-});
+        console.log('Pressione Ctrl+C para parar');
+        setInterval(() => limparSessoesExpiradas(), 30 * 60 * 1000);
+        setInterval(() => {
+            try {
+                const criado = gerarEventoAleatorio();
+                if (criado) console.log(`[EVENTOS] Novo evento gerado!`);
+            } catch (e) {
+                console.error('[EVENTOS] Erro ao gerar:', e.message);
+            }
+        }, 5 * 60 * 1000);
+    });
+    return server;
+}
+
+if (require.main === module) {
+    startServer(PORT);
+} else {
+    module.exports = { startServer };
+}
