@@ -46,14 +46,7 @@
       },
       {
         "from": "node_modules",
-        "to": "server/node_modules",
-        "filter": [
-          "better-sqlite3/**",
-          "bcryptjs/**",
-          "qrcode/**",
-          "bindings/**",
-          "file-uri-to-path/**"
-        ]
+        "to": "server/node_modules"
       },
       {
         "from": "plugins",
