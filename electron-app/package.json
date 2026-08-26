@@ -9,7 +9,7 @@
     "start": "electron .",
     "build": "npm run rebuild:server && electron-builder",
     "publish": "npm run rebuild:server && electron-builder --publish always",
-    "rebuild:server": "npx @electron/rebuild -m ../app -f",
+    "rebuild:server": "npx @electron/rebuild -m ../ -f",
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
@@ -31,14 +31,17 @@
     ],
     "extraResources": [
       {
-        "from": "../app",
+        "from": "../",
         "to": "server",
         "filter": [
           "**/*",
           "!*.db*",
           "!*.log",
           "!uploads/**",
-          "!backups/**"
+          "!backups/**",
+          "!electron-app/**",
+          "!.git/**",
+          "!node_modules/**"
         ]
       },
       {
