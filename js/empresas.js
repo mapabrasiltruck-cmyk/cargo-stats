@@ -176,3 +176,8 @@ window.addEventListener('cargo-trip-recorded', async () => {
     const ok = await loadData();
     if (ok) renderPage();
 });
+
+setInterval(async () => {
+    const ok = await loadData();
+    if (ok) renderPage();
+}, 10000);
