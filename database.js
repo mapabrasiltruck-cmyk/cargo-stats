@@ -345,7 +345,7 @@ function getMotoristas(empresa, mes, ano) {
         LEFT JOIN (
             SELECT motorista, COUNT(id) AS viagens, SUM(km) AS km, SUM(pontuacao) AS pontuacao
             FROM viagens
-            WHERE status = 'completa'${joinExtraSub}
+            WHERE 1=1${joinExtraSub}
             GROUP BY motorista
         ) v_agg ON v_agg.motorista = m.nome
         ${whereExtra}
