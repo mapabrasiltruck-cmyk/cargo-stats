@@ -75,9 +75,6 @@ function renderPage() {
         empresasMostrar = Object.values(empMap).sort((a, b) => b.pontuacao - a.pontuacao);
     }
 
-    empresasMostrar = empresasMostrar.filter(e => e.nome !== 'Lobo Solitário');
-    viagensMostrar = viagensMostrar.filter(v => v.empresa !== 'Lobo Solitário');
-
     viagensMostrar.forEach(v => {
         if (!motData[v.motorista]) motData[v.motorista] = { nome: v.motorista, empresa: v.empresa, viagens: 0, km: 0, pontuacao: 0 };
         motData[v.motorista].viagens++;

@@ -1,6 +1,6 @@
 {
   "name": "cargo-stats",
-  "version": "1.0.34",
+  "version": "1.0.35",
   "description": "Cargo Stats — Telemetria ETS2/ATS",
   "main": "main.js",
   "author": "Cargo Stats",
@@ -9,7 +9,7 @@
     "start": "electron .",
     "build": "npm run rebuild:server && electron-builder",
     "publish": "npm run rebuild:server && electron-builder --publish always",
-    "rebuild:server": "npx @electron/rebuild --version 30.5.1 -f",
+    "rebuild:server": "npx @electron/rebuild --version 30.5.1 -m ../app -f",
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
@@ -31,21 +31,19 @@
     ],
     "extraResources": [
       {
-        "from": "../",
+        "from": "../app",
         "to": "server",
         "filter": [
           "**/*",
+          "!node_modules/**",
           "!*.db*",
           "!*.log",
           "!uploads/**",
-          "!backups/**",
-          "!electron-app/**",
-          "!.git/**",
-          "!node_modules/**"
+          "!backups/**"
         ]
       },
       {
-        "from": "node_modules",
+        "from": "../app/node_modules",
         "to": "server/node_modules"
       },
       {
@@ -85,6 +83,7 @@
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.10.1",
+    "dotenv": "^17.4.2",
     "electron-updater": "^6.0.0",
     "node-addon-api": "^8.9.0",
     "qrcode": "^1.5.4"

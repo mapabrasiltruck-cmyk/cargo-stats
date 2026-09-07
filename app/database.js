@@ -431,7 +431,7 @@ function initDB() {
 function recalcularEmpresa(nomeEmpresa) {
     if (!nomeEmpresa) return;
     nomeEmpresa = nomeEmpresa.trim();
-    if (nomeEmpresa === '' || nomeEmpresa === 'Lobo Solitário') return;
+    if (nomeEmpresa === '') return;
     const db = getDB();
     const row = db.prepare(`
         SELECT
@@ -451,7 +451,7 @@ function recalcularEmpresa(nomeEmpresa) {
 
 function recalcEmpresas() {
     const db = getDB();
-    const empresasComViagens = db.prepare(`SELECT DISTINCT v.empresa FROM viagens v WHERE v.empresa != 'Lobo Solitário'`).all();
+    const empresasComViagens = db.prepare(`SELECT DISTINCT v.empresa FROM viagens v`).all();
     const empresasExistentes = db.prepare(`SELECT nome FROM empresas`).all().map(e => e.nome);
     const tx = db.transaction(() => {
         for (const ev of empresasComViagens) {
@@ -487,7 +487,6 @@ function getEmpresas(mes, ano) {
             WHERE v.status = 'completa'
               AND CAST(strftime('%m', v.data) AS INTEGER) = ?
               AND CAST(strftime('%Y', v.data) AS INTEGER) = ?
-              AND v.empresa != 'Lobo Solitário'
             GROUP BY v.empresa
             ORDER BY pontuacao DESC
         `).all(mes, ano);
@@ -507,7 +506,7 @@ function getEmpresas(mes, ano) {
             e.pontuacao,
             e.criada_por
         FROM empresas e
-        WHERE e.status = 'aprovada' AND e.nome != 'Lobo Solitário'
+        WHERE e.status = 'aprovada'
         ORDER BY e.pontuacao DESC
     `).all();
     return rows.map((r, i) => ({ ...r, rankingPos: i + 1 }));
