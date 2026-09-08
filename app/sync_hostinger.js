@@ -92,8 +92,23 @@ function loadConfig(dataDir) {
                     return true;
                 }
             }
-            console.log(`[${timestamp()}] [SYNC] Nenhum arquivo de config encontrado em ${configPath} nem nos fallbacks`);
-            return false;
+            // Auto-config: use defaults if no config file found
+            const DEFAULT_HOSTINGER_URL = 'https://cargo.brasiltruck.online/api/sync.php';
+            const DEFAULT_SYNC_SECRET = 'luiz_0763';
+            syncConfig.hostingerUrl = DEFAULT_HOSTINGER_URL;
+            syncConfig.syncSecret = process.env.SYNC_SECRET || DEFAULT_SYNC_SECRET;
+            syncConfig.enabled = true;
+            syncConfig.pcId = generatePcId();
+            syncConfig.pcNome = os.hostname();
+            // Save for future runs
+            try {
+                fs.mkdirSync(dataDir, { recursive: true });
+                saveConfig(dataDir);
+                console.log(`[${timestamp()}] [SYNC] Auto-configurado com padrao: ${syncConfig.hostingerUrl}, pcId=${syncConfig.pcId}`);
+            } catch (e) {
+                console.error(`[${timestamp()}] [SYNC] Erro ao salvar auto-config:`, e.message);
+            }
+            return true;
         }
     } catch (e) {
         console.error(`[${timestamp()}] [SYNC] Erro ao carregar config:`, e.message);
