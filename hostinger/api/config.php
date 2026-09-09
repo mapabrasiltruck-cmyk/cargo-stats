@@ -319,6 +319,11 @@ function initDB() {
     try {
         $db->exec("DELETE FROM ranking_motoristas WHERE (empresa = 'Lobo Solitário' OR empresa = 'Lobo Solitario') AND nome IN (SELECT nome FROM ranking_motoristas WHERE empresa != 'Lobo Solitário' AND empresa != 'Lobo Solitario')");
     } catch (PDOException $e) {}
+
+    // Remove Lobo Solitário from ranking_empresas (it's not a real empresa)
+    try {
+        $db->exec("DELETE FROM ranking_empresas WHERE nome = 'Lobo Solitário' OR nome = 'Lobo Solitario'");
+    } catch (PDOException $e) {}
 }
 
 /**

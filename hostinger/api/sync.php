@@ -155,6 +155,7 @@ try {
         $nomesInseridos = [];
 
         foreach ($validEmpresas as $e) {
+            if ($e['nome_canon'] === 'Lobo Solitário' || $e['nome_canon'] === 'Lobo Solitario') continue;
             $logoFinal = $e['logo'];
             $bannerFinal = $e['banner'];
 

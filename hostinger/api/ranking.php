@@ -16,7 +16,7 @@ $empresa = $_GET['empresa'] ?? null;
 $db = getDB();
 
 if ($type === 'empresas') {
-    $rows = $db->query("SELECT nome, logo, motoristas, viagens, km, pontuacao FROM ranking_empresas ORDER BY pontuacao DESC")->fetchAll();
+    $rows = $db->query("SELECT nome, logo, motoristas, viagens, km, pontuacao FROM ranking_empresas WHERE nome NOT IN ('Lobo Solitário', 'Lobo Solitario') ORDER BY pontuacao DESC")->fetchAll();
     echo json_encode(['ranking' => $rows]);
 } elseif ($type === 'motoristas') {
     if ($empresa) {

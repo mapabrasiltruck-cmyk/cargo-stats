@@ -2246,10 +2246,6 @@ const server = http.createServer(async (req, res) => {
             if (usuarioAlvo) {
                 dbConn.prepare(`UPDATE usuarios SET empresa = ? WHERE id = ?`).run(sol.empresa, usuarioAlvo.id);
             }
-            const loboMot = dbConn.prepare(`SELECT nome FROM motoristas WHERE nome = ? AND (empresa = 'Lobo Solitário' OR empresa = 'Lobo Solitario')`).get(sol.motorista);
-            if (loboMot) {
-                dbConn.prepare(`DELETE FROM motoristas WHERE nome = ? AND (empresa = 'Lobo Solitário' OR empresa = 'Lobo Solitario')`).run(sol.motorista);
-            }
         });
         tx();
         recalcEmpresas();
@@ -2440,10 +2436,6 @@ const server = http.createServer(async (req, res) => {
         responderSolicitacao(id, 'aceita');
         criarMotorista(session.nome, sol.empresa, session.user_id, 'Motorista');
         getDB().prepare(`UPDATE usuarios SET empresa = ? WHERE nome = ?`).run(sol.empresa, session.nome);
-        const loboMot = getDB().prepare(`SELECT nome FROM motoristas WHERE nome = ? AND empresa = 'Lobo Solitário'`).get(session.nome);
-        if (loboMot) {
-            getDB().prepare(`DELETE FROM motoristas WHERE nome = ? AND empresa = 'Lobo Solitário'`).run(session.nome);
-        }
         return sendJSON(res, { ok: true });
     }
 

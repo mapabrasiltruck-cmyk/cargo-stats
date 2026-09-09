@@ -250,7 +250,7 @@ async function syncNow(getDB, getRankingEmpresas, getRankingMotoristas, getStats
             pc_nome: syncConfig.pcNome || os.hostname(),
             pc_versao: '3.0',
             data_version: DATA_VERSION,
-            empresas: empresas.map(e => ({
+            empresas: empresas.filter(e => e.nome !== 'Lobo Solitário' && e.nome !== 'Lobo Solitario').map(e => ({
                 nome: e.nome || '',
                 logo: e.logo || '',
                 banner: e.banner || '',
@@ -558,6 +558,7 @@ async function processRemoteData(getDB) {
         if (result.data.empresas) {
             for (const empresa of result.data.empresas) {
                 if (!empresa.nome) continue;
+                if (empresa.nome === 'Lobo Solitário' || empresa.nome === 'Lobo Solitario') continue;
                 const existing = db.prepare(`SELECT nome, logo, banner, motoristas, viagens, km, pontuacao FROM empresas WHERE nome = ?`).get(empresa.nome);
                 if (!existing) {
                     db.prepare(`INSERT INTO empresas (nome, logo, banner, descricao, status, motoristas, viagens, km, pontuacao) VALUES (?, ?, ?, ?, 'aprovada', ?, ?, ?, ?)`).run(

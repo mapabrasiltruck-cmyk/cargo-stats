@@ -93,7 +93,7 @@ try {
     // ========== EMPRESAS (para sync entre instalacoes) ==========
 
     $empresas = [];
-    $rows = $db->prepare("SELECT nome, logo, banner, descricao, motoristas, viagens, km, pontuacao FROM ranking_empresas{$pcFilter} ORDER BY pontuacao DESC");
+    $rows = $db->prepare("SELECT nome, logo, banner, descricao, motoristas, viagens, km, pontuacao FROM ranking_empresas WHERE nome NOT IN ('Lobo Solitário', 'Lobo Solitario')" . ($pcFilter ? " AND " . substr($pcFilter, 6) : '') . " ORDER BY pontuacao DESC");
     $rows->execute($pcParams);
     $rows = $rows->fetchAll();
     foreach ($rows as $row) {

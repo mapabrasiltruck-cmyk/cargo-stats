@@ -430,10 +430,15 @@ function initDB() {
     return db;
 }
 
+function isLoboSolitario(nome) {
+    return nome === 'Lobo Solitário' || nome === 'Lobo Solitario';
+}
+
 function recalcularEmpresa(nomeEmpresa) {
     if (!nomeEmpresa) return;
     nomeEmpresa = nomeEmpresa.trim();
     if (nomeEmpresa === '') return;
+    if (isLoboSolitario(nomeEmpresa)) return;
     const db = getDB();
     const row = db.prepare(`
         SELECT
@@ -453,8 +458,8 @@ function recalcularEmpresa(nomeEmpresa) {
 
 function recalcEmpresas() {
     const db = getDB();
-    const empresasComViagens = db.prepare(`SELECT DISTINCT v.empresa FROM viagens v`).all();
-    const empresasExistentes = db.prepare(`SELECT nome FROM empresas`).all().map(e => e.nome);
+    const empresasComViagens = db.prepare(`SELECT DISTINCT v.empresa FROM viagens v WHERE v.empresa NOT IN ('Lobo Solitário', 'Lobo Solitario')`).all();
+    const empresasExistentes = db.prepare(`SELECT nome FROM empresas WHERE nome NOT IN ('Lobo Solitário', 'Lobo Solitario')`).all().map(e => e.nome);
     const tx = db.transaction(() => {
         for (const ev of empresasComViagens) {
             recalcularEmpresa(ev.empresa);
@@ -487,6 +492,7 @@ function getEmpresas(mes, ano) {
             FROM viagens v
             LEFT JOIN motoristas m ON m.empresa = v.empresa
             WHERE v.status = 'completa'
+              AND v.empresa NOT IN ('Lobo Solitário', 'Lobo Solitario')
               AND CAST(strftime('%m', v.data) AS INTEGER) = ?
               AND CAST(strftime('%Y', v.data) AS INTEGER) = ?
             GROUP BY v.empresa
@@ -508,7 +514,7 @@ function getEmpresas(mes, ano) {
             e.pontuacao,
             e.criada_por
         FROM empresas e
-        WHERE e.status = 'aprovada'
+        WHERE e.status = 'aprovada' AND e.nome NOT IN ('Lobo Solitário', 'Lobo Solitario')
         ORDER BY e.pontuacao DESC
     `).all();
     return rows.map((r, i) => ({ ...r, rankingPos: i + 1 }));
@@ -742,8 +748,8 @@ function getRankingMotoristas(periodo, mes, ano, empresa) {
 
 function getStatsGerais() {
     const db = getDB();
-    const empresas = db.prepare(`SELECT COUNT(*) AS total FROM empresas`).get();
-    const motoristas = db.prepare(`SELECT COUNT(*) AS total FROM motoristas`).get();
+    const empresas = db.prepare(`SELECT COUNT(*) AS total FROM empresas WHERE nome NOT IN ('Lobo Solitário', 'Lobo Solitario')`).get();
+    const motoristas = db.prepare(`SELECT COUNT(*) AS total FROM motoristas WHERE empresa NOT IN ('Lobo Solitário', 'Lobo Solitario')`).get();
     const viagens = db.prepare(`SELECT COUNT(*) AS total FROM viagens WHERE status = 'completa'`).get();
     const km = db.prepare(`SELECT COALESCE(SUM(km), 0) AS total FROM viagens WHERE status = 'completa'`).get();
 
@@ -761,7 +767,7 @@ function getStatsGeraisMes(mes, ano) {
         SELECT
             COUNT(*) AS totalViagens,
             COALESCE(SUM(km), 0) AS totalKm,
-            COUNT(DISTINCT empresa) AS totalEmpresas,
+            COUNT(DISTINCT CASE WHEN empresa NOT IN ('Lobo Solitário', 'Lobo Solitario') THEN empresa END) AS totalEmpresas,
             COUNT(DISTINCT motorista) AS totalMotoristas
         FROM viagens
         WHERE status = 'completa'
@@ -1634,6 +1640,7 @@ function getEmpresasPorCategoria(categoria, mes, ano) {
                 COALESCE(SUM(v.pontuacao), 0) AS pontuacao
             FROM viagens v
             WHERE v.status = 'completa' AND v.categoria_carga = ?
+              AND v.empresa NOT IN ('Lobo Solitário', 'Lobo Solitario')
               AND CAST(strftime('%m', v.data) AS INTEGER) = ?
               AND CAST(strftime('%Y', v.data) AS INTEGER) = ?
             GROUP BY v.empresa ORDER BY pontuacao DESC
@@ -1646,6 +1653,7 @@ function getEmpresasPorCategoria(categoria, mes, ano) {
             COALESCE(SUM(v.pontuacao), 0) AS pontuacao
         FROM viagens v
         WHERE v.status = 'completa' AND v.categoria_carga = ?
+          AND v.empresa NOT IN ('Lobo Solitário', 'Lobo Solitario')
         GROUP BY v.empresa ORDER BY pontuacao DESC
     `).all(categoria);
 }
