@@ -89,6 +89,8 @@ function initDB() {
             empresa TEXT NOT NULL,
             status TEXT DEFAULT 'pendente',
             mensagem TEXT DEFAULT '',
+            tipo TEXT DEFAULT 'pedido',
+            vaga_id INTEGER DEFAULT 0,
             criada_em TEXT DEFAULT (datetime('now')),
             respondida_em TEXT
         );
