@@ -640,44 +640,55 @@ async function processRemoteData(getDB) {
                     );
                     motProcessados++;
                 } else if (anyExisting.empresa !== empresaBusca) {
-                    // Motorista exists under different company - update stats but keep local company
-                    const updateFields = [];
-                    const updateParams = [];
-                    if (mot.cs_gold && mot.cs_gold > 0) {
-                        updateFields.push('cs_gold = MAX(cs_gold, ?)');
-                        updateParams.push(mot.cs_gold);
-                    }
-                    if (mot.plano && mot.plano !== 'bronze') {
-                        const planoRank = { bronze: 0, gold: 1, vip: 2 };
-                        if ((planoRank[mot.plano] || 0) > (planoRank[anyExisting.plano] || 0)) {
-                            updateFields.push('plano = ?');
-                            updateParams.push(mot.plano);
+                    // Motorista exists under different company
+                    // If local is Lobo Solitario and remote has a real company, transfer
+                    const isLocalLobo = anyExisting.empresa === 'Lobo Solitário' || anyExisting.empresa === 'Lobo Solitario';
+                    const isRemoteLobo = empresaBusca === 'Lobo Solitário' || empresaBusca === 'Lobo Solitario';
+                    if (isLocalLobo && !isRemoteLobo) {
+                        db.prepare(`UPDATE motoristas SET empresa = ?, foto = ?, cs_gold = ?, plano = ? WHERE nome = ? AND empresa = ?`).run(
+                            empresaBusca, mot.foto || anyExisting.foto || '', mot.cs_gold || 0, mot.plano || 'bronze', mot.nome, anyExisting.empresa
+                        );
+                        motProcessados++;
+                    } else {
+                        // Update stats only
+                        const updateFields = [];
+                        const updateParams = [];
+                        if (mot.cs_gold && mot.cs_gold > 0) {
+                            updateFields.push('cs_gold = MAX(cs_gold, ?)');
+                            updateParams.push(mot.cs_gold);
                         }
+                        if (mot.plano && mot.plano !== 'bronze') {
+                            const planoRank = { bronze: 0, gold: 1, vip: 2 };
+                            if ((planoRank[mot.plano] || 0) > (planoRank[anyExisting.plano] || 0)) {
+                                updateFields.push('plano = ?');
+                                updateParams.push(mot.plano);
+                            }
+                        }
+                        if (updateFields.length > 0) {
+                            updateParams.push(mot.nome);
+                            db.prepare(`UPDATE motoristas SET ${updateFields.join(', ')} WHERE nome = ?`).run(...updateParams);
+                        }
+                        motProcessados++;
                     }
-                    if (updateFields.length > 0) {
-                        updateParams.push(mot.nome);
-                        db.prepare(`UPDATE motoristas SET ${updateFields.join(', ')} WHERE nome = ?`).run(...updateParams);
-                    }
-                    motProcessados++;
                 } else {
-                    // MERGE: update foto, cs_gold (sum), plano (highest)
+                    // MERGE: update foto, cs_gold (max), plano (highest)
                     const updateFields = [];
                     const updateParams = [];
 
                     // Update foto if remote has one and local doesn't
-                    if (mot.foto && !existing.foto) {
+                    if (mot.foto && !anyExisting.foto) {
                         updateFields.push('foto = ?');
                         updateParams.push(mot.foto);
                     }
 
-                    // MERGE cs_gold: MAX (valor absoluto do motorista, nao somar a cada sync)
-                    const mergedGold = Math.max(existing.cs_gold || 0, mot.cs_gold || 0);
+                    // MERGE cs_gold: MAX
+                    const mergedGold = Math.max(anyExisting.cs_gold || 0, mot.cs_gold || 0);
                     updateFields.push('cs_gold = ?');
                     updateParams.push(mergedGold);
 
                     // MERGE plano: pegar o mais alto
                     const planoRank = { bronze: 0, gold: 1, vip: 2 };
-                    const existingPlanoRank = planoRank[existing.plano || 'bronze'] || 0;
+                    const existingPlanoRank = planoRank[anyExisting.plano || 'bronze'] || 0;
                     const newPlanoRank = planoRank[mot.plano || 'bronze'] || 0;
                     if (newPlanoRank > existingPlanoRank) {
                         updateFields.push('plano = ?');
@@ -719,13 +730,13 @@ async function processRemoteData(getDB) {
         // ========== CANDIDATURAS SYNC ==========
         let candsProcessadas = 0;
         if (result.data.candidaturas) {
-            const stmtCheckCand = db.prepare(`SELECT id FROM candidaturas WHERE motorista = ? AND vaga_id IN (SELECT id FROM vagas WHERE empresa = ?) AND status = ?`);
+            const stmtCheckCand = db.prepare(`SELECT id FROM candidaturas WHERE motorista = ? AND vaga_id = ? AND status = ?`);
             const stmtInsertCand = db.prepare(`INSERT OR IGNORE INTO candidaturas (vaga_id, motorista, motorista_empresa, mensagem, status, criada_em) VALUES (?, ?, ?, ?, ?, ?)`);
             for (const c of result.data.candidaturas) {
                 if (!c.motorista) continue;
                 const vaga = db.prepare(`SELECT id FROM vagas WHERE empresa = ? AND titulo = ?`).get(c.vaga_empresa, c.vaga_titulo);
                 if (!vaga) continue;
-                const dup = stmtCheckCand.get(c.motorista, c.vaga_empresa, c.status || 'pendente');
+                const dup = stmtCheckCand.get(c.motorista, vaga.id, c.status || 'pendente');
                 if (!dup) {
                     stmtInsertCand.run(vaga.id, c.motorista, c.motorista_empresa || 'Lobo Solitario', c.mensagem || '', c.status || 'pendente', c.criada_em || '');
                     candsProcessadas++;
@@ -736,7 +747,7 @@ async function processRemoteData(getDB) {
         // ========== SOLICITACOES/CONVITES SYNC ==========
         let solsProcessadas = 0;
         if (result.data.solicitacoes) {
-            const stmtCheckSol = db.prepare(`SELECT id FROM solicitacoes WHERE motorista = ? AND empresa = ? AND tipo = ? AND (status = 'pendente' OR status = 'aceita' OR status = 'recusada')`);
+            const stmtCheckSol = db.prepare(`SELECT id FROM solicitacoes WHERE motorista = ? AND empresa = ? AND tipo = ? AND status = 'pendente'`);
             const stmtInsertSol = db.prepare(`INSERT OR IGNORE INTO solicitacoes (motorista, empresa, status, mensagem, tipo, vaga_id, criada_em) VALUES (?, ?, ?, ?, ?, ?, ?)`);
             for (const s of result.data.solicitacoes) {
                 if (!s.motorista || !s.empresa) continue;
@@ -749,14 +760,12 @@ async function processRemoteData(getDB) {
             }
         }
 
-        // Recalcular empresas after importing new viagens
-        if (viaProcessadas > 0) {
-            try {
-                const { recalcEmpresas } = require('./database');
-                recalcEmpresas();
-            } catch (e) {
-                console.error('[SYNC] Erro ao recalcular empresas:', e.message);
-            }
+        // Sempre recalcular empresas apos sync (motoristas podem ter mudado de empresa)
+        try {
+            const { recalcEmpresas } = require('./database');
+            recalcEmpresas();
+        } catch (e) {
+            console.error('[SYNC] Erro ao recalcular empresas:', e.message);
         }
 
         if (empProcessadas > 0) {

@@ -2436,6 +2436,7 @@ const server = http.createServer(async (req, res) => {
         responderSolicitacao(id, 'aceita');
         criarMotorista(session.nome, sol.empresa, session.user_id, 'Motorista');
         getDB().prepare(`UPDATE usuarios SET empresa = ? WHERE nome = ?`).run(sol.empresa, session.nome);
+        recalcEmpresas();
         return sendJSON(res, { ok: true });
     }
 
